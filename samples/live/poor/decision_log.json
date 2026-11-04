@@ -4,7 +4,7 @@
   "pack_path": "samples/exercise_pack_sample.json",
   "pack_title": "Valley Regional Health System: Ransomware tabletop exercise (severity 3, 90 minutes)",
   "organization": "Valley Regional Health System",
-  "approval_hash": "b444028205cceb8aad4d45f5451163d024b245b2cafe3a1196cb252aa6feb5e2",
+  "approval_hash": "589ce6fc14bbcc7651e4d5b2b4d78a497330074a79567e639f99a3ce4f8a40a4",
   "approved_by": "Sample approver (synthetic run; a human signs here in real use)",
   "facilitator": "Scripted facilitator (synthetic poor run)",
   "started_at": "2026-11-06T17:00:00+00:00",
