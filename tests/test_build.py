@@ -126,17 +126,41 @@ def test_unapproved_pack_is_refused_and_draft_is_watermarked(sample_pack, tmp_pa
 
 
 def test_aar_builds_with_coverage_map_and_evidence(sample_pack, tmp_path):
+    from ttx.build.exec_summary import build_content
+
     score = read_json("samples/outputs/score.json")
     path = build_aar(sample_pack, score, tmp_path / "aar.docx")
     text = _docx_text(path)
-    assert score["headline"] in text
-    assert "Plan coverage map" in text
-    assert "Evidence page" in text
+    assert build_content(sample_pack, score)["headline"] in text
+    for section in ("Lessons learned", "Decision by decision", "Notification deadlines", "Action plan",
+                    "Plan coverage map", "Gap register", "Evidence page"):
+        assert section in text, section
     assert sample_pack["approval"]["outline_hash"] in text
     for g in score["gaps"]:
         assert g["id"] in text
     for fid in sample_pack["seed"]["findings_cited"]:
         assert fid in text
+
+
+def test_aar_body_is_short_and_detail_sits_in_the_appendix(sample_pack, tmp_path):
+    from ttx.build.aar import action_plan
+
+    score = read_json("samples/outputs/score.json")
+    doc = Document(str(build_aar(sample_pack, score, tmp_path / "aar.docx")))
+    body = []
+    for block in doc.element.body.iterchildren():
+        if block.tag.endswith("}p") and "Appendix" in "".join(block.itertext()):
+            break
+        body.append("".join(block.itertext()))
+    words = sum(len(b.split()) for b in body)
+    assert words < 3000, words  # the old report ran about 6,700 words before the evidence page
+    plan = action_plan(sample_pack, score)
+    assert len(plan) < len(score["gaps"])  # related gaps are grouped into one fix
+    assert sorted(i for r in plan for i in r["ids"]) == sorted(g["id"] for g in score["gaps"])  # none dropped
+    assert all(r["owner"] and r["due"] for r in plan)
+    body_text = "\n".join(body)
+    for fid in sample_pack["seed"]["findings_cited"]:
+        assert fid not in body_text  # finding IDs live in the appendix
 
 
 def test_aar_narrative_cannot_invent_numbers(sample_pack):

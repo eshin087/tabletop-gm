@@ -42,15 +42,24 @@ Every gap carries an owner role and a due date (people 30 days, plan 60, technic
 
 Every org plan item is followed, deviated from, not reached, or not covered by this scenario; every recorded gap topic is silent and exercised or silent and not exercised. "Not covered" is not a failure; it tells the plan owner what the next exercise should test.
 
+## The after-action report
+
+About two pages, then an appendix. The body has the headline and result, lessons learned, one row per decision, the notification deadlines, and the action plan, where gaps that share a fix are grouped into one row with the gap ids it closes. The appendix holds the scores by dimension, the plan coverage map, the gap register with citations, the evidence page, and the rubric. Finding IDs appear only in the appendix.
+
+## Demo responses
+
+`ttx report --demo` scores the invented answers in `samples/demo_responses/responses.yaml` against the approved exercise (or the built-in sample) and writes to `out/report_demo/`. Every output is marked as demo data. Never present demo results as findings.
+
 ## The executive summary
 
-Senior management gets six slides and a one-page memo built from the same content.
+Senior management gets seven slides and a one-page memo built from the same content.
 
 - **Bottom line:** a plain-language sentence giving the readiness rating, the score, and the biggest exposure.
 - **Overall readiness:** Strong (85% and up), Adequate (70 to 84%), or Needs work (below 70%).
 - **Area status:** five areas, each Good (2.5 and up on the 3-point scale), Mixed (2.0 to 2.4), or Weak (below 2.0).
 - **Regulatory exposure:** missed or unplanned notices.
 - **Top three risks.**
+- **Lessons learned:** up to three things that worked (areas rated Good, decisions handled in full, every deadline met) and up to five to improve (unready notices, plan silences, decisions made by the wrong role, parties not told, slow escalation, skipped steps, the open attack path). Each is built from the score, never written freehand.
 - **Top five fixes,** with owner and due date.
 - **Decisions needed from leadership.**
 

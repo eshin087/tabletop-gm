@@ -81,6 +81,8 @@ ttx report --open
 
 `ttx report` finds the approved exercise and the newest filled tracker for it in `uploads/` or `out/`, then writes four files into `out/report/`: `score.json`, `after_action_report.docx`, `executive_summary.pptx`, and `executive_summary.docx`. Pass `--tracker <file>` to name the tracker yourself.
 
+For a pitch or a practice run, `ttx report --demo` scores the synthetic answers in `samples/demo_responses/responses.yaml` against the approved exercise (or the built-in sample exercise when there is none) and writes the same reports, plus `demo_tracker.xlsx`, into `out/report_demo/`. Every output is marked "DEMO: synthetic responses". `--responses <file>` uses your own answers file.
+
 The lower-level steps are still available:
 
 ```bash
@@ -147,6 +149,7 @@ Two scripted synthetic sessions ship under `samples/live/` (a team that follows 
 |---|---|
 | `ttx demo` | Build the whole sample exercise and open it |
 | `ttx report [--log]` | After the exercise: score the tracker, write the AAR and executive summary; `--log` does the same from a live session's decision log |
+| `ttx report --demo` | The same reports from synthetic demo responses, for a pitch |
 | `ttx packs` | List industry packs and clock counts |
 | `ttx flags --industry SLUG --states CA,NV` | Plain-language regulated-status questions for the intake |
 | `ttx ingest-plan DOC... --out` | Extract uploaded plans with section anchors |

@@ -128,9 +128,66 @@ def test_executive_outputs_are_short(sample_pack, tmp_path):
 
     score = score_tracker(sample_pack, "samples/outputs/decision_tracker_completed.xlsx")
     deck = Presentation(str(build_exec_deck(sample_pack, score, tmp_path / "e.pptx")))
-    assert len(deck.slides) == 6
+    assert len(deck.slides) == 7  # title, bottom line, exposure, risks, lessons learned, fixes, asks
     memo = Document(str(build_exec_memo(sample_pack, score, tmp_path / "e.docx")))
     words = sum(len(p.text.split()) for p in memo.paragraphs) + sum(len(c.text.split()) for t in memo.tables for r in t.rows for c in r.cells)
     assert words < 650, words  # one page
     text = "\n".join(p.text for p in memo.paragraphs)
     assert chr(0x2014) not in text
+
+
+# --------------------------------------------------------------------------- #
+# Demo responses (for a pitch or a practice run)
+# --------------------------------------------------------------------------- #
+
+def test_demo_responses_fit_any_exercise(sample_pack):
+    from ttx.demo_responses import demo_answers
+
+    decisions, clocks = demo_answers(sample_pack)
+    assert set(decisions) == {j["id"] for j in sample_pack["injects"]}
+    roles = {r["id"] for r in sample_pack["roles"]}
+    for inj in sample_pack["injects"]:
+        d = decisions[inj["id"]]
+        assert d["decided_by"] in roles
+        assert set(d["actions"]) <= {a["id"] for a in inj["expected_actions"]}
+        assert set(d["notified"]) <= set(inj["expected_notifications"])
+        assert "{" not in d["decision"] + d["notes"]  # every token filled from the exercise
+    assert any(d["decided_by"] != j["decision_owner_role"] for j, d in ((j, decisions[j["id"]]) for j in sample_pack["injects"]))
+    assert 0 < len(clocks) < len(sample_pack["clocks"])  # one notice is left unplanned on purpose
+
+
+def test_report_demo_writes_marked_reports_without_a_tracker(sample_pack, tmp_path):
+    (tmp_path / "out").mkdir()
+    (tmp_path / "out" / "exercise_pack.json").write_text(json.dumps(sample_pack), encoding="utf-8")
+    result = run_report(root=tmp_path, demo=True)
+    out = Path(result["out"])
+    assert out == tmp_path / "out" / "report_demo"
+    for name in ("score.json", "after_action_report.docx", "executive_summary.pptx", "executive_summary.docx", "demo_tracker.xlsx"):
+        assert (out / name).exists(), name
+    assert json.loads((out / "score.json").read_text(encoding="utf-8"))["demo"]["label"]
+    aar = Document(str(out / "after_action_report.docx"))
+    assert "DEMO: SYNTHETIC RESPONSES" in "\n".join(p.text for t in aar.tables for r in t.rows for p in r.cells[0].paragraphs)
+    deck = Presentation(str(out / "executive_summary.pptx"))
+    for slide in deck.slides:
+        assert any("DEMO: SYNTHETIC RESPONSES" in (sh.text_frame.text if sh.has_text_frame else "") for sh in slide.shapes)
+    assert result["worked"] and result["improve"]
+    # a real report must never pick up the demo tracker
+    with pytest.raises(FileNotFoundError):
+        find_tracker(sample_pack, root=tmp_path)
+
+
+def test_report_demo_falls_back_to_the_sample_exercise(tmp_path):
+    result = run_report(root=tmp_path, demo=True)
+    assert result["notes"] and "sample exercise" in result["notes"][0]
+    assert Path(result["out"]).parent == tmp_path / "out"
+
+
+def test_lessons_learned_come_from_the_score(sample_pack):
+    from ttx.build.exec_summary import lessons
+
+    score = score_tracker(sample_pack, "samples/outputs/decision_tracker_completed.xlsx")
+    worked, improve = lessons(sample_pack, score)
+    assert 1 <= len(worked) <= 3 and 1 <= len(improve) <= 5
+    assert any("silent on ransom payment" in i for i in improve)  # the plan gap the sample exercised
+    for f in sample_pack["seed"]["findings_cited"]:
+        assert f not in " ".join(worked + improve)

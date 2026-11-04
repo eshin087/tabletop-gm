@@ -42,7 +42,7 @@ If Python is missing or too old, tell the person in one sentence and point them 
 Greet the person in one sentence, then ask with the AskUserQuestion tool (one question):
 
 - **Build a new exercise** (recommended): go to step 1.
-- **After the exercise: score it and write the reports**: follow `.claude/skills/tabletop-report/SKILL.md` from its first step. It is the same as typing `/tabletop-report`.
+- **After the exercise: score it and write the reports**: follow `.claude/skills/tabletop-report/SKILL.md` from its first step. It is the same as typing `/tabletop-report`, and it offers demo responses for a pitch.
 - **Run an exercise live in this chat**: Claude facilitates with the chat on the projector. Follow `skills/facilitate/SKILL.md` from its first step. It offers the built-in sample when no exercise has been built yet.
 - **See a finished sample first**: run `ttx demo`, tell them the folder opened and to start with `START_HERE.txt`, then ask this question again.
 
@@ -194,7 +194,7 @@ Two ways to run the exercise:
 
 ### 9. Score and report
 
-Follow `.claude/skills/tabletop-report/SKILL.md`, the same flow as `/tabletop-report`. One `ttx report` finds the filled tracker, scores it, and writes four files: the after-action report, the executive summary slides, the one-page executive memo, and `score.json`.
+Follow `.claude/skills/tabletop-report/SKILL.md`, the same flow as `/tabletop-report`. One `ttx report` finds the filled tracker, scores it, and writes four files: the after-action report, the executive summary slides, the one-page executive memo, and `score.json`. For a pitch or a practice run, `ttx report --demo` writes the same reports from synthetic responses into `out/report_demo/`, marked as demo data on every page.
 
 ## Sub-skills
 
