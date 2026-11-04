@@ -1,0 +1,294 @@
+{
+  "schema_version": 1,
+  "generator": "Tabletop GM ttx 0.1.0",
+  "pack_path": "samples/exercise_pack_sample.json",
+  "pack_title": "Valley Regional Health System: Ransomware tabletop exercise (severity 3, 90 minutes)",
+  "organization": "Valley Regional Health System",
+  "approval_hash": "589ce6fc14bbcc7651e4d5b2b4d78a497330074a79567e639f99a3ce4f8a40a4",
+  "approved_by": "Sample approver (synthetic run; a human signs here in real use)",
+  "facilitator": "Scripted facilitator (synthetic good run)",
+  "started_at": "2026-11-06T17:00:00+00:00",
+  "resumed_at": [],
+  "last_activity_at": "2026-11-06T18:15:00+00:00",
+  "entries": [
+    {
+      "n": 1,
+      "at": "2026-11-06T17:02:00+00:00",
+      "type": "mark",
+      "inject_id": "I1",
+      "event": "presented"
+    },
+    {
+      "n": 2,
+      "at": "2026-11-06T17:08:00+00:00",
+      "type": "decision",
+      "inject_id": "I1",
+      "unplanned": false,
+      "decision": "Treated the session as a suspected SEV1, confirmed it against the firewall logs, opened the incident record, and reached the Incident Commander.",
+      "decided_by_role": "security_operations",
+      "notified": [],
+      "actions_completed": [
+        "I1-P16",
+        "I1-d1",
+        "I1-d2"
+      ],
+      "plan_step_followed": "yes",
+      "documented": "yes",
+      "scenario_minutes": 10.0,
+      "discussion_minutes": 6.0,
+      "note": null
+    },
+    {
+      "n": 3,
+      "at": "2026-11-06T17:10:00+00:00",
+      "type": "mark",
+      "inject_id": "I2",
+      "event": "presented"
+    },
+    {
+      "n": 4,
+      "at": "2026-11-06T17:18:00+00:00",
+      "type": "decision",
+      "inject_id": "I2",
+      "unplanned": false,
+      "decision": "Declared a SEV1, activated the CIRT, and briefed executive leadership, counsel, and the insurer.",
+      "decided_by_role": "incident_commander",
+      "notified": [
+        "executive_leadership",
+        "legal_counsel",
+        "cyber_insurer"
+      ],
+      "actions_completed": [
+        "I2-P35",
+        "I2-P17",
+        "I2-P18"
+      ],
+      "plan_step_followed": "yes",
+      "documented": "yes",
+      "scenario_minutes": 20.0,
+      "discussion_minutes": 8.0,
+      "note": null,
+      "superseded_by": 18
+    },
+    {
+      "n": 5,
+      "at": "2026-11-06T17:20:00+00:00",
+      "type": "mark",
+      "inject_id": "I3",
+      "event": "presented"
+    },
+    {
+      "n": 6,
+      "at": "2026-11-06T17:28:00+00:00",
+      "type": "decision",
+      "inject_id": "I3",
+      "unplanned": false,
+      "decision": "Isolated the affected segment and kept clinical systems on downtime procedures rather than a full shutdown.",
+      "decided_by_role": "cio",
+      "notified": [
+        "executive_leadership"
+      ],
+      "actions_completed": [
+        "I3-P6",
+        "I3-P28",
+        "I3-P29"
+      ],
+      "plan_step_followed": "yes",
+      "documented": "yes",
+      "scenario_minutes": 25.0,
+      "discussion_minutes": 8.0,
+      "note": null
+    },
+    {
+      "n": 7,
+      "at": "2026-11-06T17:29:00+00:00",
+      "type": "decision",
+      "inject_id": "I3",
+      "unplanned": true,
+      "decision": "Ordered a forced password reset for every privileged account before the restore starts.",
+      "decided_by_role": "cio",
+      "notified": [],
+      "actions_completed": [],
+      "plan_step_followed": null,
+      "documented": null,
+      "scenario_minutes": null,
+      "discussion_minutes": 1.0,
+      "note": "Not in the plan; the room agreed it was worth the disruption."
+    },
+    {
+      "n": 8,
+      "at": "2026-11-06T17:30:00+00:00",
+      "type": "mark",
+      "inject_id": "I4",
+      "event": "presented"
+    },
+    {
+      "n": 9,
+      "at": "2026-11-06T17:38:00+00:00",
+      "type": "decision",
+      "inject_id": "I4",
+      "unplanned": false,
+      "decision": "Will not pay; counsel engages the insurer's negotiator to buy time while recovery proceeds.",
+      "decided_by_role": "ceo",
+      "notified": [
+        "executive_leadership"
+      ],
+      "actions_completed": [
+        "I4-P34",
+        "I4-P38",
+        "I4-P21"
+      ],
+      "plan_step_followed": "n/a",
+      "documented": "yes",
+      "scenario_minutes": null,
+      "discussion_minutes": 8.0,
+      "note": null
+    },
+    {
+      "n": 10,
+      "at": "2026-11-06T17:40:00+00:00",
+      "type": "mark",
+      "inject_id": "I5",
+      "event": "presented"
+    },
+    {
+      "n": 11,
+      "at": "2026-11-06T17:48:00+00:00",
+      "type": "decision",
+      "inject_id": "I5",
+      "unplanned": false,
+      "decision": "Restore in the plan's order: identity, then the EHR database from the offline copy, then clinics.",
+      "decided_by_role": "cio",
+      "notified": [
+        "executive_leadership"
+      ],
+      "actions_completed": [
+        "I5-P32",
+        "I5-P30",
+        "I5-P31"
+      ],
+      "plan_step_followed": "yes",
+      "documented": "yes",
+      "scenario_minutes": null,
+      "discussion_minutes": 8.0,
+      "note": null
+    },
+    {
+      "n": 12,
+      "at": "2026-11-06T17:50:00+00:00",
+      "type": "mark",
+      "inject_id": "I6",
+      "event": "presented"
+    },
+    {
+      "n": 13,
+      "at": "2026-11-06T17:58:00+00:00",
+      "type": "decision",
+      "inject_id": "I6",
+      "unplanned": false,
+      "decision": "Counsel owns every regulatory notice; the Privacy Officer starts the breach risk assessment today.",
+      "decided_by_role": "general_counsel",
+      "notified": [
+        "hhs_ocr",
+        "state_health_department",
+        "fbi",
+        "cyber_insurer",
+        "patients"
+      ],
+      "actions_completed": [
+        "I6-P26",
+        "I6-P25",
+        "I6-P23"
+      ],
+      "plan_step_followed": "yes",
+      "documented": "yes",
+      "scenario_minutes": null,
+      "discussion_minutes": 8.0,
+      "note": null
+    },
+    {
+      "n": 14,
+      "at": "2026-11-06T18:00:00+00:00",
+      "type": "clocks",
+      "owners": {
+        "state_ca_individual_notice": "privacy_officer",
+        "state_ca_ag_sample_notice": "general_counsel",
+        "ca_health_facility_unauthorized_access_15bd": "privacy_officer",
+        "hipaa_hhs_notice_500_or_more": "privacy_officer",
+        "hipaa_individual_notice": "privacy_officer",
+        "hipaa_media_notice": "communications"
+      },
+      "planned_notify_hours": {
+        "state_ca_individual_notice": 500.0,
+        "state_ca_ag_sample_notice": 700.0,
+        "ca_health_facility_unauthorized_access_15bd": 300.0,
+        "hipaa_hhs_notice_500_or_more": 1000.0,
+        "hipaa_individual_notice": 1000.0,
+        "hipaa_media_notice": 1000.0
+      }
+    },
+    {
+      "n": 15,
+      "at": "2026-11-06T18:02:00+00:00",
+      "type": "mark",
+      "inject_id": "I7",
+      "event": "presented"
+    },
+    {
+      "n": 16,
+      "at": "2026-11-06T18:10:00+00:00",
+      "type": "decision",
+      "inject_id": "I7",
+      "unplanned": false,
+      "decision": "Communications drafts the holding statement from the template; the CEO approves it after counsel's review.",
+      "decided_by_role": "ceo",
+      "notified": [
+        "executive_leadership",
+        "legal_counsel"
+      ],
+      "actions_completed": [
+        "I7-P42",
+        "I7-P41",
+        "I7-P43"
+      ],
+      "plan_step_followed": "yes",
+      "documented": "yes",
+      "scenario_minutes": null,
+      "discussion_minutes": 8.0,
+      "note": null
+    },
+    {
+      "n": 17,
+      "at": "2026-11-06T18:12:00+00:00",
+      "type": "note",
+      "text": "Exercise ended. Hot wash begins."
+    },
+    {
+      "n": 18,
+      "at": "2026-11-06T17:18:00+00:00",
+      "type": "decision",
+      "inject_id": "I2",
+      "unplanned": false,
+      "decision": "Declared a SEV1, activated the CIRT, and briefed executive leadership, General Counsel, and the cyber insurer within the hour.",
+      "decided_by_role": "incident_commander",
+      "notified": [
+        "executive_leadership",
+        "legal_counsel",
+        "cyber_insurer"
+      ],
+      "actions_completed": [
+        "I2-P35",
+        "I2-P17",
+        "I2-P18"
+      ],
+      "plan_step_followed": "yes",
+      "documented": "yes",
+      "scenario_minutes": 20.0,
+      "discussion_minutes": 8.0,
+      "note": null,
+      "supersedes": 4,
+      "edited_by": "Host",
+      "edited_at": "2026-11-06T18:15:00+00:00"
+    }
+  ]
+}

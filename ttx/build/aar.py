@@ -42,7 +42,8 @@ def _dim(v):
     return "n/a" if v is None else v
 
 
-def build_aar(pack: dict, score: dict, path: str | Path, narrative: dict | None = None) -> Path:
+def build_aar(pack: dict, score: dict, path: str | Path, narrative: dict | None = None,
+              log: dict | None = None, log_file: str | Path | None = None) -> Path:
     if narrative:
         bad = check_narrative(narrative, score, pack)
         if bad:
@@ -195,6 +196,20 @@ def build_aar(pack: dict, score: dict, path: str | Path, narrative: dict | None 
     table(doc, ["Dimension", "3", "2", "1"],
           [[score["dimension_labels"][d], rub[3], rub[2], rub[1]] for d, rub in ((d, {int(k): v for k, v in score["rubric"][d].items()}) for d in score["rubric"])],
           font_size=8)
+
+    # live mode: the decision timeline, rendered from the append-only log without change
+    if log is not None:
+        from ..decision_log import session_summary, timeline
+
+        doc.add_page_break()
+        doc.add_heading("Appendix: decision timeline", level=1)
+        doc.add_paragraph(session_summary(log, log_file))
+        doc.add_paragraph("Every logged entry in order: planned and unplanned decisions, injects presented or skipped, clock answers, "
+                          "and facilitator notes. Unplanned decisions and skipped injects are shown but not scored. A corrected entry "
+                          "appears twice: the original marked superseded, and the correction naming who asked for it.")
+        table(doc, ["#", "Wall clock", "Scenario", "Inject", "Entry", "Owner", "Score"],
+              [[r["n"], r["wall_clock"], r["scenario_time"], r["inject_id"], r["entry"], r["owner"], r["score"]] for r in timeline(log, pack, score)],
+              widths=[0.35, 1.25, 0.6, 0.5, 2.9, 0.9, 0.7], font_size=8)
     path = Path(path)
     doc.save(path)
     return path

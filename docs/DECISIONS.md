@@ -32,6 +32,13 @@ Blockers hit during the build and the option chosen, newest first. Each entry sa
 
 ## 2026-11-04
 
+- **Live GM mode.** A third way to run the exercise: Claude facilitates in the Claude Code chat with the chat on the projector, per `docs/LIVE_GM_ADDENDUM.md`. Decisions:
+  - **Fresh session on exercise day.** The prep chat holds the expected answers and scoring notes, so the live run happens in a new session that reads only the approved pack. The skill stops if it finds prep content in the chat.
+  - **Unplanned entries are logged but never scored.** The rubric covers planned decision points only; `--unplanned` entries appear in the AAR timeline so the record is complete while the score stays deterministic.
+  - **The export reuses the tracker shapes.** `ttx log export` writes `decisions.csv` and `decisions_clocks.csv` in exactly `schemas/tracker_columns.yaml`, so `ttx score` and `score_engine` are untouched. The JSON log is the audit original; corrections append a new version and mark the old one `superseded_by`.
+  - **Ids are validated, parties too.** The addendum refuses unknown inject, role, and action ids. Unknown notified-party ids are refused as well, so nothing the pack does not name reaches the record; `--note` is the escape hatch.
+  - **Session end is the last entry.** There is no `ttx log end`; the facilitate skill logs an "Exercise ended" note, and the AAR appendix reports the last entry's time as the end.
+  - **No MCP server.** `ttx log` is a CLI group the skill calls, like every other engine function. An MCP wrapper stays on the roadmap.
 - **Intake is one question at a time.** The spec asked for a single intake message. In testing, Eric found that a single message of questions overwhelms people, so the `/tabletop` intake now asks one short question per message and waits for the answer. It uses Claude Code's clickable choices where it can, skips what it already knows, and accepts "not sure" with a stated default. Regulated statuses come from `ttx flags`, which turns every clock flag into a plain yes/no question (`schemas/flags.yaml`) and drops statuses for states the organization does not operate in. A test fails if a clock uses a flag with no question.
 - **One-click launchers.** First-time users download the ZIP and double-click `start-windows.bat`, `start-mac.command`, or `start-linux.sh`. The launcher sets up a private `.venv` and shows a two-option menu. `/tabletop` also installs the engine itself when needed.
 

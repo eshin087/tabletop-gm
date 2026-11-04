@@ -13,7 +13,9 @@
   ttx approve PACK --by NAME      human approval gate: lock the outline
   ttx build PACK --out DIR        every deliverable from the approved pack
   ttx score --pack --tracker      score the decision tracker
-  ttx aar --pack --score --out    after-action report from the score
+  ttx aar --pack --score --out    after-action report from the score (--log adds the live timeline)
+  ttx log start|add|note|mark|edit|show|clocks|export
+                                  append-only decision log for an exercise facilitated live in chat
 
 No command here calls a model. Live Tenable mode is the only network call and
 it is read-only.
@@ -385,8 +387,133 @@ def cmd_aar(args) -> int:
     pack = read_json(args.pack)
     score = read_json(args.score)
     narrative = read_json(args.narrative) if args.narrative else None
-    path = build_aar(pack, score, args.out, narrative=narrative)
+    log = read_json(args.log) if args.log else None
+    path = build_aar(pack, score, args.out, narrative=narrative, log=log, log_file=args.log)
     print(f"after_action_report  {path}")
+    return 0
+
+
+# --------------------------------------------------------------------------- #
+# ttx log: the live decision log
+# --------------------------------------------------------------------------- #
+
+def _echo(entry: dict) -> None:
+    print(json.dumps(entry, indent=2, ensure_ascii=False))
+
+
+def _pairs(values: list[str] | None, flag: str) -> dict[str, str]:
+    out: dict[str, str] = {}
+    for raw in values or []:
+        for item in raw.split(","):
+            item = item.strip()
+            if not item:
+                continue
+            if "=" not in item:
+                raise ValueError(f"{flag} expects clock_id=value; got '{item}'")
+            key, _, value = item.partition("=")
+            out[key.strip()] = value.strip()
+    return out
+
+
+def cmd_log_start(args) -> int:
+    from .decision_log import log_path, start
+
+    log = start(args.pack, args.out, args.by, resume=args.resume)
+    what = "resumed" if args.resume and log["entries"] else "started"
+    print(f"{what} log for '{log['pack_title']}' (approval {log['approval_hash'][:12]}), facilitator {log['facilitator']}, at {log['started_at']}")
+    print(f"wrote {log_path(args.out)}")
+    return 0
+
+
+def cmd_log_add(args) -> int:
+    from .decision_log import add_decision, load_log, load_pack_for, save_log
+
+    log = load_log(args.out)
+    pack = load_pack_for(log, args.pack)
+    entry = add_decision(log, pack, args.inject, args.decision, args.by, notified=args.notified, actions=args.actions,
+                         plan_step=args.plan_step, documented=args.documented, scenario_minutes=args.scenario_minutes,
+                         note=args.note, unplanned=args.unplanned)
+    save_log(args.out, log)
+    _echo(entry)
+    return 0
+
+
+def cmd_log_note(args) -> int:
+    from .decision_log import add_note, load_log, save_log
+
+    log = load_log(args.out)
+    entry = add_note(log, args.text)
+    save_log(args.out, log)
+    _echo(entry)
+    return 0
+
+
+def cmd_log_mark(args) -> int:
+    from .decision_log import add_mark, load_log, load_pack_for, save_log
+
+    log = load_log(args.out)
+    pack = load_pack_for(log, args.pack)
+    entry = add_mark(log, pack, args.inject, args.event)
+    save_log(args.out, log)
+    _echo(entry)
+    return 0
+
+
+def cmd_log_edit(args) -> int:
+    from .decision_log import edit_decision, load_log, load_pack_for, save_log
+
+    log = load_log(args.out)
+    pack = load_pack_for(log, args.pack)
+    changes = {
+        "decision": args.decision,
+        "decided_by_role": args.decided_by,
+        "notified": args.notified,
+        "actions_completed": args.actions,
+        "plan_step_followed": args.plan_step,
+        "documented": args.documented,
+        "scenario_minutes": args.scenario_minutes,
+        "discussion_minutes": args.discussion_minutes,
+        "note": args.note,
+    }
+    entry = edit_decision(log, pack, args.entry, args.by, changes)
+    save_log(args.out, log)
+    _echo(entry)
+    return 0
+
+
+def cmd_log_show(args) -> int:
+    from .decision_log import load_log, show
+
+    log = load_log(args.out)
+    pack = None
+    try:
+        pack = read_json(args.pack or log["pack_path"])
+    except OSError:
+        pass
+    print(show(log, pack))
+    return 0
+
+
+def cmd_log_clocks(args) -> int:
+    from .decision_log import add_clocks, load_log, load_pack_for, save_log
+
+    log = load_log(args.out)
+    pack = load_pack_for(log, args.pack)
+    entry = add_clocks(log, pack, owners=_pairs(args.owner, "--owner"), planned_hours=_pairs(args.planned_hours, "--planned-hours"))
+    save_log(args.out, log)
+    _echo(entry)
+    return 0
+
+
+def cmd_log_export(args) -> int:
+    from .decision_log import export, load_log, load_pack_for
+
+    log = load_log(args.out)
+    pack = load_pack_for(log, args.pack)
+    paths = export(log, pack, args.out)
+    for name, path in paths.items():
+        print(f"{name:<12} {path}")
+    print(f"score with: ttx score --pack {args.pack or log['pack_path']} --tracker {paths['decisions']} --out <score.json>")
     return 0
 
 
@@ -491,8 +618,78 @@ def build_parser() -> argparse.ArgumentParser:
     s.add_argument("--pack", required=True)
     s.add_argument("--score", required=True)
     s.add_argument("--narrative", help="optional narrative.json from the scoring_aar skill (headline, summary paragraphs)")
+    s.add_argument("--log", help="optional live decision_log.json from ttx log; appends the decision timeline appendix")
     s.add_argument("--out", required=True)
     s.set_defaults(func=cmd_aar)
+
+    # ttx log: append-only decision log for an exercise facilitated live in chat
+    lg = sub.add_parser("log", help="append-only decision log for a live, chat-facilitated exercise")
+    lsub = lg.add_subparsers(dest="log_command", required=True)
+
+    def live_dir(parser):
+        parser.add_argument("--out", default="out/live", help="live session directory holding decision_log.json (default: out/live)")
+        parser.add_argument("--pack", help="exercise pack path (default: the one recorded when the log was started)")
+
+    s = lsub.add_parser("start", help="create the log for an approved exercise pack")
+    s.add_argument("--pack", required=True, help="approved exercise_pack.json")
+    s.add_argument("--out", default="out/live", help="live session directory (default: out/live)")
+    s.add_argument("--by", required=True, help="facilitator name")
+    s.add_argument("--resume", action="store_true", help="continue an existing log instead of refusing")
+    s.set_defaults(func=cmd_log_start)
+
+    s = lsub.add_parser("add", help="append the room's decision at an inject")
+    live_dir(s)
+    s.add_argument("--inject", required=True, help="inject id from the pack")
+    s.add_argument("--decision", required=True, help="what the room decided, one sentence")
+    s.add_argument("--by", required=True, help="role id that made the call; 'other' with --note for someone outside the pack")
+    s.add_argument("--notified", help="comma list of party ids from the pack")
+    s.add_argument("--actions", help="comma list of expected action ids completed")
+    s.add_argument("--plan-step", choices=["yes", "partial", "no", "plan_unclear", "n/a"])
+    s.add_argument("--documented", choices=["yes", "partial", "no"])
+    s.add_argument("--scenario-minutes", type=float, help="in-scenario minutes the team says the action takes")
+    s.add_argument("--note")
+    s.add_argument("--unplanned", action="store_true", help="an action the plan did not anticipate; shown in the AAR, never scored")
+    s.set_defaults(func=cmd_log_add)
+
+    s = lsub.add_parser("note", help="append a timestamped facilitator note")
+    live_dir(s)
+    s.add_argument("--text", required=True)
+    s.set_defaults(func=cmd_log_note)
+
+    s = lsub.add_parser("mark", help="timestamp when an inject was presented or skipped")
+    live_dir(s)
+    s.add_argument("--inject", required=True)
+    s.add_argument("--event", required=True, choices=["presented", "skipped"])
+    s.set_defaults(func=cmd_log_mark)
+
+    s = lsub.add_parser("edit", help="correct a decision entry; the original is kept and marked superseded")
+    live_dir(s)
+    s.add_argument("--entry", required=True, type=int, help="entry number from ttx log show")
+    s.add_argument("--by", required=True, help="who asked for the correction")
+    s.add_argument("--decision")
+    s.add_argument("--decided-by", help="role id that made the call")
+    s.add_argument("--notified", help="comma list of party ids")
+    s.add_argument("--actions", help="comma list of expected action ids")
+    s.add_argument("--plan-step", choices=["yes", "partial", "no", "plan_unclear", "n/a"])
+    s.add_argument("--documented", choices=["yes", "partial", "no"])
+    s.add_argument("--scenario-minutes", type=float)
+    s.add_argument("--discussion-minutes", type=float)
+    s.add_argument("--note")
+    s.set_defaults(func=cmd_log_edit)
+
+    s = lsub.add_parser("show", help="print the log as a table")
+    live_dir(s)
+    s.set_defaults(func=cmd_log_show)
+
+    s = lsub.add_parser("clocks", help="record the team's clock answers")
+    live_dir(s)
+    s.add_argument("--owner", action="append", help="clock_id=role_id (repeatable, or comma separated)")
+    s.add_argument("--planned-hours", action="append", help="clock_id=hours after the clock starts (repeatable, or comma separated)")
+    s.set_defaults(func=cmd_log_clocks)
+
+    s = lsub.add_parser("export", help="write decisions.csv and decisions_clocks.csv in the tracker's shapes")
+    live_dir(s)
+    s.set_defaults(func=cmd_log_export)
     return p
 
 

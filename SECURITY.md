@@ -34,6 +34,8 @@ The guided workflow runs inside Claude Code, which has its own outbound traffic:
 | Anthropic, through Claude Code | Whenever you use `/tabletop` | Your chat messages and the files Claude reads. That includes the intake, the seed, clock output, and the text of any plan documents during policy ingest. It is governed by your Claude Code account terms. The `ttx` CLI itself never calls Anthropic. |
 | Web research, through Claude Code's web tools | Only when you run the `pack_research` or `incident_research` skill | Search queries about the sector's regulations or public incidents. No organization data is needed or sent. |
 
+Live mode (`ttx log`, the `facilitate` skill) adds no outbound calls. The decision log is a local JSON file under `out/live/`, and its export, score, and report run offline like every other `ttx` command. The chat itself still goes through Claude Code as above.
+
 `ANTHROPIC_API_KEY` in `.env.example` is reserved for the Phase 2 `ttx host` co-host, which is not shipped. Nothing in this release reads it.
 
 ## Data handling

@@ -35,10 +35,20 @@ def test_sample_seed_and_org_plan_match_schemas(sample_pack, org_plan):
         assert item["category"] in plan_schema["properties"]["items"]["items"]["properties"]["category"]["enum"]
 
 
-def test_tracker_columns_doc_matches_score_engine():
+def test_tracker_columns_doc_matches_score_engine(sample_pack, tmp_path):
     doc = read_yaml(SCHEMAS / "tracker_columns.yaml")
     assert doc["decisions"] == DECISION_COLUMNS
     assert doc["clocks"] == CLOCK_COLUMNS
+    # the live log export writes the same shapes
+    import csv
+
+    from ttx.decision_log import export, load_log
+
+    paths = export(load_log("samples/live/good"), sample_pack, tmp_path)
+    with open(paths["decisions"], encoding="utf-8", newline="") as fh:
+        assert next(csv.reader(fh)) == doc["decisions"]
+    with open(paths["clocks"], encoding="utf-8", newline="") as fh:
+        assert next(csv.reader(fh)) == doc["clocks"]
 
 
 def test_host_tracker_doc_matches_the_builder():

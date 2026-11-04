@@ -98,6 +98,10 @@ The project pre-approves only Tabletop GM's own commands (`.claude/settings.json
 
 If you already use Claude Code, you can skip the launcher. Open the downloaded folder in Claude Code and type `/tabletop`; it installs what it needs on its own.
 
+### Run it live in chat
+
+You can also run the exercise without the deck. On exercise day, open a **fresh** Claude Code session in the folder (the prep chat contains the expected answers) and say "Run the exercise live". The chat goes on the projector. Claude presents one inject at a time, the host types what the room decides, and `ttx log` records each decision with its time. At `END`, Claude shows the log for corrections, then exports it, scores it with the same `ttx score`, and builds the after-action report with a decision timeline appendix. The record set lands in `out/live/`.
+
 ### Command line
 
 Everything the launcher and Claude do is a plain `ttx` command, and every document can be rebuilt with no model call. See [docs/CLI.md](docs/CLI.md) for manual install, the full pipeline step by step, export and live Tenable modes, and every command.
@@ -113,8 +117,9 @@ Everything the launcher and Claude do is a plain `ttx` command, and every docume
 | `participant_handout.docx` | Everyone | Roles, ground rules, a contact-list template, and note space. No inject content. |
 | `decision_tracker.xlsx` | Host, live | One color-coded block per inject with plain questions and dropdowns: who made the call, how fast, Yes/No for each expected action and notification, plan followed, written down. Only the two optional note rows are typed. A Notification clocks sheet records who owns each notice and when they'll send it. `ttx report` reads it. |
 | `attendance_signin.xlsx`, `signoff_sheet.docx` | Audit evidence | Sign-in and roles-present sheets. The sign-off covers scope, approval record, documents exercised, requirements supported, clocks, and an attestation. |
-| `after_action_report.docx` (from `ttx report`) | Security team, auditors | Headline, scores by dimension and decision, and regulatory exposure: each clock met or missed by hours, plus the plan's own standards. Plan, people, and technical gaps with citation, fix, owner, and due date. Plan coverage map, decision log, and an evidence page with hashes. |
+| `after_action_report.docx` (from `ttx report`) | Security team, auditors | Headline, scores by dimension and decision, and regulatory exposure: each clock met or missed by hours, plus the plan's own standards. Plan, people, and technical gaps with citation, fix, owner, and due date. Plan coverage map, decision log, and an evidence page with hashes. With `ttx aar --log`, an appendix with the live session's decision timeline. |
 | `executive_summary.pptx`, `executive_summary.docx` (from `ttx report`) | Senior management | Six slides and a one-page memo: a plain-language bottom line, an overall readiness rating (Strong, Adequate, Needs work), regulatory exposure, the top three risks, the top five fixes with owners and dates, and the decisions needed from leadership. No finding IDs or rubric detail. |
+| `out/live/decision_log.json`, `decisions.csv`, `decisions_clocks.csv` (from `ttx log`) | Live mode | The append-only decision log of a chat-facilitated session (the audit original) and its export in the tracker's column shapes, which `ttx score` reads unchanged. |
 
 Option 1 in the launcher (or `ttx demo`) rebuilds the same sample into `out/demo/` with a `START_HERE.txt` guide. `samples/outputs/` holds one complete synthetic run: the documents above plus `seed.json`, `clocks.json`, `exercise_pack.json`, a synthetic completed tracker, and `score.json`. The sample rates Adequate at 82.8%. Its regulatory clock line is the HIPAA media notice, planned 30 days late. The California health department report had no owner. The sample report lists 2 plan gaps, 11 people gaps, and 3 technical gaps.
 
@@ -136,7 +141,8 @@ Option 1 in the launcher (or `ttx demo`) rebuilds the same sample into `out/demo
 - **Pre-approved commands depend on Claude Code's trust prompt.** Claude Code applies the project's allow rules only after you accept the trust prompt for the folder. The Windows rule's backslash path has not been confirmed in a live session; if Claude Code still asks, choose "don't ask again" once.
 - **Executive ratings use fixed thresholds.** Strong is 85% and up, Adequate is 70 to 84%, and Needs work is below 70%. Tune them to your organization's appetite in `ttx/build/exec_summary.py`.
 - **Launchers were tested on Windows only.** The Windows launcher was run from a fresh copy. The macOS and Linux launchers are plain shell scripts but have not been run on a Mac or a Linux desktop yet. macOS Gatekeeper asks for a right-click Open the first time.
-- **Only one host workflow ships.** The browser host console (`host.html`) and `ttx host` are not shipped. Run the exercise from the facilitator guide and the tracker; see Roadmap.
+- **Live mode relies on the host typing.** When Claude facilitates in chat, the record is only as complete as what the host types in; voice capture of the room is roadmap. Timestamps and discussion minutes are measured from when each decision is typed.
+- **No host console ships.** The browser host console (`host.html`) and `ttx host` are not shipped. Run the exercise from the facilitator guide and the tracker, or live in chat; see Roadmap.
 
 ## Roadmap
 
