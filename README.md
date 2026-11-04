@@ -292,10 +292,8 @@ Skip the deck and let Claude run the room.
 
 1. Open a new chat in the folder, type `/tabletop`, and choose **Run an exercise live**. Use a new chat, not the one where you built the exercise, because that one holds the answers.
 2. Pick your exercise, or the built-in sample if you just want to try it.
-3. Put the chat on the projector. Claude shows one inject at a time. You type what the room decides.
-4. Type `END` when you are done. Claude shows the log for corrections, then writes the scored after-action report and executive summary into `out/live/`.
-
-You can type `PAUSE`, `RESUME`, or `SKIP` at any point.
+3. Put the chat on the projector. Claude shows one inject at a time and asks for the room's decision through the question UI, with Pause, Skip, and End always offered as clicks. Type the room's actual decision into the question's Other field.
+4. Click **End the exercise** when you're done. Claude shows the log for corrections, then writes the scored after-action report and executive summary into `out/live/`.
 
 ### Command line
 
