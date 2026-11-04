@@ -25,7 +25,7 @@ It ships as a Claude Code skill (`/tabletop`) on top of a deterministic Python e
 7. **Build.** `ttx build` produces the deck, facilitator guide, handout, decision tracker, attendance sheet, and sign-off sheet.
 8. **Score and report.** After the exercise, `/tabletop-report` (or `ttx report`) finds the filled tracker, scores it against your plan or the pack defaults, and writes everything in one step:
    - the after-action report, with gap labels, the plan coverage map, and an evidence page
-   - an executive summary for senior management, as six slides and a one-page memo
+   - an executive summary for senior management, as seven slides and a one-page memo, including lessons learned
 
 Industry packs shipped (`ttx packs`):
 
@@ -94,6 +94,8 @@ Claude then shows the outline as a table: each inject, the decision it forces, w
 
 It scores the tracker and writes the after-action report and the executive summary into `out/report/`.
 
+**For a pitch or a practice run:** type `/tabletop-report` and choose demo responses, or run `ttx report --demo --open`. It scores the invented answers in `samples/demo_responses/` against your approved exercise (or the built-in sample) and writes the same reports into `out/report_demo/`, marked as demo data on every page.
+
 The project pre-approves only Tabletop GM's own commands (`.claude/settings.json`), so Claude Code doesn't ask permission at every step. Claude Code shows these rules in its trust prompt the first time you open the folder.
 
 If you already use Claude Code, you can skip the launcher. Open the downloaded folder in Claude Code and type `/tabletop`; it installs what it needs on its own.
@@ -113,8 +115,8 @@ Everything the launcher and Claude do is a plain `ttx` command, and every docume
 | `participant_handout.docx` | Everyone | Roles, ground rules, a contact-list template, and note space. No inject content. |
 | `decision_tracker.xlsx` | Host, live | One color-coded block per inject with plain questions and dropdowns: who made the call, how fast, Yes/No for each expected action and notification, plan followed, written down. Only the two optional note rows are typed. A Notification clocks sheet records who owns each notice and when they'll send it. `ttx report` reads it. |
 | `attendance_signin.xlsx`, `signoff_sheet.docx` | Audit evidence | Sign-in and roles-present sheets. The sign-off covers scope, approval record, documents exercised, requirements supported, clocks, and an attestation. |
-| `after_action_report.docx` (from `ttx report`) | Security team, auditors | Headline, scores by dimension and decision, and regulatory exposure: each clock met or missed by hours, plus the plan's own standards. Plan, people, and technical gaps with citation, fix, owner, and due date. Plan coverage map, decision log, and an evidence page with hashes. |
-| `executive_summary.pptx`, `executive_summary.docx` (from `ttx report`) | Senior management | Six slides and a one-page memo: a plain-language bottom line, an overall readiness rating (Strong, Adequate, Needs work), regulatory exposure, the top three risks, the top five fixes with owners and dates, and the decisions needed from leadership. No finding IDs or rubric detail. |
+| `after_action_report.docx` (from `ttx report`) | Security team, auditors | About two pages: headline and readiness rating, lessons learned (what worked, what to improve), one row per decision, each notification deadline met or missed, and an action plan with owners and due dates. The appendix holds the scores by dimension, the plan coverage map, every gap with its citation, and an evidence page with hashes. |
+| `executive_summary.pptx`, `executive_summary.docx` (from `ttx report`) | Senior management | Seven slides and a one-page memo: a plain-language bottom line, an overall readiness rating (Strong, Adequate, Needs work), regulatory exposure, the top three risks, lessons learned, the top five fixes with owners and dates, and the decisions needed from leadership. No finding IDs or rubric detail. |
 
 Option 1 in the launcher (or `ttx demo`) rebuilds the same sample into `out/demo/` with a `START_HERE.txt` guide. `samples/outputs/` holds one complete synthetic run: the documents above plus `seed.json`, `clocks.json`, `exercise_pack.json`, a synthetic completed tracker, and `score.json`. The sample rates Adequate at 82.8%. Its regulatory clock line is the HIPAA media notice, planned 30 days late. The California health department report had no owner. The sample report lists 2 plan gaps, 11 people gaps, and 3 technical gaps.
 

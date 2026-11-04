@@ -1,0 +1,124 @@
+# Synthetic tabletop responses for demos and pitches.
+#
+# Every answer here is invented. `ttx report --demo` applies these answers to the
+# approved exercise in out/ (or to the built-in sample exercise if there is none),
+# writes a demo tracker, and scores it into out/report_demo/. Every report built
+# from them is marked "DEMO: synthetic responses" so it is never mistaken for a
+# real result.
+#
+# The answers are written once and fit any exercise. Instead of naming roles,
+# systems, or plan steps, they use tokens the engine fills in from the approved
+# exercise:
+#
+#   decided_by   owner        the role the exercise expects to decide
+#                alternate    the first accepted delegate (falls back to owner)
+#                other        a defined role that is not the expected owner, taken from
+#                             other_prefer below when the exercise has one of those roles
+#   actions      all | all_but_last | half | first | none   (of the inject's expected actions)
+#   notified     all | all_but_last | half | first | none   (of the inject's expected notifications)
+#   text         {owner} {alternate} {other} {entry} {pivot} {target}
+#
+# The answers describe a capable team with realistic gaps: fast detection,
+# a slow declaration, a decision made by the wrong role, and one notice nobody
+# planned. Speed, plan step, and documented use the tracker's dropdown text.
+
+# Roles to use for "other", in order, when the exercise defines them.
+other_prefer: [cfo, coo, cio, communications]
+
+slots:
+  detection:
+    decided_by: owner
+    speed: Within 15 minutes
+    discussion: "10"
+    actions: all_but_last
+    notified: all
+    plan_step: "Yes"
+    documented: Partly
+    decision: "The analyst checked the alert on {entry} against a second source within minutes and called the {owner}."
+    notes: "The timeline was started late; the first-seen time had to be reconstructed afterwards."
+
+  escalation:
+    decided_by: owner
+    speed: Within 1 hour
+    discussion: "10"
+    actions: all
+    notified: all_but_last
+    plan_step: Partly
+    documented: "Yes"
+    decision: "The {owner} declared the incident once {pivot} was confirmed, after a debate about waiting until morning."
+    notes: "The last party on the call list was not reached; everyone assumed someone else had called."
+
+  containment:
+    decided_by: owner
+    speed: Within 30 minutes
+    discussion: "15"
+    actions: all_but_last
+    notified: all
+    plan_step: "Yes"
+    documented: "Yes"
+    decision: "The {owner} isolated {entry} and kept containment in place despite the vendor's claim; forensic images were taken first."
+    notes: "Privileged credential resets were discussed but not assigned to anyone."
+
+  tradeoff:
+    decided_by: other
+    speed: Within 1 hour
+    discussion: "15"
+    actions: half
+    notified: all
+    plan_step: Partly
+    documented: "No"
+    decision: "The {other} pushed to keep {target} running through the business day; the room agreed without the {owner} making the call."
+    notes: "Nobody wrote down why. Counsel was consulted after the decision, not before."
+
+  recovery:
+    decided_by: owner
+    speed: Within 4 hours
+    discussion: "10"
+    actions: all_but_last
+    notified: all
+    plan_step: "Yes"
+    documented: "Yes"
+    decision: "The {owner} approved restoring identity services first, then {target}, after confirming the backups predate the compromise."
+    notes: "Nobody could say when a restore was last tested."
+
+  notification:
+    decided_by: owner
+    speed: Within 1 hour
+    discussion: "15"
+    actions: all
+    notified: all_but_last
+    plan_step: Partly
+    documented: "Yes"
+    decision: "The {owner} listed the notices, assigned owners, and set the discovery date the organization will defend."
+    notes: "The room spent ten minutes debating whether data was really taken before starting the clocks."
+
+  public:
+    decided_by: owner
+    speed: Within 1 hour
+    discussion: "15"
+    actions: all
+    notified: all
+    plan_step: "Yes"
+    documented: "Yes"
+    decision: "Communications drafted a holding statement, counsel reviewed it, and the {owner} approved it."
+    notes: "What to tell staff was raised and left open."
+
+  # Used for any slot not listed above.
+  default:
+    decided_by: owner
+    speed: Within 1 hour
+    discussion: "10"
+    actions: all_but_last
+    notified: all
+    plan_step: Partly
+    documented: Partly
+    decision: "The {owner} made the call after a short discussion."
+    notes: ""
+
+# Notification clocks, tightest deadline first. The pattern repeats if there
+# are more clocks than entries. on_time picks the latest tracker option that is
+# still inside the deadline; late picks the first option past it; not_planned
+# leaves the row blank (no owner, no date).
+clocks:
+  owner: notification_owner   # the role that decides at the inject that starts the clocks
+  pattern: [on_time, on_time, late, on_time, not_planned, on_time]

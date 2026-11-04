@@ -2,6 +2,12 @@
 
 Blockers hit during the build and the option chosen, newest first. Each entry says what the spec or prompt asked for, what was found, and what was done instead.
 
+## 2026-11-04 (demo responses and a shorter AAR)
+
+- **Demo responses for pitches.** Eric needs to show the after-exercise reports without running an exercise first. `samples/demo_responses/responses.yaml` holds invented answers written with tokens (`owner`, `other`, `all_but_last`, `{entry}`) instead of names, so one file fits any approved exercise. `ttx report --demo` fills a tracker from it, scores it, and writes to `out/report_demo/`, falling back to the built-in sample exercise when `out/` has none. Every output is marked "DEMO: synthetic responses", and the demo tracker is named so a real `ttx report` never picks it up. `/tabletop-report` asks whether to use the real tracker or demo responses.
+- **Shorter after-action report.** The AAR ran about 6,700 words before the evidence page, and readers could not find the actions. The body is now about two pages: the result, lessons learned, one row per decision, the deadlines, and an action plan that groups gaps sharing a fix into one row with the gap ids it closes. Everything the spec requires for auditors (scores by dimension, the plan coverage map, every gap with its citation, the evidence page, the rubric) moved to an appendix, unchanged in content.
+- **Lessons learned.** The AAR, the executive deck (now seven slides), and the memo add "What worked" and "What to improve". Both lists are built from the score by fixed rules, so they add no fact the score does not hold. The memo swaps its risks section for lessons learned to stay on one page.
+
 ## 2026-11-04 (prep and report experience)
 
 - **Lengths are 30, 60, or 90 minutes.** The spec had 60, 90, and 180. Eric asked for shorter options, so the engine now builds 3, 5, or 7 injects.

@@ -72,7 +72,9 @@ def test_seed_export_mode_from_cli(tmp_path):
 
 
 def test_tenable_mode_without_keys_fails_cleanly(tmp_path):
-    r = run("seed", "--intake", "samples/intake_valley_regional.yaml", "--mode", "tenable", "--out", str(tmp_path / "seed.json"))
+    # run outside the repo so a developer's own .env (which may hold real keys) is not loaded
+    r = run("seed", "--intake", str(REPO / "samples" / "intake_valley_regional.yaml"), "--mode", "tenable",
+            "--out", str(tmp_path / "seed.json"), cwd=tmp_path)
     assert r.returncode == 2
     assert "TENABLE_ACCESS_KEY" in r.stderr
 

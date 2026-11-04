@@ -55,8 +55,101 @@ def _gap_topic(pack: dict, gap: dict) -> str | None:
         g = next((x for x in (pack.get("org_plan") or {}).get("gaps", []) if x.get("id") == proc.get("ref")), None)
         if g:
             return g.get("topic")
-        return (proc.get("label") or "").replace("Plan is silent on: ", "") or None
+        label = (proc.get("label") or "").replace("Plan is silent on: ", "")
+        if label.startswith("No plan uploaded") and label.endswith(")") and "(" in label:
+            return label[label.rfind("(") + 1:-1]  # "... do not cover (public statement approval)"
+        return label or None
     return None
+
+
+def gap_kind(gap: dict) -> str:
+    """Classify a gap from score_engine by what went wrong (for grouping lessons)."""
+    if gap.get("clock_id"):
+        return "clock"
+    if gap["label"] in {"plan", "technical"}:
+        return gap["label"]
+    f = gap.get("finding") or ""
+    if "the decision was made by" in f:
+        return "owner"
+    if f.startswith("Not notified"):
+        return "notify"
+    if f.startswith("Slower than"):
+        return "timing"
+    return "steps"
+
+
+def _join(items: list[str], limit: int = 3) -> str:
+    items = list(dict.fromkeys(i for i in items if i))
+    more = len(items) - limit
+    items = items[:limit]
+    if not items:
+        return ""
+    if more > 0:
+        return ", ".join(items) + f", and {more} more"
+    return items[0] if len(items) == 1 else ", ".join(items[:-1]) + " and " + items[-1]
+
+
+def lessons(pack: dict, score: dict) -> tuple[list[str], list[str]]:
+    """Return (what worked, what to improve), each a short list of plain sentences built only from the score."""
+    worked, improve = _lessons(pack, score)
+    return worked, [text for _, text in improve]
+
+
+def _lessons(pack: dict, score: dict) -> tuple[list[str], list[tuple[str, str]]]:
+    """Like lessons(), but each improvement comes with the gap kind it summarizes."""
+    s = score["summary"]
+    gaps = score.get("gaps", [])
+    clocks = score.get("clocks", [])
+    titles = {r["inject_id"]: r["title"] for r in score.get("injects", [])}
+    seed = pack.get("seed") or {}
+
+    worked: list[str] = []
+    for dim, avg in s["dimension_averages"].items():
+        if avg is not None and avg >= 2.5:
+            worked.append(AREA_LABELS.get(dim, dim) + ".")
+    full = [r for r in score.get("injects", []) if r.get("reached") and r.get("max") and r.get("total") == r.get("max")]
+    if full:
+        worked.append(f"Handled exactly as expected: {_join([r['title'] for r in full], 2)}.")
+    numeric = [c for c in clocks if c["status"] != "no_fixed_deadline"]
+    if numeric and all(c["status"] == "met" for c in numeric):
+        worked.append("Every notification deadline had an owner and a plan that meets it.")
+    if not worked:
+        worked.append(f"The team reached a decision at {s['injects_scored']} of {s['injects_total']} injects.")
+
+    by_kind: dict[str, list[dict]] = {}
+    for g in gaps:
+        by_kind.setdefault(gap_kind(g), []).append(g)
+    improve: list[tuple[str, str]] = []
+    if by_kind.get("clock"):
+        names = [next((c["name"] for c in clocks if c["clock_id"] == g["clock_id"]), g["clock_id"]) for g in by_kind["clock"]]
+        improve.append(("clock", f"Regulatory notices were not ready: {_join(names, 2)}. Name an owner and pre-draft each notice now."))
+    topics = []
+    for g in by_kind.get("plan", []):
+        t = _gap_topic(pack, g)
+        if t:
+            topics.append(t.lower())
+    if topics:
+        improve.append(("plan", f"The plan is silent on {_join(topics, 2)}; decide who owns it and write it down."))
+    if by_kind.get("owner"):
+        n = len(by_kind["owner"])
+        improve.append(("owner", f"{'A decision was' if n == 1 else f'{n} decisions were'} made by someone other than the named owner "
+                       f"({_join([titles.get(g['inject_id'], g['inject_id']) for g in by_kind['owner']], 2)}). Settle who holds that authority before the next incident."))
+    if by_kind.get("notify"):
+        parties = []
+        for g in by_kind["notify"]:
+            parties += [p.strip() for p in g["finding"].split(":", 1)[1].rstrip(".").split(",")]
+        improve.append(("notify", f"Key parties were not told when expected: {_join(parties, 3)}."))
+    if by_kind.get("timing"):
+        improve.append(("timing", f"Escalation was slower than the plan commits to ({_join([titles.get(g['inject_id'], g['inject_id']) for g in by_kind['timing']], 2)})."))
+    if by_kind.get("steps"):
+        steps = by_kind["steps"]
+        injects = {g["inject_id"] for g in steps}
+        improve.append(("steps", f"{len(steps)} expected step{'s were' if len(steps) != 1 else ' was'} skipped across {len(injects)} decision{'s' if len(injects) != 1 else ''}; add them to the incident checklist."))
+    if by_kind.get("technical"):
+        assets = [(seed.get(p) or {}).get("asset") for p in ("entry", "pivot", "target")
+                  if any(g.get("finding_id") == (seed.get(p) or {}).get("finding_id") for g in by_kind["technical"])]
+        improve.append(("technical", f"The weaknesses the attacker used are still open on {_join([a for a in assets if a], 3)}."))
+    return worked[:3], improve[:5]
 
 
 def build_content(pack: dict, score: dict, narrative: dict | None = None) -> dict:
@@ -146,12 +239,20 @@ def build_content(pack: dict, score: dict, narrative: dict | None = None) -> dic
     plain = f"{short}'s readiness to handle a serious cyber incident is {label.lower()}: {s['percent']}% across {s['injects_scored']} decisions."
     if risks:
         plain += f" The biggest exposure: {risks[0]}"
+    worked, improve_kinds = _lessons(pack, score)
+    demo = score.get("demo") or {}
     return {
+        "demo_label": demo.get("label") or "",
+        "demo_note": demo.get("note") or "",
+        "worked": worked,
+        "improve": [text for _, text in improve_kinds],
+        # the memo's regulatory exposure section already lists unready notices
+        "improve_without_notices": [text for kind, text in improve_kinds if kind != "clock"],
         "organization": org.get("name") or "The organization",
         "short_name": org.get("short_name") or org.get("name") or "The organization",
         "date": str(when),
         "scenario": (pack.get("scenario") or {}).get("summary") or "",
-        "scenario_short": f"{(pack.get('scenario') or {}).get('family', 'incident').title()} scenario, severity {pack.get('severity_level')}, {pack.get('duration_minutes')} minutes",
+        "scenario_short": f"{(pack.get('scenario') or {}).get('family', 'incident').replace('_', ' ').title()} scenario, severity {pack.get('severity_level')}, {pack.get('duration_minutes')} minutes",
         "headline": (narrative or {}).get("headline") or plain,
         "percent": s["percent"],
         "rating": label,
@@ -178,12 +279,18 @@ def build_exec_deck(pack: dict, score: dict, path: str | Path, narrative: dict |
     from pptx.enum.text import PP_ALIGN
     from pptx.util import Inches, Pt
 
-    from .deck import H, NAVY, TEAL, W, WHITE, _bullets, _frame, _notes, _rect, _text
+    from .deck import H, NAVY, RED, TEAL, W, WHITE, _bullets, _frame, _notes, _rect, _text
 
     c = build_content(pack, score, narrative)
     prs = Presentation()
     prs.slide_width, prs.slide_height = W, H
     rgb = lambda hexs: RGBColor.from_string(hexs)  # noqa: E731
+
+    def frame(title, number, **kw):
+        slide = _frame(prs, title, number, pack, False, **kw)
+        if c["demo_label"]:
+            _text(slide, Inches(6.4), Inches(7.0), Inches(5.5), Inches(0.35), c["demo_label"].upper(), size=12, bold=True, color=RED, align=PP_ALIGN.RIGHT)
+        return slide
 
     # 1 title
     s = prs.slides.add_slide(prs.slide_layouts[6])
@@ -193,10 +300,13 @@ def build_exec_deck(pack: dict, score: dict, path: str | Path, narrative: dict |
     _text(s, Inches(0.8), Inches(2.0), Inches(11.7), Inches(1.4), "Cyber incident readiness: tabletop exercise results", size=36, bold=True, color=WHITE)
     _text(s, Inches(0.8), Inches(3.5), Inches(11.5), Inches(0.8), f"{c['organization']}  |  {c['date']}", size=20, color=RGBColor(0xC9, 0xD3, 0xE3))
     _text(s, Inches(0.8), Inches(4.9), Inches(11.5), Inches(0.6), c["scenario_short"], size=16, color=WHITE)
+    if c["demo_label"]:
+        _rect(s, Inches(0.8), Inches(5.8), Inches(11.7), Inches(0.9), RED)
+        _text(s, Inches(1.0), Inches(5.88), Inches(11.3), Inches(0.75), f"{c['demo_label'].upper()}. {c['demo_note']}", size=13, bold=True, color=WHITE)
     _notes(s, ["Purpose: what the exercise showed about our readiness, the regulatory exposure, and what we need leadership to decide."])
 
     # 2 bottom line
-    s = _frame(prs, "The bottom line", 2, pack, False)
+    s = frame("The bottom line", 2)
     _text(s, Inches(0.8), Inches(1.5), Inches(11.8), Inches(1.3), c["headline"], size=20, bold=True, color=NAVY)
     _rect(s, Inches(0.8), Inches(3.05), Inches(3.4), Inches(2.6), rgb(c["rating_color"]))
     _text(s, Inches(0.8), Inches(3.25), Inches(3.4), Inches(0.5), "OVERALL READINESS", size=13, bold=True, color=WHITE, align=PP_ALIGN.CENTER)
@@ -211,7 +321,7 @@ def build_exec_deck(pack: dict, score: dict, path: str | Path, narrative: dict |
     _notes(s, ["Rating thresholds: Strong 85% and up, Adequate 70 to 84%, Needs work below 70%. Area status: Good 2.5 and up on a 3-point scale, Mixed 2.0 to 2.4, Weak below 2.0."])
 
     # 3 regulatory exposure
-    s = _frame(prs, "Regulatory exposure", 3, pack, False, accent=rgb("B02418"))
+    s = frame("Regulatory exposure", 3, accent=rgb("B02418"))
     _text(s, Inches(0.8), Inches(1.5), Inches(11.8), Inches(0.6), c["exposure_line"], size=22, bold=True, color=NAVY)
     items = [e["text"] for e in c["exposure"]] or ["Every notification deadline was met, with a named owner."]
     _bullets(s, Inches(0.8), Inches(2.3), Inches(11.8), Inches(3.8), items[:5], size=19)
@@ -219,11 +329,21 @@ def build_exec_deck(pack: dict, score: dict, path: str | Path, narrative: dict |
         _text(s, Inches(0.8), Inches(6.3), Inches(11.8), Inches(0.5), c["unverified_note"], size=12, color=RGBColor(0x7A, 0x52, 0x00))
 
     # 4 top risks
-    s = _frame(prs, "What worries us most", 4, pack, False)
+    s = frame("What worries us most", 4)
     _bullets(s, Inches(0.8), Inches(1.6), Inches(11.8), Inches(5.0), c["risks"] or ["No significant risks surfaced in this exercise."], size=22)
 
-    # 5 actions
-    s = _frame(prs, "What we are fixing, who owns it, and by when", 5, pack, False)
+    # 5 lessons learned
+    s = frame("Lessons learned", 5)
+    _rect(s, Inches(0.8), Inches(1.55), Inches(5.7), Inches(0.5), rgb("2E8B57"))
+    _text(s, Inches(0.95), Inches(1.6), Inches(5.4), Inches(0.4), "What worked", size=17, bold=True, color=WHITE)
+    _bullets(s, Inches(0.8), Inches(2.2), Inches(5.7), Inches(4.6), c["worked"], size=17)
+    _rect(s, Inches(6.9), Inches(1.55), Inches(5.7), Inches(0.5), rgb("B02418"))
+    _text(s, Inches(7.05), Inches(1.6), Inches(5.4), Inches(0.4), "What to improve", size=17, bold=True, color=WHITE)
+    _bullets(s, Inches(6.9), Inches(2.2), Inches(5.7), Inches(4.6), c["improve"] or ["Nothing significant surfaced in this exercise."], size=15)
+    _notes(s, ["Built from the score: areas rated Good are what worked; each improvement groups the gaps in the after-action report."])
+
+    # 6 actions
+    s = frame("What we are fixing, who owns it, and by when", 6)
     rows = len(c["actions"]) + 1
     tbl = s.shapes.add_table(rows, 3, Inches(0.8), Inches(1.6), Inches(11.8), Inches(0.5 * rows)).table
     tbl.columns[0].width, tbl.columns[1].width, tbl.columns[2].width = Inches(7.6), Inches(2.6), Inches(1.6)
@@ -243,8 +363,8 @@ def build_exec_deck(pack: dict, score: dict, path: str | Path, narrative: dict |
             cell.text_frame.paragraphs[0].runs[0].font.size = Pt(14)
     _notes(s, ["The after-action report lists every gap with its citation; these are the highest-priority fixes."])
 
-    # 6 asks
-    s = _frame(prs, "Decisions we need from you", 6, pack, False, accent=rgb("2E8B57"))
+    # 7 asks
+    s = frame("Decisions we need from you", 7, accent=rgb("2E8B57"))
     _bullets(s, Inches(0.8), Inches(1.6), Inches(11.8), Inches(5.0), c["asks"], size=21)
 
     path = Path(path)
@@ -267,6 +387,11 @@ def build_exec_memo(pack: dict, score: dict, path: str | Path, narrative: dict |
         s.top_margin = s.bottom_margin = Inches(0.6)
     doc.styles["Normal"].font.size = Pt(10)
 
+    if c["demo_label"]:
+        from .docx_util import AMBER_FILL, boxed
+        boxed(doc, c["demo_label"].upper(), ["Invented answers for a demonstration, not the result of a real exercise."], AMBER_FILL)
+        spacer = doc.paragraphs[-1]._element  # boxed() adds a blank line; the memo needs the room
+        spacer.getparent().remove(spacer)
     p = doc.add_paragraph()
     r = p.add_run("Bottom line. ")
     r.bold = True
@@ -291,7 +416,7 @@ def build_exec_memo(pack: dict, score: dict, path: str | Path, narrative: dict |
         run.font.color.rgb = RGBColor.from_string(a["color"])
         para.add_run(a["label"])
     left.width, right.width = Inches(2.4), Inches(4.5)
-    doc.add_paragraph()
+    doc.add_paragraph().paragraph_format.space_after = Pt(0)
 
     doc.add_heading("Regulatory exposure", level=2)
     doc.add_paragraph(c["exposure_line"])
@@ -303,12 +428,24 @@ def build_exec_memo(pack: dict, score: dict, path: str | Path, narrative: dict |
         qr.italic = True
         qr.font.size = Pt(9)
 
-    doc.add_heading("What worries us most", level=2)
-    for risk in c["risks"] or ["No significant risks surfaced in this exercise."]:
-        doc.add_paragraph(risk, style="List Bullet")
+    # The memo stays on one page: lessons learned carry the risks here (the deck keeps both).
+    doc.add_heading("Lessons learned", level=2)
+    lt = doc.add_table(rows=2, cols=2)
+    lt.style = "Table Grid"
+    for i, (head, items, fill) in enumerate((("What worked", c["worked"], "2E8B57"),
+                                             ("What to improve", c["improve_without_notices"][:3] or ["Nothing significant surfaced."], "B02418"))):
+        hc, bc = lt.rows[0].cells[i], lt.rows[1].cells[i]
+        shade(hc, fill)
+        hr = hc.paragraphs[0].add_run(head)
+        hr.bold = True
+        hr.font.color.rgb = RGBColor(0xFF, 0xFF, 0xFF)
+        for j, item in enumerate(items):
+            para = bc.paragraphs[0] if j == 0 else bc.add_paragraph()
+            para.add_run("\u2022 " + item).font.size = Pt(9)
 
     doc.add_heading("What we are fixing", level=2)
-    table(doc, ["Action", "Owner", "Due"], [[a["action"], a["owner"], a["due"]] for a in c["actions"]], widths=[4.6, 1.5, 0.9], font_size=9)
+    # the top four fit on one page; the deck and the AAR carry the rest
+    table(doc, ["Action", "Owner", "Due"], [[a["action"], a["owner"], a["due"]] for a in c["actions"][:4]], widths=[4.6, 1.5, 0.9], font_size=9)
 
     doc.add_heading("Decisions we need from you", level=2)
     for ask in c["asks"]:

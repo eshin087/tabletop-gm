@@ -2,9 +2,11 @@
 
   ttx report                       finds out/exercise_pack.json and the filled tracker
   ttx report --tracker <file>      use a specific tracker (.xlsx or .csv decision log)
+  ttx report --demo                score synthetic demo responses instead (for a pitch or a practice run)
 
 Outputs (default out/report/): score.json, after_action_report.docx,
 executive_summary.pptx, executive_summary.docx. No network, no model.
+With --demo the outputs go to out/report_demo/ and every page is marked as demo data.
 """
 
 from __future__ import annotations
@@ -83,22 +85,39 @@ def find_tracker(pack: dict, explicit: str | None = None, root: Path | None = No
 
 
 def run_report(pack_path: str | None = None, tracker_path: str | None = None, out_dir: str | None = None,
-               narrative_path: str | None = None, root: Path | None = None) -> dict:
+               narrative_path: str | None = None, root: Path | None = None, demo: bool = False,
+               responses_path: str | None = None) -> dict:
     from .build.aar import build_aar, check_narrative
     from .build.exec_summary import build_content, build_exec_deck, build_exec_memo
     from .score_engine import score_tracker
 
     root = root or Path.cwd()
-    pack_file = find_pack(pack_path, root)
+    notes: list[str] = []
+    if demo and tracker_path:
+        raise ValueError("--demo scores synthetic responses; leave out --tracker")
+    try:
+        pack_file = find_pack(pack_path, root)
+    except FileNotFoundError:
+        if not demo or pack_path:
+            raise
+        from .common import REPO_ROOT
+        pack_file = REPO_ROOT / "samples" / "outputs" / "exercise_pack.json"
+        notes.append("no approved exercise in out/; using the built-in sample exercise for the demo")
     pack = read_json(pack_file)
     if not (pack.get("approval") or {}).get("approved"):
         raise ValueError(f"{pack_file} is not approved; approve the outline before scoring")
-    tracker, notes = find_tracker(pack, tracker_path, root)
-    narrative = read_json(narrative_path) if narrative_path else None
-    out = Path(out_dir) if out_dir else root / "out" / "report"
+    out = Path(out_dir) if out_dir else root / "out" / ("report_demo" if demo else "report")
     out.mkdir(parents=True, exist_ok=True)
+    if demo:
+        from .demo_responses import DEMO_LABEL, DEMO_NOTE, RESPONSES_FILE, make_demo_tracker
+        tracker = make_demo_tracker(pack, out, responses_path)
+    else:
+        tracker, notes = find_tracker(pack, tracker_path, root)
+    narrative = read_json(narrative_path) if narrative_path else None
 
     score = score_tracker(pack, tracker)
+    if demo:
+        score["demo"] = {"label": DEMO_LABEL, "note": DEMO_NOTE, "responses": str(responses_path or RESPONSES_FILE)}
     write_json(out / "score.json", score)
     if narrative:
         bad = check_narrative(narrative, score, pack)
@@ -111,6 +130,9 @@ def run_report(pack_path: str | None = None, tracker_path: str | None = None, ou
         "executive_summary_memo": str(build_exec_memo(pack, score, out / "executive_summary.docx", narrative=narrative)),
     }
     content = build_content(pack, score, narrative)
-    return {"pack": str(pack_file), "tracker": str(tracker), "notes": notes, "files": files, "out": str(out),
+    if demo:
+        files["demo_tracker"] = str(tracker)
+    return {"pack": str(pack_file), "tracker": str(tracker), "notes": notes, "files": files, "out": str(out), "demo": demo,
             "headline": content["headline"], "rating": content["rating"], "percent": content["percent"],
-            "risks": content["risks"], "asks": content["asks"], "summary": score["summary"]}
+            "risks": content["risks"], "asks": content["asks"], "worked": content["worked"],
+            "improve": content["improve"], "summary": score["summary"]}
