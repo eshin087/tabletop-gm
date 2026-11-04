@@ -1,0 +1,59 @@
+# Pack defaults used when the organization uploads no plan. score_engine reads
+# expected_actions and notify_parties; scenario_design reads roles and phases.
+pack: _template
+
+roles:
+  - id: incident_commander
+    name: Incident Commander
+    decides: [incident_declaration, containment_actions]
+  - id: ciso
+    name: CISO
+    decides: [severity_rating, regulator_notification]
+  - id: legal
+    name: General Counsel
+    decides: [notification_obligations, law_enforcement_contact]
+  - id: comms
+    name: Communications Lead
+    decides: [public_statement]
+  - id: ceo
+    name: Chief Executive
+    decides: [ransom_decision, business_shutdown]
+
+notify_parties:
+  - id: executive_leadership
+    name: Executive leadership
+  - id: legal_counsel
+    name: Legal counsel
+  - id: cyber_insurer
+    name: Cyber insurance carrier
+  - id: law_enforcement
+    name: Law enforcement (FBI or local)
+  - id: primary_regulator
+    name: Primary regulator
+
+expected_actions:
+  detection:
+    - id: d1
+      text: Confirm the alert with a second source before acting
+    - id: d2
+      text: Open an incident ticket and start a timeline
+  escalation:
+    - id: e1
+      text: Notify the incident commander and declare severity
+    - id: e2
+      text: Engage legal counsel
+  containment:
+    - id: c1
+      text: Isolate the affected system without destroying evidence
+    - id: c2
+      text: Reset credentials believed compromised
+  recovery:
+    - id: r1
+      text: Confirm backups are intact and restorable
+    - id: r2
+      text: Agree the restore order with business owners
+  notification:
+    - id: n1
+      text: Decide which clocks apply and who owns each notification
+    - id: n2
+      text: Notify the cyber insurer before engaging outside help

@@ -1,0 +1,119 @@
+# Clocks for the insurance pack. This file is the only place deadlines live.
+# clock_engine reads it; the validator fails the build on any clock without
+# source_url, verified_date, tier, and deadline_text.
+#
+# tier:
+#   verified    a human opened source_url on verified_date and confirmed the deadline. Used silently.
+#   researched  drafted by the pack_research skill from an authoritative source, not yet human-checked.
+#               Every output that uses it carries a "verify before exercise" banner.
+#
+# applies_when: all listed keys must hold (AND). List-valued keys hold when any value matches (OR).
+#   industries        pack slugs; omit for any industry (used by clocks_common.yaml)
+#   data_types        PHI, PII, PCI, PFI, FERPA, CUI, OT, trade_secrets
+#   countries         ISO 3166-1 alpha-2
+#   states            US state codes
+#   public_company    true or false
+#   flags             intake.regulated flags that must all be present, for example nydfs_licensed
+#   min_affected      the clock applies only when intake.affected_estimate is at least this number
+#
+# HIPAA clocks are not duplicated here. A health insurer also loads the healthcare pack.
+# GDPR, SEC Form 8-K, state breach laws, and CIRCIA come from clocks_common.yaml.
+
+pack: insurance
+display_name: Insurance carriers and producers
+includes_common: true
+
+clocks:
+  - id: nydfs_500_17_incident_notice
+    name: NYDFS, cybersecurity incident notice to the superintendent
+    regulator: New York State Department of Financial Services
+    jurisdiction: US-NY
+    trigger: determination that a cybersecurity incident has occurred at the covered entity, an affiliate, or a third-party service provider
+    deadline_hours: 72
+    deadline_business_days: null
+    deadline_text: "as promptly as possible but in no event later than 72 hours after determining that a cybersecurity incident has occurred at the covered entity, its affiliates, or a third-party service provider"
+    applies_when:
+      industries: [insurance]
+      flags: [nydfs_licensed]
+    source_url: https://www.dfs.ny.gov/cybersecurity/23-NYCRR-Part-500
+    citation: "23 NYCRR 500.17(a)(1)"
+    tier: researched
+    verified_date: 2026-11-03
+    verifier: "pack_research skill (Claude), not yet human-checked"
+    notes: "The DFS page serves the department's PDF of the Second Amendment text (adopted November 2023). Notice is filed electronically in the form on the DFS website. 500.17(a)(2) adds a continuing duty to update the superintendent with material changes."
+
+  - id: nydfs_500_17_extortion_payment_notice
+    name: NYDFS, notice of extortion payment
+    regulator: New York State Department of Financial Services
+    jurisdiction: US-NY
+    trigger: an extortion payment made in connection with a cybersecurity event involving the covered entity
+    deadline_hours: 24
+    deadline_business_days: null
+    deadline_text: "within 24 hours of the extortion payment, notice of the payment"
+    applies_when:
+      industries: [insurance]
+      flags: [nydfs_licensed]
+    source_url: https://www.dfs.ny.gov/cybersecurity/23-NYCRR-Part-500
+    citation: "23 NYCRR 500.17(c)(1)"
+    tier: researched
+    verified_date: 2026-11-03
+    verifier: "pack_research skill (Claude), not yet human-checked"
+    notes: "The clock runs from the payment itself, not from the incident. Pair with the 30-day written explanation below."
+
+  - id: nydfs_500_17_extortion_payment_explanation
+    name: NYDFS, written explanation of extortion payment
+    regulator: New York State Department of Financial Services
+    jurisdiction: US-NY
+    trigger: an extortion payment made in connection with a cybersecurity event involving the covered entity
+    deadline_hours: 720
+    deadline_business_days: null
+    deadline_text: "within 30 days of the extortion payment, a written description of the reasons payment was necessary, a description of alternatives to payment considered, all diligence performed to find alternatives to payment and all diligence performed to ensure compliance with applicable rules and regulations including those of the Office of Foreign Assets Control"
+    applies_when:
+      industries: [insurance]
+      flags: [nydfs_licensed]
+    source_url: https://www.dfs.ny.gov/cybersecurity/23-NYCRR-Part-500
+    citation: "23 NYCRR 500.17(c)(2)"
+    tier: researched
+    verified_date: 2026-11-03
+    verifier: "pack_research skill (Claude), not yet human-checked"
+    notes: "30 calendar days expressed as 720 hours. The explanation must document OFAC diligence, so the sanctions check has to happen before the payment decision, not after."
+
+  - id: naic_668_commissioner_notice
+    name: NAIC Model 668 as adopted, cybersecurity event notice to the insurance commissioner
+    regulator: State insurance commissioner of the licensee's state of domicile or home state
+    jurisdiction: US-state
+    trigger: determination that a cybersecurity event has occurred, where the state is the licensee's state of domicile or home state, or the event involves nonpublic information of 250 or more consumers in the state and meets the model's reporting or harm criteria
+    deadline_hours: 72
+    deadline_business_days: null
+    deadline_text: "as promptly as possible but in no event later than 72 hours from a determination that a Cybersecurity Event has occurred"
+    applies_when:
+      industries: [insurance]
+      flags: [insurer_licensed]
+      states: [AL, AK, CT, DE, HI, IL, IN, IA, KY, LA, ME, MD, MI, MN, MS, MO, NH, ND, OH, OK, PA, RI, SC, TN, VT, VA, WI]
+    source_url: https://content.naic.org/sites/default/files/model-law-668.pdf
+    citation: "NAIC Insurance Data Security Model Law (MDL-668) Section 6.A"
+    tier: researched
+    verified_date: 2026-11-03
+    verifier: "pack_research skill (Claude), not yet human-checked"
+    notes: "Deadline text is the NAIC model. The NAIC Government Affairs brief dated October 2026 lists the model as implemented in 28 jurisdictions: AL, AK, CT, DE, HI, IL, IN, IA, KY, LA, ME, MD, MI, MN, MS, MO, NH, ND, OH, OK, PA, PR, RI, SC, TN, VT, VA, and WI (PR is omitted from the states filter because it is not a state code). Enacted state versions vary in deadline, threshold, and wording; confirm the enacted text for the state of domicile before the exercise. Section 6.E adds a separate 72-hour notice from assuming reinsurers to ceding insurers and the domiciliary commissioner."
+
+exercise_requirements:
+  - id: nydfs_500_16_d_annual_plan_test
+    name: NYDFS, annual test of incident response and BCDR plans
+    requirement: "periodically, but at a minimum annually, test its incident response and BCDR plans with all staff and management critical to the response, and shall revise the plan as necessary; and its ability to restore its critical data and information systems from backups"
+    frequency: annual
+    source_url: https://www.dfs.ny.gov/cybersecurity/23-NYCRR-Part-500
+    citation: "23 NYCRR 500.16(d)"
+    tier: researched
+    verified_date: 2026-11-03
+    verifier: "pack_research skill (Claude), not yet human-checked"
+
+  - id: naic_668_section_4h_incident_response_plan
+    name: NAIC Model 668 as adopted, written incident response plan
+    requirement: "establish a written incident response plan designed to promptly respond to, and recover from, any Cybersecurity Event that compromises the confidentiality, integrity, or availability of Nonpublic Information in its possession, the Licensee's Information Systems, or the continuing functionality of any aspect of the Licensee's business or operations"
+    frequency: none stated (the model requires the plan and its evaluation and revision after an event, not a test interval)
+    source_url: https://content.naic.org/sites/default/files/model-law-668.pdf
+    citation: "NAIC Insurance Data Security Model Law (MDL-668) Section 4.H"
+    tier: researched
+    verified_date: 2026-11-03
+    verifier: "pack_research skill (Claude), not yet human-checked"

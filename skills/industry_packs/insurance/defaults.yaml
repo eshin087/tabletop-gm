@@ -1,0 +1,106 @@
+# Pack defaults used when the organization uploads no plan. score_engine reads
+# expected_actions and notify_parties; scenario_design reads roles and phases.
+pack: insurance
+
+roles:
+  - id: incident_commander
+    name: Incident Commander (Head of Security Operations)
+    decides: [incident_declaration, containment_actions]
+  - id: ciso
+    name: Chief Information Security Officer
+    decides: [severity_rating, regulator_notification, cybersecurity_incident_determination]
+  - id: cio
+    name: Chief Information Officer
+    decides: [system_shutdown, restore_order]
+  - id: general_counsel
+    name: General Counsel
+    decides: [notification_obligations, law_enforcement_contact, privilege_strategy]
+  - id: chief_compliance_officer
+    name: Chief Compliance Officer
+    decides: [regulatory_filings, market_conduct_disclosure]
+  - id: chief_claims_officer
+    name: Chief Claims Officer
+    decides: [manual_claims_workaround, claims_payment_priority]
+  - id: chief_underwriting_officer
+    name: Chief Underwriting Officer
+    decides: [binding_authority_suspension, quote_moratorium]
+  - id: head_of_distribution
+    name: Head of Agency and Producer Distribution
+    decides: [producer_portal_shutdown, producer_notification]
+  - id: cfo
+    name: Chief Financial Officer and Treasurer
+    decides: [premium_payment_rerouting, ransom_funding]
+  - id: privacy_officer
+    name: Chief Privacy Officer
+    decides: [consumer_notification_scope]
+  - id: comms
+    name: Head of Corporate Communications
+    decides: [public_statement, policyholder_messaging]
+  - id: ceo
+    name: Chief Executive Officer
+    decides: [ransom_decision, business_shutdown]
+
+notify_parties:
+  - id: executive_leadership
+    name: Executive leadership and the board or senior governing body
+  - id: legal_counsel
+    name: Outside breach counsel
+  - id: cyber_insurer
+    name: Cyber insurance carrier and reinsurers of the cyber program
+  - id: law_enforcement
+    name: Law enforcement (FBI field office or IC3)
+  - id: domiciliary_commissioner
+    name: Insurance commissioner of the state of domicile
+  - id: nydfs
+    name: New York State Department of Financial Services (when NYDFS licensed)
+  - id: state_attorneys_general
+    name: State attorneys general under state breach laws
+  - id: ofac_counsel
+    name: Sanctions counsel for OFAC screening before any extortion payment
+  - id: producers_of_record
+    name: Producers of record for affected policyholders
+  - id: reinsurance_partners
+    name: Ceding or assuming insurers and reinsurance partners
+  - id: third_party_administrators
+    name: Third-party administrators and claims vendors
+  - id: policyholders
+    name: Affected policyholders, claimants, and certificate holders
+
+expected_actions:
+  detection:
+    - id: d1
+      text: Confirm the alert with a second source before acting on it
+    - id: d2
+      text: Open an incident ticket and start a timeline with timestamps
+    - id: d3
+      text: Identify which lines of business and policy administration systems hold the affected data
+  escalation:
+    - id: e1
+      text: Notify the incident commander and assign a provisional severity
+    - id: e2
+      text: Engage general counsel and outside breach counsel to set privilege
+    - id: e3
+      text: Record the time of the cybersecurity incident determination, because the NYDFS and commissioner clocks run from it
+  containment:
+    - id: c1
+      text: Isolate affected claims, policy administration, and producer portal systems without destroying evidence
+    - id: c2
+      text: Reset credentials believed compromised, including producer and TPA accounts
+    - id: c3
+      text: Suspend binding authority or payment release only with the business owner's sign-off
+  recovery:
+    - id: r1
+      text: Confirm backups of policy and claims data are intact and restorable
+    - id: r2
+      text: Agree the restore order with claims, underwriting, and billing owners
+    - id: r3
+      text: Stand up manual claims payment and premium intake workarounds for the restore window
+  notification:
+    - id: n1
+      text: Decide which clocks apply and name an owner for each notification
+    - id: n2
+      text: Notify the cyber insurer before engaging outside forensic help
+    - id: n3
+      text: Complete OFAC screening and document alternatives before any extortion payment decision
+    - id: n4
+      text: Notify producers of record and reinsurance partners once the affected population is known

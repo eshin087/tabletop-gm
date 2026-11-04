@@ -1,0 +1,107 @@
+# Pack defaults used when the organization uploads no plan. score_engine reads
+# expected_actions and notify_parties; scenario_design reads roles and phases.
+pack: public_sector
+
+roles:
+  - id: executive
+    name: Agency Director, County Administrator, City Manager, Superintendent, or Tribal Administrator
+    decides: [business_shutdown, ransom_decision, public_declaration]
+  - id: state_ciso
+    name: State Chief Information Security Officer (or the state CIO's designee)
+    decides: [statewide_containment_direction, state_resource_activation]
+  - id: agency_iso
+    name: Agency Information Security Officer
+    decides: [incident_declaration, severity_rating]
+  - id: it_director
+    name: IT Director or Technology Director
+    decides: [system_shutdown, restore_order]
+  - id: counsel
+    name: Agency General Counsel, County Attorney, or Tribal Attorney
+    decides: [notification_obligations, law_enforcement_contact, public_records_response]
+  - id: pio
+    name: Public Information Officer
+    decides: [public_statement, media_response]
+  - id: emergency_manager
+    name: Emergency Management Director
+    decides: [eoc_activation, emergency_declaration_request]
+  - id: records_officer
+    name: Records Management Officer or Clerk
+    decides: [records_hold, public_records_handling]
+  - id: governing_body_liaison
+    name: Clerk to the Board, Council, or Tribal Council
+    decides: [governing_body_briefing, closed_session_request]
+  - id: data_protection_officer
+    name: Data Protection Officer (K-12)
+    decides: [student_data_breach_determination, parent_notification]
+  - id: finance_director
+    name: Finance Director or Treasurer
+    decides: [payment_system_suspension, emergency_procurement]
+
+notify_parties:
+  - id: executive_leadership
+    name: Executive leadership and the governing body (board, council, or tribal council)
+  - id: legal_counsel
+    name: Legal counsel (in-house, county attorney, or outside breach counsel)
+  - id: cyber_insurer
+    name: Cyber insurance carrier or public entity risk pool
+  - id: law_enforcement
+    name: Law enforcement (FBI field office or IC3)
+  - id: state_ciso_or_soc
+    name: State CISO or state security operations center
+  - id: state_statutory_recipient
+    name: State statutory incident recipient (for example DIR, VITA or the Fusion Center, DIT, or the Cybersecurity Operations Center)
+  - id: ms_isac
+    name: MS-ISAC (Multi-State Information Sharing and Analysis Center)
+  - id: cisa
+    name: CISA (voluntary report while CIRCIA rules are not in force)
+  - id: state_attorney_general
+    name: State attorney general under the state breach law
+  - id: state_education_agency
+    name: State education agency or chief privacy officer (K-12)
+  - id: federal_program_funders
+    name: Federal program funders whose data or grants are affected
+  - id: residents
+    name: Affected residents, students, parents, and employees
+  - id: shared_service_partners
+    name: Shared service partners and vendors on the same network or platform
+
+expected_actions:
+  detection:
+    - id: d1
+      text: Confirm the alert with a second source before acting on it
+    - id: d2
+      text: Open an incident ticket and start a timeline with timestamps
+    - id: d3
+      text: Identify which services are affected (payroll, utility billing, permits, public safety dispatch, student information system)
+  escalation:
+    - id: e1
+      text: Notify the agency information security officer and the executive, and declare a provisional severity
+    - id: e2
+      text: Engage counsel before external statements and before any public records response
+    - id: e3
+      text: Notify the state CISO or state SOC and MS-ISAC as early convention, separate from any statutory clock
+    - id: e4
+      text: Record the discovery time, because the state statutory clocks run from discovery or confirmation
+  containment:
+    - id: c1
+      text: Isolate affected systems without destroying evidence, and keep public safety systems running
+    - id: c2
+      text: Reset credentials believed compromised, including shared service and vendor accounts
+    - id: c3
+      text: Decide whether to disconnect from shared state or county networks and tell the partners first
+  recovery:
+    - id: r1
+      text: Confirm backups are intact and restorable, and that they were not reachable from the compromised network
+    - id: r2
+      text: Agree the restore order with department heads, starting with public safety and payroll
+    - id: r3
+      text: Stand up manual workarounds for permits, payments, and student attendance during the restore window
+  notification:
+    - id: n1
+      text: Decide which clocks apply and name an owner for each notification
+    - id: n2
+      text: File the state statutory incident report within its window (for example 48 hours in Texas, 24 hours in Virginia)
+    - id: n3
+      text: Report to the FBI through the local field office or IC3 and to MS-ISAC, and record the report numbers in the timeline
+    - id: n4
+      text: Notify the cyber insurer or risk pool before engaging outside forensic help

@@ -1,0 +1,101 @@
+# Pack defaults used when the organization uploads no plan. score_engine reads
+# expected_actions and notify_parties; scenario_design reads roles and phases.
+pack: saas_technology
+
+roles:
+  - id: incident_commander
+    name: Head of Security Operations (incident commander)
+    decides: [incident_declaration, containment_actions, forensic_scope]
+  - id: ciso
+    name: CISO
+    decides: [severity_rating, regulator_notification, key_rotation_order]
+  - id: cto
+    name: CTO or VP Engineering
+    decides: [change_freeze, rollback, service_degradation, kill_switch]
+  - id: platform_lead
+    name: Platform or Site Reliability Lead
+    decides: [cloud_account_lockdown, restore_order]
+  - id: customer_success
+    name: VP Customer Success
+    decides: [customer_notice_timing, status_page_wording, executive_escalations]
+  - id: trust_compliance
+    name: Trust and Compliance Lead
+    decides: [auditor_notification, attestation_impact, questionnaire_response]
+  - id: legal
+    name: General Counsel
+    decides: [notification_obligations, contractual_notice, law_enforcement_contact]
+  - id: dpo
+    name: Data Protection Officer
+    decides: [supervisory_authority_notice, data_subject_notice]
+  - id: comms
+    name: Head of Communications
+    decides: [public_statement, press_response]
+  - id: cfo
+    name: CFO
+    decides: [sla_credits, insurance_claim]
+  - id: ceo
+    name: Chief Executive
+    decides: [ransom_decision, business_shutdown, board_briefing]
+
+notify_parties:
+  - id: executive_leadership
+    name: Executive leadership and board
+  - id: legal_counsel
+    name: Legal counsel (in-house and outside)
+  - id: cyber_insurer
+    name: Cyber insurance carrier
+  - id: law_enforcement
+    name: Law enforcement (FBI or national equivalent)
+  - id: csirt_competent_authority
+    name: National CSIRT or competent authority (NIS2, UK NIS, CERT-In, OAIC, as applicable)
+  - id: data_protection_authority
+    name: Data protection supervisory authority (GDPR, via clocks_common.yaml)
+  - id: enterprise_customers
+    name: Enterprise customers under contractual notice terms
+  - id: financial_entity_customers
+    name: Financial-entity customers that must file under DORA
+  - id: all_customers
+    name: All affected customers and the public status page
+  - id: cloud_provider
+    name: Cloud provider account and abuse teams
+  - id: sub_processors
+    name: Sub-processors and downstream vendors in the data path
+  - id: soc2_auditor
+    name: SOC 2 auditor (for the attestation period)
+
+expected_actions:
+  detection:
+    - id: d1
+      text: Confirm the alert with a second source (cloud audit log, identity provider log, or the customer's own report) before declaring
+    - id: d2
+      text: Open an incident ticket, start a timeline, and record the first-aware timestamp that every clock keys from
+    - id: d3
+      text: Snapshot affected instances and preserve cloud audit logs before remediation changes them
+  escalation:
+    - id: e1
+      text: Notify the incident commander and declare severity under the incident response plan
+    - id: e2
+      text: Engage legal counsel and the Data Protection Officer before any customer or regulator contact
+    - id: e3
+      text: Brief the CTO on the change freeze and the customer success lead on the likely customer impact
+  containment:
+    - id: c1
+      text: Isolate the affected tenant, service, or cloud account without destroying evidence
+    - id: c2
+      text: Revoke compromised sessions, tokens, and service accounts, then rotate customer-facing keys in a planned order
+    - id: c3
+      text: Close the access path used (identity provider, VPN, support tool) and confirm no persistence in CI/CD or infrastructure as code
+  recovery:
+    - id: r1
+      text: Confirm backups and snapshots are intact, unencrypted, and restorable into a clean account
+    - id: r2
+      text: Agree the restore order with engineering and customer success (control plane before data plane, then tenants by contract)
+    - id: r3
+      text: Validate the rebuilt environment and publish a customer-facing root cause analysis with the postmortem
+  notification:
+    - id: n1
+      text: Decide which clocks apply (NIS2, DORA customers, UK NIS, CERT-In, OAIC, GDPR, SEC, states) and assign an owner to each
+    - id: n2
+      text: Notify the cyber insurer before engaging outside forensics
+    - id: n3
+      text: Issue contractual customer notices on the timetable in the MSA and DPA, with one consistent fact set across status page, email, and regulator filings

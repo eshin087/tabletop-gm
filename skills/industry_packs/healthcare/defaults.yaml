@@ -1,0 +1,108 @@
+# Healthcare pack defaults. Used when the organization uploads no plan, and as the
+# role vocabulary for scenario_design. The uploaded org plan always wins when present.
+pack: healthcare
+
+roles:
+  - id: incident_commander
+    name: Incident Commander (HICS)
+    decides: [incident_declaration, downtime_procedures, ems_diversion]
+  - id: ciso
+    name: Chief Information Security Officer
+    decides: [severity_rating, containment_actions, forensic_engagement]
+  - id: cio
+    name: Chief Information Officer
+    decides: [system_shutdown, restore_order]
+  - id: privacy_officer
+    name: Privacy Officer
+    decides: [breach_risk_assessment, hhs_notification, patient_notification]
+  - id: cmio
+    name: Chief Medical Information Officer
+    decides: [clinical_workaround_approval]
+  - id: cno
+    name: Chief Nursing Officer
+    decides: [unit_downtime_activation]
+  - id: general_counsel
+    name: General Counsel
+    decides: [regulator_notification, law_enforcement_contact, ransom_decision_input]
+  - id: communications
+    name: Director of Communications
+    decides: [public_statement, patient_facing_messaging]
+  - id: ceo
+    name: Chief Executive Officer
+    decides: [ransom_decision, business_shutdown, board_notification]
+  - id: cfo
+    name: Chief Financial Officer
+    decides: [cyber_insurance_claim, emergency_spend]
+  - id: clinical_engineering
+    name: Director of Clinical Engineering
+    decides: [medical_device_isolation]
+  - id: emergency_management
+    name: Emergency Management Director
+    decides: [command_center_activation]
+
+notify_parties:
+  - id: executive_leadership
+    name: Executive leadership and the board
+  - id: privacy_officer
+    name: Privacy Officer
+  - id: legal_counsel
+    name: General Counsel and outside breach counsel
+  - id: cyber_insurer
+    name: Cyber insurance carrier
+  - id: fbi
+    name: FBI field office or IC3
+  - id: hhs_ocr
+    name: HHS Office for Civil Rights
+  - id: state_health_department
+    name: State health department
+  - id: health_isac
+    name: Health-ISAC
+  - id: business_associates
+    name: Affected business associates and vendors
+  - id: ems_partners
+    name: EMS agencies and neighboring hospitals (diversion)
+  - id: patients
+    name: Affected patients
+
+expected_actions:
+  detection:
+    - id: d1
+      text: Confirm the alert with a second source (EDR, firewall, or help desk reports) before declaring
+    - id: d2
+      text: Open an incident record and start a timestamped timeline
+    - id: d3
+      text: Identify which clinical systems and units are affected
+  escalation:
+    - id: e1
+      text: Notify the CISO and Incident Commander and assign a severity level
+    - id: e2
+      text: Activate the hospital command center and the clinical downtime procedures where affected
+    - id: e3
+      text: Engage General Counsel and the Privacy Officer so the breach risk assessment starts on day one
+    - id: e4
+      text: Notify the cyber insurer before retaining outside forensics or negotiators
+  containment:
+    - id: c1
+      text: Isolate the affected systems and the entry asset while preserving forensic evidence
+    - id: c2
+      text: Reset credentials believed compromised, starting with privileged and service accounts
+    - id: c3
+      text: Decide which interfaces (lab, pharmacy, imaging, EHR) stay up and which are cut
+    - id: c4
+      text: Confirm medical devices on the affected segments are isolated by Clinical Engineering
+  recovery:
+    - id: r1
+      text: Verify backups are intact, offline, and restorable before any rebuild
+    - id: r2
+      text: Agree the restore order with clinical leadership (EHR, then ancillaries, then business systems)
+    - id: r3
+      text: Plan paper-to-electronic reconciliation for the downtime period
+  notification:
+    - id: n1
+      text: Decide which clocks apply and name the owner for each notification
+    - id: n2
+      text: Complete the four-factor breach risk assessment and document the result
+    - id: n3
+      text: Prepare patient, media, and HHS notices with legal review before the 60-day limit
+    - id: n4
+      text: Notify EMS partners and the state health department about diversion or capacity changes

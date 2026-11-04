@@ -1,0 +1,40 @@
+# Intake for the sample run. Valley Regional Health System is fictional.
+# The tabletop skill fills this from one chat message; the CLI reads it as is.
+
+organization:
+  name: Valley Regional Health System
+  size_employees: 1200
+  description: Fictional community health system with two hospitals and fourteen clinics in California and Nevada.
+  short_name: VRHS
+
+industry: healthcare           # pack slug under skills/industry_packs
+additional_packs: []           # other packs whose clocks also apply, for example federal_contractors
+
+countries: [US]
+states: [CA, NV]
+data_types: [PHI, PII, PCI]
+public_company: false
+regulated:                     # flags that clocks.yaml applies_when can require
+  - hipaa_covered_entity
+  - ca_licensed_health_facility
+  - pci_merchant
+affected_estimate: 85000       # patients whose records are on the crown jewel; drives min_affected clocks
+
+severity_level: 3              # 1 contained, 2 serious, 3 major, 4 crisis
+audience: mixed                # technical, executive, mixed
+duration_minutes: 90           # 60, 90, or 180 (5, 7, or 10 injects)
+scenario_family: ransomware    # optional preference
+
+environment:
+  mode: sample                 # sample | export | tenable | none
+  estate_file: samples/synthetic_estate.json
+  internet_facing_tags: ["Exposure: Internet"]
+
+documents:                     # uploaded plans; only the synthetic sample ships in the repo
+  - samples/sample_ir_plan.md
+
+exercise:
+  date: 2026-11-06
+  facilitator: Facilitator name
+  sponsor: Chief Executive Officer
+  location: Hospital Command Center, Valley Regional Medical Center

@@ -1,0 +1,3041 @@
+{
+  "name": "Valley Regional Health System synthetic estate",
+  "description": "Synthetic. Shaped like a Tenable VM findings export plus an assets export. No real hosts, no real data.",
+  "generated_by": "samples/make_synthetic_estate.py",
+  "assets": [
+    {
+      "id": "a-0001",
+      "hostnames": [
+        "vpngw01"
+      ],
+      "fqdns": [
+        "vpngw01.vrhs.example"
+      ],
+      "ipv4s": [
+        "203.0.113.10",
+        "10.20.0.10"
+      ],
+      "ratings": {
+        "acr": {
+          "score": 8
+        }
+      },
+      "tags": [
+        {
+          "key": "Exposure",
+          "value": "Internet"
+        },
+        {
+          "key": "Role",
+          "value": "Remote Access"
+        }
+      ],
+      "system_types": [
+        "general-purpose"
+      ],
+      "operating_systems": [
+        "Ivanti Connect Secure 22.7"
+      ],
+      "installed_software": [
+        "cpe:/a:ivanti:connect_secure:22.7"
+      ],
+      "device_type": "firewall",
+      "sources": [
+        {
+          "name": "NESSUS_SCAN"
+        }
+      ],
+      "exposure_score": 812
+    },
+    {
+      "id": "a-0002",
+      "hostnames": [
+        "win2019"
+      ],
+      "fqdns": [
+        "win2019.vrhs.example"
+      ],
+      "ipv4s": [
+        "203.0.113.22",
+        "10.20.0.22"
+      ],
+      "ratings": {
+        "acr": {
+          "score": 7
+        }
+      },
+      "tags": [
+        {
+          "key": "Exposure",
+          "value": "Internet"
+        }
+      ],
+      "system_types": [
+        "general-purpose"
+      ],
+      "operating_systems": [
+        "Microsoft Windows Server 2019 Standard"
+      ],
+      "installed_software": [
+        "cpe:/a:microsoft:exchange_server:2019",
+        "cpe:/a:microsoft:iis:10.0"
+      ],
+      "device_type": "general-purpose",
+      "sources": [
+        {
+          "name": "NESSUS_SCAN"
+        },
+        {
+          "name": "NESSUS_AGENT"
+        }
+      ],
+      "exposure_score": 740
+    },
+    {
+      "id": "a-0003",
+      "hostnames": [
+        "patientportal01"
+      ],
+      "fqdns": [
+        "patientportal01.vrhs.example"
+      ],
+      "ipv4s": [
+        "203.0.113.40",
+        "10.20.0.40"
+      ],
+      "ratings": {
+        "acr": {
+          "score": 7
+        }
+      },
+      "tags": [
+        {
+          "key": "Exposure",
+          "value": "Internet"
+        }
+      ],
+      "system_types": [
+        "general-purpose"
+      ],
+      "operating_systems": [
+        "Ubuntu 22.04"
+      ],
+      "installed_software": [
+        "cpe:/a:apache:http_server:2.4.57",
+        "cpe:/a:openssl:openssl:3.0.2"
+      ],
+      "device_type": "general-purpose",
+      "sources": [
+        {
+          "name": "NESSUS_AGENT"
+        }
+      ],
+      "exposure_score": 655
+    },
+    {
+      "id": "a-0010",
+      "hostnames": [
+        "dc1"
+      ],
+      "fqdns": [
+        "dc1.vrhs.example"
+      ],
+      "ipv4s": [
+        "10.20.1.5"
+      ],
+      "ratings": {
+        "acr": {
+          "score": 9
+        }
+      },
+      "tags": [
+        {
+          "key": "Role",
+          "value": "Domain Controller"
+        }
+      ],
+      "system_types": [
+        "general-purpose"
+      ],
+      "operating_systems": [
+        "Microsoft Windows Server 2019 Standard"
+      ],
+      "installed_software": [
+        "cpe:/a:microsoft:active_directory_domain_services"
+      ],
+      "device_type": "general-purpose",
+      "sources": [
+        {
+          "name": "NESSUS_AGENT"
+        }
+      ]
+    },
+    {
+      "id": "a-0011",
+      "hostnames": [
+        "dc2"
+      ],
+      "fqdns": [
+        "dc2.vrhs.example"
+      ],
+      "ipv4s": [
+        "10.20.1.6"
+      ],
+      "ratings": {
+        "acr": {
+          "score": 9
+        }
+      },
+      "tags": [
+        {
+          "key": "Role",
+          "value": "Domain Controller"
+        }
+      ],
+      "system_types": [
+        "general-purpose"
+      ],
+      "operating_systems": [
+        "Microsoft Windows Server 2019 Standard"
+      ],
+      "installed_software": [
+        "cpe:/a:microsoft:active_directory_domain_services"
+      ],
+      "device_type": "general-purpose",
+      "sources": [
+        {
+          "name": "NESSUS_AGENT"
+        }
+      ]
+    },
+    {
+      "id": "a-0020",
+      "hostnames": [
+        "sql2016"
+      ],
+      "fqdns": [
+        "sql2016.vrhs.example"
+      ],
+      "ipv4s": [
+        "10.20.2.15"
+      ],
+      "ratings": {
+        "acr": {
+          "score": 9
+        }
+      },
+      "tags": [
+        {
+          "key": "Data",
+          "value": "PHI"
+        },
+        {
+          "key": "System",
+          "value": "EHR database"
+        }
+      ],
+      "system_types": [
+        "general-purpose"
+      ],
+      "operating_systems": [
+        "Microsoft Windows Server 2016 Standard"
+      ],
+      "installed_software": [
+        "cpe:/a:microsoft:sql_server:2016:sp3"
+      ],
+      "device_type": "general-purpose",
+      "sources": [
+        {
+          "name": "NESSUS_AGENT"
+        }
+      ],
+      "exposure_score": 590
+    },
+    {
+      "id": "a-0021",
+      "hostnames": [
+        "target2"
+      ],
+      "fqdns": [
+        "target2.vrhs.example"
+      ],
+      "ipv4s": [
+        "10.20.2.16"
+      ],
+      "ratings": {
+        "acr": {
+          "score": 9
+        }
+      },
+      "tags": [
+        {
+          "key": "Data",
+          "value": "PHI"
+        },
+        {
+          "key": "System",
+          "value": "Clinical file share"
+        }
+      ],
+      "system_types": [
+        "general-purpose"
+      ],
+      "operating_systems": [
+        "Microsoft Windows Server 2019 Standard"
+      ],
+      "installed_software": [
+        "cpe:/a:microsoft:windows_server:2019"
+      ],
+      "device_type": "general-purpose",
+      "sources": [
+        {
+          "name": "NESSUS_AGENT"
+        }
+      ],
+      "exposure_score": 560
+    },
+    {
+      "id": "a-0022",
+      "hostnames": [
+        "ehr-app01"
+      ],
+      "fqdns": [
+        "ehr-app01.vrhs.example"
+      ],
+      "ipv4s": [
+        "10.20.2.20"
+      ],
+      "ratings": {
+        "acr": {
+          "score": 8
+        }
+      },
+      "tags": [
+        {
+          "key": "System",
+          "value": "EHR application"
+        }
+      ],
+      "system_types": [
+        "general-purpose"
+      ],
+      "operating_systems": [
+        "Red Hat Enterprise Linux 8.9"
+      ],
+      "installed_software": [
+        "cpe:/a:apache:log4j:2.14.1",
+        "cpe:/a:oracle:jdk:11.0"
+      ],
+      "device_type": "general-purpose",
+      "sources": [
+        {
+          "name": "NESSUS_AGENT"
+        }
+      ]
+    },
+    {
+      "id": "a-0023",
+      "hostnames": [
+        "pacs01"
+      ],
+      "fqdns": [
+        "pacs01.vrhs.example"
+      ],
+      "ipv4s": [
+        "10.20.2.30"
+      ],
+      "ratings": {
+        "acr": {
+          "score": 8
+        }
+      },
+      "tags": [
+        {
+          "key": "Data",
+          "value": "PHI"
+        },
+        {
+          "key": "System",
+          "value": "PACS"
+        }
+      ],
+      "system_types": [
+        "general-purpose"
+      ],
+      "operating_systems": [
+        "Microsoft Windows Server 2019 Standard"
+      ],
+      "installed_software": [
+        "cpe:/a:microsoft:sql_server:2017"
+      ],
+      "device_type": "general-purpose",
+      "sources": [
+        {
+          "name": "NESSUS_AGENT"
+        }
+      ]
+    },
+    {
+      "id": "a-0024",
+      "hostnames": [
+        "fs01"
+      ],
+      "fqdns": [
+        "fs01.vrhs.example"
+      ],
+      "ipv4s": [
+        "10.20.2.40"
+      ],
+      "ratings": {
+        "acr": {
+          "score": 6
+        }
+      },
+      "tags": [
+        {
+          "key": "Data",
+          "value": "PII"
+        }
+      ],
+      "system_types": [
+        "general-purpose"
+      ],
+      "operating_systems": [
+        "Microsoft Windows Server 2019 Standard"
+      ],
+      "installed_software": [],
+      "device_type": "general-purpose",
+      "sources": [
+        {
+          "name": "NESSUS_AGENT"
+        }
+      ]
+    },
+    {
+      "id": "a-0025",
+      "hostnames": [
+        "revcycle01"
+      ],
+      "fqdns": [
+        "revcycle01.vrhs.example"
+      ],
+      "ipv4s": [
+        "10.20.2.50"
+      ],
+      "ratings": {
+        "acr": {
+          "score": 7
+        }
+      },
+      "tags": [
+        {
+          "key": "Data",
+          "value": "PCI"
+        },
+        {
+          "key": "System",
+          "value": "Revenue cycle"
+        }
+      ],
+      "system_types": [
+        "general-purpose"
+      ],
+      "operating_systems": [
+        "Microsoft Windows Server 2019 Standard"
+      ],
+      "installed_software": [
+        "cpe:/a:microsoft:sql_server:2019"
+      ],
+      "device_type": "general-purpose",
+      "sources": [
+        {
+          "name": "NESSUS_AGENT"
+        }
+      ]
+    },
+    {
+      "id": "a-0026",
+      "hostnames": [
+        "mail01"
+      ],
+      "fqdns": [
+        "mail01.vrhs.example"
+      ],
+      "ipv4s": [
+        "10.20.2.60"
+      ],
+      "ratings": {
+        "acr": {
+          "score": 6
+        }
+      },
+      "tags": [],
+      "system_types": [
+        "general-purpose"
+      ],
+      "operating_systems": [
+        "Microsoft Windows Server 2019 Standard"
+      ],
+      "installed_software": [
+        "cpe:/a:microsoft:exchange_server:2019"
+      ],
+      "device_type": "general-purpose",
+      "sources": [
+        {
+          "name": "NESSUS_AGENT"
+        }
+      ]
+    },
+    {
+      "id": "a-0027",
+      "hostnames": [
+        "win2008-lab"
+      ],
+      "fqdns": [
+        "win2008-lab.vrhs.example"
+      ],
+      "ipv4s": [
+        "10.20.3.90"
+      ],
+      "ratings": {
+        "acr": {
+          "score": 3
+        }
+      },
+      "tags": [],
+      "system_types": [
+        "general-purpose"
+      ],
+      "operating_systems": [
+        "Microsoft Windows Server 2008 R2"
+      ],
+      "installed_software": [],
+      "device_type": "general-purpose",
+      "sources": [
+        {
+          "name": "NESSUS_AGENT"
+        }
+      ]
+    },
+    {
+      "id": "a-0028",
+      "hostnames": [
+        "hvhost01"
+      ],
+      "fqdns": [
+        "hvhost01.vrhs.example"
+      ],
+      "ipv4s": [
+        "10.20.1.50"
+      ],
+      "ratings": {
+        "acr": {
+          "score": 8
+        }
+      },
+      "tags": [],
+      "system_types": [
+        "hypervisor"
+      ],
+      "operating_systems": [
+        "Microsoft Windows Server 2019 Standard"
+      ],
+      "installed_software": [
+        "cpe:/a:vmware:esxi:7.0"
+      ],
+      "device_type": "general-purpose",
+      "sources": [
+        {
+          "name": "NESSUS_AGENT"
+        }
+      ]
+    },
+    {
+      "id": "a-0030",
+      "hostnames": [
+        "ip-10-40-1-12"
+      ],
+      "fqdns": [
+        "ip-10-40-1-12.vrhs.example"
+      ],
+      "ipv4s": [
+        "10.40.1.12"
+      ],
+      "ratings": {
+        "acr": {
+          "score": 5
+        }
+      },
+      "tags": [],
+      "system_types": [
+        "general-purpose"
+      ],
+      "operating_systems": [
+        "Amazon Linux 2023"
+      ],
+      "installed_software": [],
+      "device_type": "general-purpose",
+      "sources": [
+        {
+          "name": "AWS"
+        }
+      ],
+      "aws_ec2_instance_id": "i-0a1b2c3d4e5f67890",
+      "aws_region": "us-west-2"
+    },
+    {
+      "id": "a-0031",
+      "hostnames": [
+        "ip-10-40-1-13"
+      ],
+      "fqdns": [
+        "ip-10-40-1-13.vrhs.example"
+      ],
+      "ipv4s": [
+        "10.40.1.13"
+      ],
+      "ratings": {
+        "acr": {
+          "score": 5
+        }
+      },
+      "tags": [],
+      "system_types": [
+        "general-purpose"
+      ],
+      "operating_systems": [
+        "Amazon Linux 2023"
+      ],
+      "installed_software": [],
+      "device_type": "general-purpose",
+      "sources": [
+        {
+          "name": "AWS"
+        }
+      ],
+      "aws_ec2_instance_id": "i-0a1b2c3d4e5f67891",
+      "aws_region": "us-west-2"
+    },
+    {
+      "id": "a-0032",
+      "hostnames": [
+        "vrhs-analytics-vm"
+      ],
+      "fqdns": [
+        "vrhs-analytics-vm.vrhs.example"
+      ],
+      "ipv4s": [
+        "10.50.1.4"
+      ],
+      "ratings": {
+        "acr": {
+          "score": 6
+        }
+      },
+      "tags": [],
+      "system_types": [
+        "general-purpose"
+      ],
+      "operating_systems": [
+        "Ubuntu 22.04"
+      ],
+      "installed_software": [],
+      "device_type": "general-purpose",
+      "sources": [
+        {
+          "name": "AZURE"
+        }
+      ],
+      "azure_resource_id": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rg-analytics/providers/Microsoft.Compute/virtualMachines/vrhs-analytics-vm",
+      "azure_vm_id": "00000000-0000-0000-0000-000000000001"
+    },
+    {
+      "id": "a-0101",
+      "hostnames": [
+        "endpoint #1"
+      ],
+      "fqdns": [
+        "endpoint-1.vrhs.example"
+      ],
+      "ipv4s": [
+        "10.20.10.2"
+      ],
+      "ratings": {
+        "acr": {
+          "score": 2
+        }
+      },
+      "tags": [],
+      "system_types": [
+        "general-purpose"
+      ],
+      "operating_systems": [
+        "Microsoft Windows 11 Enterprise"
+      ],
+      "installed_software": [],
+      "device_type": "endpoint",
+      "sources": [
+        {
+          "name": "NESSUS_AGENT"
+        }
+      ]
+    },
+    {
+      "id": "a-0102",
+      "hostnames": [
+        "endpoint #2"
+      ],
+      "fqdns": [
+        "endpoint-2.vrhs.example"
+      ],
+      "ipv4s": [
+        "10.20.10.3"
+      ],
+      "ratings": {
+        "acr": {
+          "score": 2
+        }
+      },
+      "tags": [],
+      "system_types": [
+        "general-purpose"
+      ],
+      "operating_systems": [
+        "Microsoft Windows 11 Enterprise"
+      ],
+      "installed_software": [],
+      "device_type": "endpoint",
+      "sources": [
+        {
+          "name": "NESSUS_AGENT"
+        }
+      ]
+    },
+    {
+      "id": "a-0103",
+      "hostnames": [
+        "endpoint #3"
+      ],
+      "fqdns": [
+        "endpoint-3.vrhs.example"
+      ],
+      "ipv4s": [
+        "10.20.10.4"
+      ],
+      "ratings": {
+        "acr": {
+          "score": 2
+        }
+      },
+      "tags": [],
+      "system_types": [
+        "general-purpose"
+      ],
+      "operating_systems": [
+        "Microsoft Windows 11 Enterprise"
+      ],
+      "installed_software": [],
+      "device_type": "endpoint",
+      "sources": [
+        {
+          "name": "NESSUS_AGENT"
+        }
+      ]
+    },
+    {
+      "id": "a-0104",
+      "hostnames": [
+        "endpoint #4"
+      ],
+      "fqdns": [
+        "endpoint-4.vrhs.example"
+      ],
+      "ipv4s": [
+        "10.20.10.5"
+      ],
+      "ratings": {
+        "acr": {
+          "score": 2
+        }
+      },
+      "tags": [],
+      "system_types": [
+        "general-purpose"
+      ],
+      "operating_systems": [
+        "Microsoft Windows 11 Enterprise"
+      ],
+      "installed_software": [],
+      "device_type": "endpoint",
+      "sources": [
+        {
+          "name": "NESSUS_AGENT"
+        }
+      ]
+    },
+    {
+      "id": "a-0105",
+      "hostnames": [
+        "endpoint #5"
+      ],
+      "fqdns": [
+        "endpoint-5.vrhs.example"
+      ],
+      "ipv4s": [
+        "10.20.10.6"
+      ],
+      "ratings": {
+        "acr": {
+          "score": 2
+        }
+      },
+      "tags": [],
+      "system_types": [
+        "general-purpose"
+      ],
+      "operating_systems": [
+        "Microsoft Windows 11 Enterprise"
+      ],
+      "installed_software": [],
+      "device_type": "endpoint",
+      "sources": [
+        {
+          "name": "NESSUS_AGENT"
+        }
+      ]
+    },
+    {
+      "id": "a-0106",
+      "hostnames": [
+        "endpoint #6"
+      ],
+      "fqdns": [
+        "endpoint-6.vrhs.example"
+      ],
+      "ipv4s": [
+        "10.20.10.7"
+      ],
+      "ratings": {
+        "acr": {
+          "score": 2
+        }
+      },
+      "tags": [],
+      "system_types": [
+        "general-purpose"
+      ],
+      "operating_systems": [
+        "Microsoft Windows 11 Enterprise"
+      ],
+      "installed_software": [],
+      "device_type": "endpoint",
+      "sources": [
+        {
+          "name": "NESSUS_AGENT"
+        }
+      ]
+    },
+    {
+      "id": "a-0107",
+      "hostnames": [
+        "endpoint #7"
+      ],
+      "fqdns": [
+        "endpoint-7.vrhs.example"
+      ],
+      "ipv4s": [
+        "10.20.10.8"
+      ],
+      "ratings": {
+        "acr": {
+          "score": 2
+        }
+      },
+      "tags": [],
+      "system_types": [
+        "general-purpose"
+      ],
+      "operating_systems": [
+        "Microsoft Windows 11 Enterprise"
+      ],
+      "installed_software": [],
+      "device_type": "endpoint",
+      "sources": [
+        {
+          "name": "NESSUS_AGENT"
+        }
+      ]
+    },
+    {
+      "id": "a-0108",
+      "hostnames": [
+        "endpoint #8"
+      ],
+      "fqdns": [
+        "endpoint-8.vrhs.example"
+      ],
+      "ipv4s": [
+        "10.20.10.9"
+      ],
+      "ratings": {
+        "acr": {
+          "score": 2
+        }
+      },
+      "tags": [],
+      "system_types": [
+        "general-purpose"
+      ],
+      "operating_systems": [
+        "Microsoft Windows 11 Enterprise"
+      ],
+      "installed_software": [],
+      "device_type": "endpoint",
+      "sources": [
+        {
+          "name": "NESSUS_AGENT"
+        }
+      ]
+    },
+    {
+      "id": "a-0109",
+      "hostnames": [
+        "endpoint #9"
+      ],
+      "fqdns": [
+        "endpoint-9.vrhs.example"
+      ],
+      "ipv4s": [
+        "10.20.10.10"
+      ],
+      "ratings": {
+        "acr": {
+          "score": 2
+        }
+      },
+      "tags": [],
+      "system_types": [
+        "general-purpose"
+      ],
+      "operating_systems": [
+        "Microsoft Windows 11 Enterprise"
+      ],
+      "installed_software": [],
+      "device_type": "endpoint",
+      "sources": [
+        {
+          "name": "NESSUS_AGENT"
+        }
+      ]
+    },
+    {
+      "id": "a-0110",
+      "hostnames": [
+        "endpoint #10"
+      ],
+      "fqdns": [
+        "endpoint-10.vrhs.example"
+      ],
+      "ipv4s": [
+        "10.20.11.11"
+      ],
+      "ratings": {
+        "acr": {
+          "score": 2
+        }
+      },
+      "tags": [],
+      "system_types": [
+        "general-purpose"
+      ],
+      "operating_systems": [
+        "Microsoft Windows 11 Enterprise"
+      ],
+      "installed_software": [],
+      "device_type": "endpoint",
+      "sources": [
+        {
+          "name": "NESSUS_AGENT"
+        }
+      ]
+    },
+    {
+      "id": "a-0111",
+      "hostnames": [
+        "endpoint #11"
+      ],
+      "fqdns": [
+        "endpoint-11.vrhs.example"
+      ],
+      "ipv4s": [
+        "10.20.11.12"
+      ],
+      "ratings": {
+        "acr": {
+          "score": 2
+        }
+      },
+      "tags": [],
+      "system_types": [
+        "general-purpose"
+      ],
+      "operating_systems": [
+        "Microsoft Windows 11 Enterprise"
+      ],
+      "installed_software": [],
+      "device_type": "endpoint",
+      "sources": [
+        {
+          "name": "NESSUS_AGENT"
+        }
+      ]
+    },
+    {
+      "id": "a-0112",
+      "hostnames": [
+        "endpoint #12"
+      ],
+      "fqdns": [
+        "endpoint-12.vrhs.example"
+      ],
+      "ipv4s": [
+        "10.20.11.13"
+      ],
+      "ratings": {
+        "acr": {
+          "score": 2
+        }
+      },
+      "tags": [],
+      "system_types": [
+        "general-purpose"
+      ],
+      "operating_systems": [
+        "Microsoft Windows 11 Enterprise"
+      ],
+      "installed_software": [],
+      "device_type": "endpoint",
+      "sources": [
+        {
+          "name": "NESSUS_AGENT"
+        }
+      ]
+    },
+    {
+      "id": "a-0113",
+      "hostnames": [
+        "endpoint #13"
+      ],
+      "fqdns": [
+        "endpoint-13.vrhs.example"
+      ],
+      "ipv4s": [
+        "10.20.11.14"
+      ],
+      "ratings": {
+        "acr": {
+          "score": 2
+        }
+      },
+      "tags": [],
+      "system_types": [
+        "general-purpose"
+      ],
+      "operating_systems": [
+        "Microsoft Windows 11 Enterprise"
+      ],
+      "installed_software": [],
+      "device_type": "endpoint",
+      "sources": [
+        {
+          "name": "NESSUS_AGENT"
+        }
+      ]
+    },
+    {
+      "id": "a-0114",
+      "hostnames": [
+        "endpoint #14"
+      ],
+      "fqdns": [
+        "endpoint-14.vrhs.example"
+      ],
+      "ipv4s": [
+        "10.20.11.15"
+      ],
+      "ratings": {
+        "acr": {
+          "score": 2
+        }
+      },
+      "tags": [],
+      "system_types": [
+        "general-purpose"
+      ],
+      "operating_systems": [
+        "Microsoft Windows 11 Enterprise"
+      ],
+      "installed_software": [],
+      "device_type": "endpoint",
+      "sources": [
+        {
+          "name": "NESSUS_AGENT"
+        }
+      ]
+    },
+    {
+      "id": "a-0115",
+      "hostnames": [
+        "endpoint #15"
+      ],
+      "fqdns": [
+        "endpoint-15.vrhs.example"
+      ],
+      "ipv4s": [
+        "10.20.11.16"
+      ],
+      "ratings": {
+        "acr": {
+          "score": 2
+        }
+      },
+      "tags": [],
+      "system_types": [
+        "general-purpose"
+      ],
+      "operating_systems": [
+        "Microsoft Windows 11 Enterprise"
+      ],
+      "installed_software": [],
+      "device_type": "endpoint",
+      "sources": [
+        {
+          "name": "NESSUS_AGENT"
+        }
+      ]
+    },
+    {
+      "id": "a-0116",
+      "hostnames": [
+        "endpoint #16"
+      ],
+      "fqdns": [
+        "endpoint-16.vrhs.example"
+      ],
+      "ipv4s": [
+        "10.20.11.17"
+      ],
+      "ratings": {
+        "acr": {
+          "score": 2
+        }
+      },
+      "tags": [],
+      "system_types": [
+        "general-purpose"
+      ],
+      "operating_systems": [
+        "Microsoft Windows 11 Enterprise"
+      ],
+      "installed_software": [],
+      "device_type": "endpoint",
+      "sources": [
+        {
+          "name": "NESSUS_AGENT"
+        }
+      ]
+    },
+    {
+      "id": "a-0117",
+      "hostnames": [
+        "endpoint #17"
+      ],
+      "fqdns": [
+        "endpoint-17.vrhs.example"
+      ],
+      "ipv4s": [
+        "10.20.11.18"
+      ],
+      "ratings": {
+        "acr": {
+          "score": 2
+        }
+      },
+      "tags": [],
+      "system_types": [
+        "general-purpose"
+      ],
+      "operating_systems": [
+        "Microsoft Windows 11 Enterprise"
+      ],
+      "installed_software": [],
+      "device_type": "endpoint",
+      "sources": [
+        {
+          "name": "NESSUS_AGENT"
+        }
+      ]
+    },
+    {
+      "id": "a-0118",
+      "hostnames": [
+        "endpoint #18"
+      ],
+      "fqdns": [
+        "endpoint-18.vrhs.example"
+      ],
+      "ipv4s": [
+        "10.20.11.19"
+      ],
+      "ratings": {
+        "acr": {
+          "score": 2
+        }
+      },
+      "tags": [],
+      "system_types": [
+        "general-purpose"
+      ],
+      "operating_systems": [
+        "Microsoft Windows 11 Enterprise"
+      ],
+      "installed_software": [],
+      "device_type": "endpoint",
+      "sources": [
+        {
+          "name": "NESSUS_AGENT"
+        }
+      ]
+    },
+    {
+      "id": "a-0119",
+      "hostnames": [
+        "endpoint #19"
+      ],
+      "fqdns": [
+        "endpoint-19.vrhs.example"
+      ],
+      "ipv4s": [
+        "10.20.11.20"
+      ],
+      "ratings": {
+        "acr": {
+          "score": 2
+        }
+      },
+      "tags": [],
+      "system_types": [
+        "general-purpose"
+      ],
+      "operating_systems": [
+        "Microsoft Windows 11 Enterprise"
+      ],
+      "installed_software": [],
+      "device_type": "endpoint",
+      "sources": [
+        {
+          "name": "NESSUS_AGENT"
+        }
+      ]
+    },
+    {
+      "id": "a-0120",
+      "hostnames": [
+        "endpoint #20"
+      ],
+      "fqdns": [
+        "endpoint-20.vrhs.example"
+      ],
+      "ipv4s": [
+        "10.20.12.21"
+      ],
+      "ratings": {
+        "acr": {
+          "score": 2
+        }
+      },
+      "tags": [],
+      "system_types": [
+        "general-purpose"
+      ],
+      "operating_systems": [
+        "Microsoft Windows 11 Enterprise"
+      ],
+      "installed_software": [],
+      "device_type": "endpoint",
+      "sources": [
+        {
+          "name": "NESSUS_AGENT"
+        }
+      ]
+    },
+    {
+      "id": "a-0201",
+      "hostnames": [
+        "ot device #1"
+      ],
+      "fqdns": [
+        "ot device-1.vrhs.example"
+      ],
+      "ipv4s": [
+        "10.60.0.11"
+      ],
+      "ratings": {
+        "acr": {
+          "score": 7
+        }
+      },
+      "tags": [
+        {
+          "key": "Segment",
+          "value": "Clinical devices"
+        }
+      ],
+      "system_types": [
+        "medical-device"
+      ],
+      "operating_systems": [
+        "Embedded"
+      ],
+      "installed_software": [],
+      "device_type": "ot",
+      "sources": [
+        {
+          "name": "OTSensor"
+        }
+      ]
+    },
+    {
+      "id": "a-0202",
+      "hostnames": [
+        "ot device #2"
+      ],
+      "fqdns": [
+        "ot device-2.vrhs.example"
+      ],
+      "ipv4s": [
+        "10.60.0.12"
+      ],
+      "ratings": {
+        "acr": {
+          "score": 7
+        }
+      },
+      "tags": [
+        {
+          "key": "Segment",
+          "value": "Clinical devices"
+        }
+      ],
+      "system_types": [
+        "medical-device"
+      ],
+      "operating_systems": [
+        "Embedded"
+      ],
+      "installed_software": [],
+      "device_type": "ot",
+      "sources": [
+        {
+          "name": "OTSensor"
+        }
+      ]
+    },
+    {
+      "id": "a-0203",
+      "hostnames": [
+        "ot device #3"
+      ],
+      "fqdns": [
+        "ot device-3.vrhs.example"
+      ],
+      "ipv4s": [
+        "10.60.0.13"
+      ],
+      "ratings": {
+        "acr": {
+          "score": 7
+        }
+      },
+      "tags": [
+        {
+          "key": "Segment",
+          "value": "Clinical devices"
+        }
+      ],
+      "system_types": [
+        "medical-device"
+      ],
+      "operating_systems": [
+        "Embedded"
+      ],
+      "installed_software": [],
+      "device_type": "ot",
+      "sources": [
+        {
+          "name": "OTSensor"
+        }
+      ]
+    },
+    {
+      "id": "a-0204",
+      "hostnames": [
+        "ot device #4"
+      ],
+      "fqdns": [
+        "ot device-4.vrhs.example"
+      ],
+      "ipv4s": [
+        "10.60.0.14"
+      ],
+      "ratings": {
+        "acr": {
+          "score": 7
+        }
+      },
+      "tags": [
+        {
+          "key": "Segment",
+          "value": "Clinical devices"
+        }
+      ],
+      "system_types": [
+        "medical-device"
+      ],
+      "operating_systems": [
+        "Embedded"
+      ],
+      "installed_software": [],
+      "device_type": "ot",
+      "sources": [
+        {
+          "name": "OTSensor"
+        }
+      ]
+    },
+    {
+      "id": "a-0205",
+      "hostnames": [
+        "ot device #5"
+      ],
+      "fqdns": [
+        "ot device-5.vrhs.example"
+      ],
+      "ipv4s": [
+        "10.60.0.15"
+      ],
+      "ratings": {
+        "acr": {
+          "score": 7
+        }
+      },
+      "tags": [
+        {
+          "key": "Segment",
+          "value": "Clinical devices"
+        }
+      ],
+      "system_types": [
+        "medical-device"
+      ],
+      "operating_systems": [
+        "Embedded"
+      ],
+      "installed_software": [],
+      "device_type": "ot",
+      "sources": [
+        {
+          "name": "OTSensor"
+        }
+      ]
+    },
+    {
+      "id": "a-0206",
+      "hostnames": [
+        "ot device #6"
+      ],
+      "fqdns": [
+        "ot device-6.vrhs.example"
+      ],
+      "ipv4s": [
+        "10.60.0.16"
+      ],
+      "ratings": {
+        "acr": {
+          "score": 7
+        }
+      },
+      "tags": [
+        {
+          "key": "Segment",
+          "value": "Clinical devices"
+        }
+      ],
+      "system_types": [
+        "medical-device"
+      ],
+      "operating_systems": [
+        "Embedded"
+      ],
+      "installed_software": [],
+      "device_type": "ot",
+      "sources": [
+        {
+          "name": "OTSensor"
+        }
+      ]
+    },
+    {
+      "id": "a-0207",
+      "hostnames": [
+        "ot device #7"
+      ],
+      "fqdns": [
+        "ot device-7.vrhs.example"
+      ],
+      "ipv4s": [
+        "10.60.0.17"
+      ],
+      "ratings": {
+        "acr": {
+          "score": 7
+        }
+      },
+      "tags": [
+        {
+          "key": "Segment",
+          "value": "Clinical devices"
+        }
+      ],
+      "system_types": [
+        "medical-device"
+      ],
+      "operating_systems": [
+        "Embedded"
+      ],
+      "installed_software": [],
+      "device_type": "ot",
+      "sources": [
+        {
+          "name": "OTSensor"
+        }
+      ]
+    },
+    {
+      "id": "a-0208",
+      "hostnames": [
+        "ot device #8"
+      ],
+      "fqdns": [
+        "ot device-8.vrhs.example"
+      ],
+      "ipv4s": [
+        "10.60.0.18"
+      ],
+      "ratings": {
+        "acr": {
+          "score": 7
+        }
+      },
+      "tags": [
+        {
+          "key": "Segment",
+          "value": "Clinical devices"
+        }
+      ],
+      "system_types": [
+        "medical-device"
+      ],
+      "operating_systems": [
+        "Embedded"
+      ],
+      "installed_software": [],
+      "device_type": "ot",
+      "sources": [
+        {
+          "name": "OTSensor"
+        }
+      ]
+    }
+  ],
+  "findings": [
+    {
+      "finding_id": "F1042",
+      "asset": {
+        "uuid": "a-0001",
+        "hostname": "vpngw01",
+        "fqdn": "vpngw01.vrhs.example",
+        "ipv4": "203.0.113.10",
+        "device_type": "firewall",
+        "operating_system": "Ivanti Connect Secure 22.7"
+      },
+      "plugin": {
+        "id": 214055,
+        "name": "Ivanti Connect Secure stack-based buffer overflow (CVE-2025-0282)",
+        "cve": [
+          "CVE-2025-0282"
+        ],
+        "vpr": {
+          "score": 9.6,
+          "on_cisa_kev": true
+        },
+        "epss_score": 0.92,
+        "exploit_available": true,
+        "cvss3_base_score": 9.0
+      },
+      "severity": "critical",
+      "state": "OPEN",
+      "first_found": "2026-09-14T03:12:00Z",
+      "last_found": "2026-11-02T22:40:00Z",
+      "port": {
+        "port": 443,
+        "protocol": "TCP"
+      },
+      "source": "NESSUS_SCAN"
+    },
+    {
+      "finding_id": "F1043",
+      "asset": {
+        "uuid": "a-0001",
+        "hostname": "vpngw01",
+        "fqdn": "vpngw01.vrhs.example",
+        "ipv4": "203.0.113.10",
+        "device_type": "firewall",
+        "operating_system": "Ivanti Connect Secure 22.7"
+      },
+      "plugin": {
+        "id": 209783,
+        "name": "Ivanti Connect Secure outdated version",
+        "cve": [],
+        "vpr": {
+          "score": 6.1,
+          "on_cisa_kev": false
+        },
+        "epss_score": 0.01,
+        "exploit_available": false,
+        "cvss3_base_score": null
+      },
+      "severity": "high",
+      "state": "OPEN",
+      "first_found": "2026-09-14T03:12:00Z",
+      "last_found": "2026-11-02T22:40:00Z",
+      "port": {
+        "port": 443,
+        "protocol": "TCP"
+      },
+      "source": "NESSUS_SCAN"
+    },
+    {
+      "finding_id": "F1101",
+      "asset": {
+        "uuid": "a-0002",
+        "hostname": "win2019",
+        "fqdn": "win2019.vrhs.example",
+        "ipv4": "203.0.113.22",
+        "device_type": "general-purpose",
+        "operating_system": "Microsoft Windows Server 2019 Standard"
+      },
+      "plugin": {
+        "id": 152854,
+        "name": "Microsoft Exchange Server remote code execution (ProxyShell, CVE-2021-34473)",
+        "cve": [
+          "CVE-2021-34473"
+        ],
+        "vpr": {
+          "score": 9.2,
+          "on_cisa_kev": true
+        },
+        "epss_score": 0.97,
+        "exploit_available": true,
+        "cvss3_base_score": 9.8
+      },
+      "severity": "critical",
+      "state": "OPEN",
+      "first_found": "2026-09-14T03:12:00Z",
+      "last_found": "2026-11-02T22:40:00Z",
+      "port": {
+        "port": 443,
+        "protocol": "TCP"
+      },
+      "source": "NESSUS_SCAN"
+    },
+    {
+      "finding_id": "F1102",
+      "asset": {
+        "uuid": "a-0002",
+        "hostname": "win2019",
+        "fqdn": "win2019.vrhs.example",
+        "ipv4": "203.0.113.22",
+        "device_type": "general-purpose",
+        "operating_system": "Microsoft Windows Server 2019 Standard"
+      },
+      "plugin": {
+        "id": 156003,
+        "name": "Microsoft IIS missing security update",
+        "cve": [
+          "CVE-2022-21907"
+        ],
+        "vpr": {
+          "score": 7.4,
+          "on_cisa_kev": false
+        },
+        "epss_score": 0.3,
+        "exploit_available": true,
+        "cvss3_base_score": 9.8
+      },
+      "severity": "critical",
+      "state": "OPEN",
+      "first_found": "2026-09-14T03:12:00Z",
+      "last_found": "2026-11-02T22:40:00Z",
+      "port": {
+        "port": 80,
+        "protocol": "TCP"
+      },
+      "source": "NESSUS_AGENT"
+    },
+    {
+      "finding_id": "F1201",
+      "asset": {
+        "uuid": "a-0003",
+        "hostname": "patientportal01",
+        "fqdn": "patientportal01.vrhs.example",
+        "ipv4": "203.0.113.40",
+        "device_type": "general-purpose",
+        "operating_system": "Ubuntu 22.04"
+      },
+      "plugin": {
+        "id": 165901,
+        "name": "OpenSSL 3.0.x multiple vulnerabilities",
+        "cve": [
+          "CVE-2022-3602",
+          "CVE-2022-3786"
+        ],
+        "vpr": {
+          "score": 5.9,
+          "on_cisa_kev": false
+        },
+        "epss_score": 0.05,
+        "exploit_available": false,
+        "cvss3_base_score": 7.5
+      },
+      "severity": "high",
+      "state": "OPEN",
+      "first_found": "2026-09-14T03:12:00Z",
+      "last_found": "2026-11-02T22:40:00Z",
+      "port": {
+        "port": 443,
+        "protocol": "TCP"
+      },
+      "source": "NESSUS_AGENT"
+    },
+    {
+      "finding_id": "F2001",
+      "asset": {
+        "uuid": "a-0022",
+        "hostname": "ehr-app01",
+        "fqdn": "ehr-app01.vrhs.example",
+        "ipv4": "10.20.2.20",
+        "device_type": "general-purpose",
+        "operating_system": "Red Hat Enterprise Linux 8.9"
+      },
+      "plugin": {
+        "id": 155999,
+        "name": "Apache Log4j remote code execution (Log4Shell, CVE-2021-44228)",
+        "cve": [
+          "CVE-2021-44228"
+        ],
+        "vpr": {
+          "score": 9.9,
+          "on_cisa_kev": true
+        },
+        "epss_score": 0.98,
+        "exploit_available": true,
+        "cvss3_base_score": 10.0
+      },
+      "severity": "critical",
+      "state": "OPEN",
+      "first_found": "2026-09-14T03:12:00Z",
+      "last_found": "2026-11-02T22:40:00Z",
+      "port": {
+        "port": 8080,
+        "protocol": "TCP"
+      },
+      "source": "NESSUS_AGENT"
+    },
+    {
+      "finding_id": "F2210",
+      "asset": {
+        "uuid": "a-0010",
+        "hostname": "dc1",
+        "fqdn": "dc1.vrhs.example",
+        "ipv4": "10.20.1.5",
+        "device_type": "general-purpose",
+        "operating_system": "Microsoft Windows Server 2019 Standard"
+      },
+      "plugin": {
+        "id": 141462,
+        "name": "Netlogon elevation of privilege (Zerologon, CVE-2020-1472)",
+        "cve": [
+          "CVE-2020-1472"
+        ],
+        "vpr": {
+          "score": 9.0,
+          "on_cisa_kev": true
+        },
+        "epss_score": 0.96,
+        "exploit_available": true,
+        "cvss3_base_score": 10.0
+      },
+      "severity": "critical",
+      "state": "OPEN",
+      "first_found": "2026-09-14T03:12:00Z",
+      "last_found": "2026-11-02T22:40:00Z",
+      "port": {
+        "port": 445,
+        "protocol": "TCP"
+      },
+      "source": "NESSUS_AGENT"
+    },
+    {
+      "finding_id": "F2211",
+      "asset": {
+        "uuid": "a-0011",
+        "hostname": "dc2",
+        "fqdn": "dc2.vrhs.example",
+        "ipv4": "10.20.1.6",
+        "device_type": "general-purpose",
+        "operating_system": "Microsoft Windows Server 2019 Standard"
+      },
+      "plugin": {
+        "id": 141462,
+        "name": "Netlogon elevation of privilege (Zerologon, CVE-2020-1472)",
+        "cve": [
+          "CVE-2020-1472"
+        ],
+        "vpr": {
+          "score": 9.0,
+          "on_cisa_kev": true
+        },
+        "epss_score": 0.96,
+        "exploit_available": true,
+        "cvss3_base_score": 10.0
+      },
+      "severity": "critical",
+      "state": "OPEN",
+      "first_found": "2026-09-14T03:12:00Z",
+      "last_found": "2026-11-02T22:40:00Z",
+      "port": {
+        "port": 445,
+        "protocol": "TCP"
+      },
+      "source": "NESSUS_AGENT"
+    },
+    {
+      "finding_id": "F2301",
+      "asset": {
+        "uuid": "a-0020",
+        "hostname": "sql2016",
+        "fqdn": "sql2016.vrhs.example",
+        "ipv4": "10.20.2.15",
+        "device_type": "general-purpose",
+        "operating_system": "Microsoft Windows Server 2016 Standard"
+      },
+      "plugin": {
+        "id": 181040,
+        "name": "Microsoft SQL Server 2016 SP3 missing cumulative update",
+        "cve": [
+          "CVE-2023-36728"
+        ],
+        "vpr": {
+          "score": 6.7,
+          "on_cisa_kev": false
+        },
+        "epss_score": 0.02,
+        "exploit_available": false,
+        "cvss3_base_score": 5.5
+      },
+      "severity": "high",
+      "state": "OPEN",
+      "first_found": "2026-09-14T03:12:00Z",
+      "last_found": "2026-11-02T22:40:00Z",
+      "port": {
+        "port": 1433,
+        "protocol": "TCP"
+      },
+      "source": "NESSUS_AGENT"
+    },
+    {
+      "finding_id": "F2302",
+      "asset": {
+        "uuid": "a-0021",
+        "hostname": "target2",
+        "fqdn": "target2.vrhs.example",
+        "ipv4": "10.20.2.16",
+        "device_type": "general-purpose",
+        "operating_system": "Microsoft Windows Server 2019 Standard"
+      },
+      "plugin": {
+        "id": 160000,
+        "name": "SMB signing not required",
+        "cve": [],
+        "vpr": {
+          "score": 4.4,
+          "on_cisa_kev": false
+        },
+        "epss_score": 0.0,
+        "exploit_available": false,
+        "cvss3_base_score": null
+      },
+      "severity": "medium",
+      "state": "OPEN",
+      "first_found": "2026-09-14T03:12:00Z",
+      "last_found": "2026-11-02T22:40:00Z",
+      "port": {
+        "port": 445,
+        "protocol": "TCP"
+      },
+      "source": "NESSUS_AGENT"
+    },
+    {
+      "finding_id": "F2401",
+      "asset": {
+        "uuid": "a-0023",
+        "hostname": "pacs01",
+        "fqdn": "pacs01.vrhs.example",
+        "ipv4": "10.20.2.30",
+        "device_type": "general-purpose",
+        "operating_system": "Microsoft Windows Server 2019 Standard"
+      },
+      "plugin": {
+        "id": 181040,
+        "name": "Microsoft SQL Server 2017 missing cumulative update",
+        "cve": [
+          "CVE-2023-36728"
+        ],
+        "vpr": {
+          "score": 6.7,
+          "on_cisa_kev": false
+        },
+        "epss_score": 0.02,
+        "exploit_available": false,
+        "cvss3_base_score": 5.5
+      },
+      "severity": "high",
+      "state": "OPEN",
+      "first_found": "2026-09-14T03:12:00Z",
+      "last_found": "2026-11-02T22:40:00Z",
+      "port": {
+        "port": 1433,
+        "protocol": "TCP"
+      },
+      "source": "NESSUS_AGENT"
+    },
+    {
+      "finding_id": "F2501",
+      "asset": {
+        "uuid": "a-0027",
+        "hostname": "win2008-lab",
+        "fqdn": "win2008-lab.vrhs.example",
+        "ipv4": "10.20.3.90",
+        "device_type": "general-purpose",
+        "operating_system": "Microsoft Windows Server 2008 R2"
+      },
+      "plugin": {
+        "id": 125313,
+        "name": "Microsoft RDP remote code execution (BlueKeep, CVE-2019-0708)",
+        "cve": [
+          "CVE-2019-0708"
+        ],
+        "vpr": {
+          "score": 9.1,
+          "on_cisa_kev": true
+        },
+        "epss_score": 0.95,
+        "exploit_available": true,
+        "cvss3_base_score": 9.8
+      },
+      "severity": "critical",
+      "state": "OPEN",
+      "first_found": "2026-09-14T03:12:00Z",
+      "last_found": "2026-11-02T22:40:00Z",
+      "port": {
+        "port": 3389,
+        "protocol": "TCP"
+      },
+      "source": "NESSUS_AGENT"
+    },
+    {
+      "finding_id": "F2601",
+      "asset": {
+        "uuid": "a-0028",
+        "hostname": "hvhost01",
+        "fqdn": "hvhost01.vrhs.example",
+        "ipv4": "10.20.1.50",
+        "device_type": "general-purpose",
+        "operating_system": "Microsoft Windows Server 2019 Standard"
+      },
+      "plugin": {
+        "id": 171600,
+        "name": "VMware ESXi heap overflow (CVE-2021-21974)",
+        "cve": [
+          "CVE-2021-21974"
+        ],
+        "vpr": {
+          "score": 8.4,
+          "on_cisa_kev": true
+        },
+        "epss_score": 0.9,
+        "exploit_available": true,
+        "cvss3_base_score": 8.8
+      },
+      "severity": "high",
+      "state": "OPEN",
+      "first_found": "2026-09-14T03:12:00Z",
+      "last_found": "2026-11-02T22:40:00Z",
+      "port": {
+        "port": 427,
+        "protocol": "TCP"
+      },
+      "source": "NESSUS_AGENT"
+    },
+    {
+      "finding_id": "F2701",
+      "asset": {
+        "uuid": "a-0026",
+        "hostname": "mail01",
+        "fqdn": "mail01.vrhs.example",
+        "ipv4": "10.20.2.60",
+        "device_type": "general-purpose",
+        "operating_system": "Microsoft Windows Server 2019 Standard"
+      },
+      "plugin": {
+        "id": 152854,
+        "name": "Microsoft Exchange Server remote code execution (ProxyShell, CVE-2021-34473)",
+        "cve": [
+          "CVE-2021-34473"
+        ],
+        "vpr": {
+          "score": 9.2,
+          "on_cisa_kev": true
+        },
+        "epss_score": 0.97,
+        "exploit_available": true,
+        "cvss3_base_score": 9.8
+      },
+      "severity": "critical",
+      "state": "OPEN",
+      "first_found": "2026-09-14T03:12:00Z",
+      "last_found": "2026-11-02T22:40:00Z",
+      "port": {
+        "port": 443,
+        "protocol": "TCP"
+      },
+      "source": "NESSUS_AGENT"
+    },
+    {
+      "finding_id": "F2801",
+      "asset": {
+        "uuid": "a-0025",
+        "hostname": "revcycle01",
+        "fqdn": "revcycle01.vrhs.example",
+        "ipv4": "10.20.2.50",
+        "device_type": "general-purpose",
+        "operating_system": "Microsoft Windows Server 2019 Standard"
+      },
+      "plugin": {
+        "id": 181040,
+        "name": "Microsoft SQL Server 2019 missing cumulative update",
+        "cve": [
+          "CVE-2023-36728"
+        ],
+        "vpr": {
+          "score": 6.7,
+          "on_cisa_kev": false
+        },
+        "epss_score": 0.02,
+        "exploit_available": false,
+        "cvss3_base_score": 5.5
+      },
+      "severity": "high",
+      "state": "OPEN",
+      "first_found": "2026-09-14T03:12:00Z",
+      "last_found": "2026-11-02T22:40:00Z",
+      "port": {
+        "port": 1433,
+        "protocol": "TCP"
+      },
+      "source": "NESSUS_AGENT"
+    },
+    {
+      "finding_id": "F2901",
+      "asset": {
+        "uuid": "a-0003",
+        "hostname": "patientportal01",
+        "fqdn": "patientportal01.vrhs.example",
+        "ipv4": "203.0.113.40",
+        "device_type": "general-purpose",
+        "operating_system": "Ubuntu 22.04"
+      },
+      "plugin": {
+        "id": 214055,
+        "name": "Ivanti Connect Secure stack-based buffer overflow (CVE-2025-0282)",
+        "cve": [
+          "CVE-2025-0282"
+        ],
+        "vpr": {
+          "score": 9.6,
+          "on_cisa_kev": true
+        },
+        "epss_score": 0.92,
+        "exploit_available": true,
+        "cvss3_base_score": 9.0
+      },
+      "severity": "critical",
+      "state": "FIXED",
+      "first_found": "2026-09-14T03:12:00Z",
+      "last_found": "2026-11-02T22:40:00Z",
+      "port": {
+        "port": 443,
+        "protocol": "TCP"
+      },
+      "source": "NESSUS_AGENT"
+    },
+    {
+      "finding_id": "F3001",
+      "asset": {
+        "uuid": "a-0101",
+        "hostname": "endpoint #1",
+        "fqdn": "endpoint-1.vrhs.example",
+        "ipv4": "10.20.10.2",
+        "device_type": "endpoint",
+        "operating_system": "Microsoft Windows 11 Enterprise"
+      },
+      "plugin": {
+        "id": 190003,
+        "name": "Microsoft Windows 11 missing cumulative update",
+        "cve": [
+          "CVE-2024-30088"
+        ],
+        "vpr": {
+          "score": 6.9,
+          "on_cisa_kev": false
+        },
+        "epss_score": 0.12,
+        "exploit_available": true,
+        "cvss3_base_score": 7.0
+      },
+      "severity": "high",
+      "state": "OPEN",
+      "first_found": "2026-09-14T03:12:00Z",
+      "last_found": "2026-11-02T22:40:00Z",
+      "port": {
+        "port": 0,
+        "protocol": "TCP"
+      },
+      "source": "NESSUS_AGENT"
+    },
+    {
+      "finding_id": "F3002",
+      "asset": {
+        "uuid": "a-0102",
+        "hostname": "endpoint #2",
+        "fqdn": "endpoint-2.vrhs.example",
+        "ipv4": "10.20.10.3",
+        "device_type": "endpoint",
+        "operating_system": "Microsoft Windows 11 Enterprise"
+      },
+      "plugin": {
+        "id": 190004,
+        "name": "Microsoft Windows 11 missing cumulative update",
+        "cve": [
+          "CVE-2024-30088"
+        ],
+        "vpr": {
+          "score": 6.9,
+          "on_cisa_kev": false
+        },
+        "epss_score": 0.12,
+        "exploit_available": true,
+        "cvss3_base_score": 7.0
+      },
+      "severity": "high",
+      "state": "OPEN",
+      "first_found": "2026-09-14T03:12:00Z",
+      "last_found": "2026-11-02T22:40:00Z",
+      "port": {
+        "port": 0,
+        "protocol": "TCP"
+      },
+      "source": "NESSUS_AGENT"
+    },
+    {
+      "finding_id": "F3003",
+      "asset": {
+        "uuid": "a-0103",
+        "hostname": "endpoint #3",
+        "fqdn": "endpoint-3.vrhs.example",
+        "ipv4": "10.20.10.4",
+        "device_type": "endpoint",
+        "operating_system": "Microsoft Windows 11 Enterprise"
+      },
+      "plugin": {
+        "id": 190005,
+        "name": "Microsoft Windows 11 missing cumulative update",
+        "cve": [
+          "CVE-2024-30088"
+        ],
+        "vpr": {
+          "score": 6.9,
+          "on_cisa_kev": false
+        },
+        "epss_score": 0.12,
+        "exploit_available": true,
+        "cvss3_base_score": 7.0
+      },
+      "severity": "high",
+      "state": "OPEN",
+      "first_found": "2026-09-14T03:12:00Z",
+      "last_found": "2026-11-02T22:40:00Z",
+      "port": {
+        "port": 0,
+        "protocol": "TCP"
+      },
+      "source": "NESSUS_AGENT"
+    },
+    {
+      "finding_id": "F3004",
+      "asset": {
+        "uuid": "a-0104",
+        "hostname": "endpoint #4",
+        "fqdn": "endpoint-4.vrhs.example",
+        "ipv4": "10.20.10.5",
+        "device_type": "endpoint",
+        "operating_system": "Microsoft Windows 11 Enterprise"
+      },
+      "plugin": {
+        "id": 190006,
+        "name": "Microsoft Windows 11 missing cumulative update",
+        "cve": [
+          "CVE-2024-30088"
+        ],
+        "vpr": {
+          "score": 6.9,
+          "on_cisa_kev": true
+        },
+        "epss_score": 0.12,
+        "exploit_available": true,
+        "cvss3_base_score": 7.0
+      },
+      "severity": "high",
+      "state": "OPEN",
+      "first_found": "2026-09-14T03:12:00Z",
+      "last_found": "2026-11-02T22:40:00Z",
+      "port": {
+        "port": 0,
+        "protocol": "TCP"
+      },
+      "source": "NESSUS_AGENT"
+    },
+    {
+      "finding_id": "F3005",
+      "asset": {
+        "uuid": "a-0105",
+        "hostname": "endpoint #5",
+        "fqdn": "endpoint-5.vrhs.example",
+        "ipv4": "10.20.10.6",
+        "device_type": "endpoint",
+        "operating_system": "Microsoft Windows 11 Enterprise"
+      },
+      "plugin": {
+        "id": 190000,
+        "name": "Microsoft Windows 11 missing cumulative update",
+        "cve": [
+          "CVE-2024-30088"
+        ],
+        "vpr": {
+          "score": 6.9,
+          "on_cisa_kev": false
+        },
+        "epss_score": 0.12,
+        "exploit_available": true,
+        "cvss3_base_score": 7.0
+      },
+      "severity": "high",
+      "state": "OPEN",
+      "first_found": "2026-09-14T03:12:00Z",
+      "last_found": "2026-11-02T22:40:00Z",
+      "port": {
+        "port": 0,
+        "protocol": "TCP"
+      },
+      "source": "NESSUS_AGENT"
+    },
+    {
+      "finding_id": "F3006",
+      "asset": {
+        "uuid": "a-0106",
+        "hostname": "endpoint #6",
+        "fqdn": "endpoint-6.vrhs.example",
+        "ipv4": "10.20.10.7",
+        "device_type": "endpoint",
+        "operating_system": "Microsoft Windows 11 Enterprise"
+      },
+      "plugin": {
+        "id": 190001,
+        "name": "Microsoft Windows 11 missing cumulative update",
+        "cve": [
+          "CVE-2024-30088"
+        ],
+        "vpr": {
+          "score": 6.9,
+          "on_cisa_kev": false
+        },
+        "epss_score": 0.12,
+        "exploit_available": true,
+        "cvss3_base_score": 7.0
+      },
+      "severity": "high",
+      "state": "OPEN",
+      "first_found": "2026-09-14T03:12:00Z",
+      "last_found": "2026-11-02T22:40:00Z",
+      "port": {
+        "port": 0,
+        "protocol": "TCP"
+      },
+      "source": "NESSUS_AGENT"
+    },
+    {
+      "finding_id": "F3007",
+      "asset": {
+        "uuid": "a-0107",
+        "hostname": "endpoint #7",
+        "fqdn": "endpoint-7.vrhs.example",
+        "ipv4": "10.20.10.8",
+        "device_type": "endpoint",
+        "operating_system": "Microsoft Windows 11 Enterprise"
+      },
+      "plugin": {
+        "id": 190002,
+        "name": "Microsoft Windows 11 missing cumulative update",
+        "cve": [
+          "CVE-2024-30088"
+        ],
+        "vpr": {
+          "score": 6.9,
+          "on_cisa_kev": false
+        },
+        "epss_score": 0.12,
+        "exploit_available": true,
+        "cvss3_base_score": 7.0
+      },
+      "severity": "high",
+      "state": "OPEN",
+      "first_found": "2026-09-14T03:12:00Z",
+      "last_found": "2026-11-02T22:40:00Z",
+      "port": {
+        "port": 0,
+        "protocol": "TCP"
+      },
+      "source": "NESSUS_AGENT"
+    },
+    {
+      "finding_id": "F3008",
+      "asset": {
+        "uuid": "a-0108",
+        "hostname": "endpoint #8",
+        "fqdn": "endpoint-8.vrhs.example",
+        "ipv4": "10.20.10.9",
+        "device_type": "endpoint",
+        "operating_system": "Microsoft Windows 11 Enterprise"
+      },
+      "plugin": {
+        "id": 190003,
+        "name": "Microsoft Windows 11 missing cumulative update",
+        "cve": [
+          "CVE-2024-30088"
+        ],
+        "vpr": {
+          "score": 6.9,
+          "on_cisa_kev": false
+        },
+        "epss_score": 0.12,
+        "exploit_available": true,
+        "cvss3_base_score": 7.0
+      },
+      "severity": "high",
+      "state": "OPEN",
+      "first_found": "2026-09-14T03:12:00Z",
+      "last_found": "2026-11-02T22:40:00Z",
+      "port": {
+        "port": 0,
+        "protocol": "TCP"
+      },
+      "source": "NESSUS_AGENT"
+    },
+    {
+      "finding_id": "F3009",
+      "asset": {
+        "uuid": "a-0109",
+        "hostname": "endpoint #9",
+        "fqdn": "endpoint-9.vrhs.example",
+        "ipv4": "10.20.10.10",
+        "device_type": "endpoint",
+        "operating_system": "Microsoft Windows 11 Enterprise"
+      },
+      "plugin": {
+        "id": 190004,
+        "name": "Microsoft Windows 11 missing cumulative update",
+        "cve": [
+          "CVE-2024-30088"
+        ],
+        "vpr": {
+          "score": 6.9,
+          "on_cisa_kev": true
+        },
+        "epss_score": 0.12,
+        "exploit_available": true,
+        "cvss3_base_score": 7.0
+      },
+      "severity": "high",
+      "state": "OPEN",
+      "first_found": "2026-09-14T03:12:00Z",
+      "last_found": "2026-11-02T22:40:00Z",
+      "port": {
+        "port": 0,
+        "protocol": "TCP"
+      },
+      "source": "NESSUS_AGENT"
+    },
+    {
+      "finding_id": "F3010",
+      "asset": {
+        "uuid": "a-0110",
+        "hostname": "endpoint #10",
+        "fqdn": "endpoint-10.vrhs.example",
+        "ipv4": "10.20.11.11",
+        "device_type": "endpoint",
+        "operating_system": "Microsoft Windows 11 Enterprise"
+      },
+      "plugin": {
+        "id": 190005,
+        "name": "Microsoft Windows 11 missing cumulative update",
+        "cve": [
+          "CVE-2024-30088"
+        ],
+        "vpr": {
+          "score": 6.9,
+          "on_cisa_kev": false
+        },
+        "epss_score": 0.12,
+        "exploit_available": true,
+        "cvss3_base_score": 7.0
+      },
+      "severity": "high",
+      "state": "OPEN",
+      "first_found": "2026-09-14T03:12:00Z",
+      "last_found": "2026-11-02T22:40:00Z",
+      "port": {
+        "port": 0,
+        "protocol": "TCP"
+      },
+      "source": "NESSUS_AGENT"
+    },
+    {
+      "finding_id": "F3011",
+      "asset": {
+        "uuid": "a-0111",
+        "hostname": "endpoint #11",
+        "fqdn": "endpoint-11.vrhs.example",
+        "ipv4": "10.20.11.12",
+        "device_type": "endpoint",
+        "operating_system": "Microsoft Windows 11 Enterprise"
+      },
+      "plugin": {
+        "id": 190006,
+        "name": "Microsoft Windows 11 missing cumulative update",
+        "cve": [
+          "CVE-2024-30088"
+        ],
+        "vpr": {
+          "score": 6.9,
+          "on_cisa_kev": false
+        },
+        "epss_score": 0.12,
+        "exploit_available": true,
+        "cvss3_base_score": 7.0
+      },
+      "severity": "high",
+      "state": "OPEN",
+      "first_found": "2026-09-14T03:12:00Z",
+      "last_found": "2026-11-02T22:40:00Z",
+      "port": {
+        "port": 0,
+        "protocol": "TCP"
+      },
+      "source": "NESSUS_AGENT"
+    },
+    {
+      "finding_id": "F3012",
+      "asset": {
+        "uuid": "a-0112",
+        "hostname": "endpoint #12",
+        "fqdn": "endpoint-12.vrhs.example",
+        "ipv4": "10.20.11.13",
+        "device_type": "endpoint",
+        "operating_system": "Microsoft Windows 11 Enterprise"
+      },
+      "plugin": {
+        "id": 190000,
+        "name": "Microsoft Windows 11 missing cumulative update",
+        "cve": [
+          "CVE-2024-30088"
+        ],
+        "vpr": {
+          "score": 6.9,
+          "on_cisa_kev": false
+        },
+        "epss_score": 0.12,
+        "exploit_available": true,
+        "cvss3_base_score": 7.0
+      },
+      "severity": "high",
+      "state": "OPEN",
+      "first_found": "2026-09-14T03:12:00Z",
+      "last_found": "2026-11-02T22:40:00Z",
+      "port": {
+        "port": 0,
+        "protocol": "TCP"
+      },
+      "source": "NESSUS_AGENT"
+    },
+    {
+      "finding_id": "F3013",
+      "asset": {
+        "uuid": "a-0113",
+        "hostname": "endpoint #13",
+        "fqdn": "endpoint-13.vrhs.example",
+        "ipv4": "10.20.11.14",
+        "device_type": "endpoint",
+        "operating_system": "Microsoft Windows 11 Enterprise"
+      },
+      "plugin": {
+        "id": 190001,
+        "name": "Microsoft Windows 11 missing cumulative update",
+        "cve": [
+          "CVE-2024-30088"
+        ],
+        "vpr": {
+          "score": 6.9,
+          "on_cisa_kev": false
+        },
+        "epss_score": 0.12,
+        "exploit_available": true,
+        "cvss3_base_score": 7.0
+      },
+      "severity": "high",
+      "state": "OPEN",
+      "first_found": "2026-09-14T03:12:00Z",
+      "last_found": "2026-11-02T22:40:00Z",
+      "port": {
+        "port": 0,
+        "protocol": "TCP"
+      },
+      "source": "NESSUS_AGENT"
+    },
+    {
+      "finding_id": "F3014",
+      "asset": {
+        "uuid": "a-0114",
+        "hostname": "endpoint #14",
+        "fqdn": "endpoint-14.vrhs.example",
+        "ipv4": "10.20.11.15",
+        "device_type": "endpoint",
+        "operating_system": "Microsoft Windows 11 Enterprise"
+      },
+      "plugin": {
+        "id": 190002,
+        "name": "Microsoft Windows 11 missing cumulative update",
+        "cve": [
+          "CVE-2024-30088"
+        ],
+        "vpr": {
+          "score": 6.9,
+          "on_cisa_kev": true
+        },
+        "epss_score": 0.12,
+        "exploit_available": true,
+        "cvss3_base_score": 7.0
+      },
+      "severity": "high",
+      "state": "OPEN",
+      "first_found": "2026-09-14T03:12:00Z",
+      "last_found": "2026-11-02T22:40:00Z",
+      "port": {
+        "port": 0,
+        "protocol": "TCP"
+      },
+      "source": "NESSUS_AGENT"
+    },
+    {
+      "finding_id": "F3015",
+      "asset": {
+        "uuid": "a-0115",
+        "hostname": "endpoint #15",
+        "fqdn": "endpoint-15.vrhs.example",
+        "ipv4": "10.20.11.16",
+        "device_type": "endpoint",
+        "operating_system": "Microsoft Windows 11 Enterprise"
+      },
+      "plugin": {
+        "id": 190003,
+        "name": "Microsoft Windows 11 missing cumulative update",
+        "cve": [
+          "CVE-2024-30088"
+        ],
+        "vpr": {
+          "score": 6.9,
+          "on_cisa_kev": false
+        },
+        "epss_score": 0.12,
+        "exploit_available": true,
+        "cvss3_base_score": 7.0
+      },
+      "severity": "high",
+      "state": "OPEN",
+      "first_found": "2026-09-14T03:12:00Z",
+      "last_found": "2026-11-02T22:40:00Z",
+      "port": {
+        "port": 0,
+        "protocol": "TCP"
+      },
+      "source": "NESSUS_AGENT"
+    },
+    {
+      "finding_id": "F3016",
+      "asset": {
+        "uuid": "a-0116",
+        "hostname": "endpoint #16",
+        "fqdn": "endpoint-16.vrhs.example",
+        "ipv4": "10.20.11.17",
+        "device_type": "endpoint",
+        "operating_system": "Microsoft Windows 11 Enterprise"
+      },
+      "plugin": {
+        "id": 190004,
+        "name": "Microsoft Windows 11 missing cumulative update",
+        "cve": [
+          "CVE-2024-30088"
+        ],
+        "vpr": {
+          "score": 6.9,
+          "on_cisa_kev": false
+        },
+        "epss_score": 0.12,
+        "exploit_available": true,
+        "cvss3_base_score": 7.0
+      },
+      "severity": "high",
+      "state": "OPEN",
+      "first_found": "2026-09-14T03:12:00Z",
+      "last_found": "2026-11-02T22:40:00Z",
+      "port": {
+        "port": 0,
+        "protocol": "TCP"
+      },
+      "source": "NESSUS_AGENT"
+    },
+    {
+      "finding_id": "F3017",
+      "asset": {
+        "uuid": "a-0117",
+        "hostname": "endpoint #17",
+        "fqdn": "endpoint-17.vrhs.example",
+        "ipv4": "10.20.11.18",
+        "device_type": "endpoint",
+        "operating_system": "Microsoft Windows 11 Enterprise"
+      },
+      "plugin": {
+        "id": 190005,
+        "name": "Microsoft Windows 11 missing cumulative update",
+        "cve": [
+          "CVE-2024-30088"
+        ],
+        "vpr": {
+          "score": 6.9,
+          "on_cisa_kev": false
+        },
+        "epss_score": 0.12,
+        "exploit_available": true,
+        "cvss3_base_score": 7.0
+      },
+      "severity": "high",
+      "state": "OPEN",
+      "first_found": "2026-09-14T03:12:00Z",
+      "last_found": "2026-11-02T22:40:00Z",
+      "port": {
+        "port": 0,
+        "protocol": "TCP"
+      },
+      "source": "NESSUS_AGENT"
+    },
+    {
+      "finding_id": "F3018",
+      "asset": {
+        "uuid": "a-0118",
+        "hostname": "endpoint #18",
+        "fqdn": "endpoint-18.vrhs.example",
+        "ipv4": "10.20.11.19",
+        "device_type": "endpoint",
+        "operating_system": "Microsoft Windows 11 Enterprise"
+      },
+      "plugin": {
+        "id": 190006,
+        "name": "Microsoft Windows 11 missing cumulative update",
+        "cve": [
+          "CVE-2024-30088"
+        ],
+        "vpr": {
+          "score": 6.9,
+          "on_cisa_kev": false
+        },
+        "epss_score": 0.12,
+        "exploit_available": true,
+        "cvss3_base_score": 7.0
+      },
+      "severity": "high",
+      "state": "OPEN",
+      "first_found": "2026-09-14T03:12:00Z",
+      "last_found": "2026-11-02T22:40:00Z",
+      "port": {
+        "port": 0,
+        "protocol": "TCP"
+      },
+      "source": "NESSUS_AGENT"
+    },
+    {
+      "finding_id": "F3019",
+      "asset": {
+        "uuid": "a-0119",
+        "hostname": "endpoint #19",
+        "fqdn": "endpoint-19.vrhs.example",
+        "ipv4": "10.20.11.20",
+        "device_type": "endpoint",
+        "operating_system": "Microsoft Windows 11 Enterprise"
+      },
+      "plugin": {
+        "id": 190000,
+        "name": "Microsoft Windows 11 missing cumulative update",
+        "cve": [
+          "CVE-2024-30088"
+        ],
+        "vpr": {
+          "score": 6.9,
+          "on_cisa_kev": true
+        },
+        "epss_score": 0.12,
+        "exploit_available": true,
+        "cvss3_base_score": 7.0
+      },
+      "severity": "high",
+      "state": "OPEN",
+      "first_found": "2026-09-14T03:12:00Z",
+      "last_found": "2026-11-02T22:40:00Z",
+      "port": {
+        "port": 0,
+        "protocol": "TCP"
+      },
+      "source": "NESSUS_AGENT"
+    },
+    {
+      "finding_id": "F3020",
+      "asset": {
+        "uuid": "a-0120",
+        "hostname": "endpoint #20",
+        "fqdn": "endpoint-20.vrhs.example",
+        "ipv4": "10.20.12.21",
+        "device_type": "endpoint",
+        "operating_system": "Microsoft Windows 11 Enterprise"
+      },
+      "plugin": {
+        "id": 190001,
+        "name": "Microsoft Windows 11 missing cumulative update",
+        "cve": [
+          "CVE-2024-30088"
+        ],
+        "vpr": {
+          "score": 6.9,
+          "on_cisa_kev": false
+        },
+        "epss_score": 0.12,
+        "exploit_available": true,
+        "cvss3_base_score": 7.0
+      },
+      "severity": "high",
+      "state": "OPEN",
+      "first_found": "2026-09-14T03:12:00Z",
+      "last_found": "2026-11-02T22:40:00Z",
+      "port": {
+        "port": 0,
+        "protocol": "TCP"
+      },
+      "source": "NESSUS_AGENT"
+    },
+    {
+      "finding_id": "F3021",
+      "asset": {
+        "uuid": "a-0201",
+        "hostname": "ot device #1",
+        "fqdn": "ot device-1.vrhs.example",
+        "ipv4": "10.60.0.11",
+        "device_type": "ot",
+        "operating_system": "Embedded"
+      },
+      "plugin": {
+        "id": 500101,
+        "name": "Embedded device uses default credentials",
+        "cve": [],
+        "vpr": {
+          "score": 7.3,
+          "on_cisa_kev": false
+        },
+        "epss_score": null,
+        "exploit_available": true,
+        "cvss3_base_score": 9.8
+      },
+      "severity": "critical",
+      "state": "OPEN",
+      "first_found": "2026-09-14T03:12:00Z",
+      "last_found": "2026-11-02T22:40:00Z",
+      "port": {
+        "port": 502,
+        "protocol": "TCP"
+      },
+      "source": "OTSensor"
+    },
+    {
+      "finding_id": "F3022",
+      "asset": {
+        "uuid": "a-0202",
+        "hostname": "ot device #2",
+        "fqdn": "ot device-2.vrhs.example",
+        "ipv4": "10.60.0.12",
+        "device_type": "ot",
+        "operating_system": "Embedded"
+      },
+      "plugin": {
+        "id": 500102,
+        "name": "Embedded device uses default credentials",
+        "cve": [],
+        "vpr": {
+          "score": 7.3,
+          "on_cisa_kev": false
+        },
+        "epss_score": null,
+        "exploit_available": true,
+        "cvss3_base_score": 9.8
+      },
+      "severity": "critical",
+      "state": "OPEN",
+      "first_found": "2026-09-14T03:12:00Z",
+      "last_found": "2026-11-02T22:40:00Z",
+      "port": {
+        "port": 502,
+        "protocol": "TCP"
+      },
+      "source": "OTSensor"
+    },
+    {
+      "finding_id": "F3023",
+      "asset": {
+        "uuid": "a-0203",
+        "hostname": "ot device #3",
+        "fqdn": "ot device-3.vrhs.example",
+        "ipv4": "10.60.0.13",
+        "device_type": "ot",
+        "operating_system": "Embedded"
+      },
+      "plugin": {
+        "id": 500100,
+        "name": "Embedded device uses default credentials",
+        "cve": [],
+        "vpr": {
+          "score": 7.3,
+          "on_cisa_kev": false
+        },
+        "epss_score": null,
+        "exploit_available": true,
+        "cvss3_base_score": 9.8
+      },
+      "severity": "critical",
+      "state": "OPEN",
+      "first_found": "2026-09-14T03:12:00Z",
+      "last_found": "2026-11-02T22:40:00Z",
+      "port": {
+        "port": 502,
+        "protocol": "TCP"
+      },
+      "source": "OTSensor"
+    },
+    {
+      "finding_id": "F3024",
+      "asset": {
+        "uuid": "a-0204",
+        "hostname": "ot device #4",
+        "fqdn": "ot device-4.vrhs.example",
+        "ipv4": "10.60.0.14",
+        "device_type": "ot",
+        "operating_system": "Embedded"
+      },
+      "plugin": {
+        "id": 500101,
+        "name": "Embedded device uses default credentials",
+        "cve": [],
+        "vpr": {
+          "score": 7.3,
+          "on_cisa_kev": false
+        },
+        "epss_score": null,
+        "exploit_available": true,
+        "cvss3_base_score": 9.8
+      },
+      "severity": "critical",
+      "state": "OPEN",
+      "first_found": "2026-09-14T03:12:00Z",
+      "last_found": "2026-11-02T22:40:00Z",
+      "port": {
+        "port": 502,
+        "protocol": "TCP"
+      },
+      "source": "OTSensor"
+    },
+    {
+      "finding_id": "F3025",
+      "asset": {
+        "uuid": "a-0205",
+        "hostname": "ot device #5",
+        "fqdn": "ot device-5.vrhs.example",
+        "ipv4": "10.60.0.15",
+        "device_type": "ot",
+        "operating_system": "Embedded"
+      },
+      "plugin": {
+        "id": 500102,
+        "name": "Embedded device uses default credentials",
+        "cve": [],
+        "vpr": {
+          "score": 7.3,
+          "on_cisa_kev": false
+        },
+        "epss_score": null,
+        "exploit_available": true,
+        "cvss3_base_score": 9.8
+      },
+      "severity": "critical",
+      "state": "OPEN",
+      "first_found": "2026-09-14T03:12:00Z",
+      "last_found": "2026-11-02T22:40:00Z",
+      "port": {
+        "port": 502,
+        "protocol": "TCP"
+      },
+      "source": "OTSensor"
+    },
+    {
+      "finding_id": "F3026",
+      "asset": {
+        "uuid": "a-0206",
+        "hostname": "ot device #6",
+        "fqdn": "ot device-6.vrhs.example",
+        "ipv4": "10.60.0.16",
+        "device_type": "ot",
+        "operating_system": "Embedded"
+      },
+      "plugin": {
+        "id": 500100,
+        "name": "Embedded device uses default credentials",
+        "cve": [],
+        "vpr": {
+          "score": 7.3,
+          "on_cisa_kev": false
+        },
+        "epss_score": null,
+        "exploit_available": true,
+        "cvss3_base_score": 9.8
+      },
+      "severity": "critical",
+      "state": "OPEN",
+      "first_found": "2026-09-14T03:12:00Z",
+      "last_found": "2026-11-02T22:40:00Z",
+      "port": {
+        "port": 502,
+        "protocol": "TCP"
+      },
+      "source": "OTSensor"
+    },
+    {
+      "finding_id": "F3027",
+      "asset": {
+        "uuid": "a-0207",
+        "hostname": "ot device #7",
+        "fqdn": "ot device-7.vrhs.example",
+        "ipv4": "10.60.0.17",
+        "device_type": "ot",
+        "operating_system": "Embedded"
+      },
+      "plugin": {
+        "id": 500101,
+        "name": "Embedded device uses default credentials",
+        "cve": [],
+        "vpr": {
+          "score": 7.3,
+          "on_cisa_kev": false
+        },
+        "epss_score": null,
+        "exploit_available": true,
+        "cvss3_base_score": 9.8
+      },
+      "severity": "critical",
+      "state": "OPEN",
+      "first_found": "2026-09-14T03:12:00Z",
+      "last_found": "2026-11-02T22:40:00Z",
+      "port": {
+        "port": 502,
+        "protocol": "TCP"
+      },
+      "source": "OTSensor"
+    },
+    {
+      "finding_id": "F3028",
+      "asset": {
+        "uuid": "a-0208",
+        "hostname": "ot device #8",
+        "fqdn": "ot device-8.vrhs.example",
+        "ipv4": "10.60.0.18",
+        "device_type": "ot",
+        "operating_system": "Embedded"
+      },
+      "plugin": {
+        "id": 500102,
+        "name": "Embedded device uses default credentials",
+        "cve": [],
+        "vpr": {
+          "score": 7.3,
+          "on_cisa_kev": false
+        },
+        "epss_score": null,
+        "exploit_available": true,
+        "cvss3_base_score": 9.8
+      },
+      "severity": "critical",
+      "state": "OPEN",
+      "first_found": "2026-09-14T03:12:00Z",
+      "last_found": "2026-11-02T22:40:00Z",
+      "port": {
+        "port": 502,
+        "protocol": "TCP"
+      },
+      "source": "OTSensor"
+    }
+  ],
+  "attack_paths": []
+}

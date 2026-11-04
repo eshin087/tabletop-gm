@@ -1,0 +1,165 @@
+# Clocks for the healthcare pack. This file is the only place these deadlines live.
+# Every clock was drafted by Claude Code from the primary source on 2026-11-03 and is
+# therefore researched tier until a human opens source_url and promotes it.
+# Shared clocks (GDPR, SEC Form 8-K, state breach laws, CIRCIA) come from clocks_common.yaml.
+#
+# To promote a clock after checking the source: set tier: verified, verifier: <your name>,
+# verified_date: <date you checked>.
+
+pack: healthcare
+display_name: Healthcare and health systems
+includes_common: true
+
+clocks:
+  - id: hipaa_individual_notice
+    name: HIPAA Breach Notification Rule, notice to individuals
+    regulator: HHS Office for Civil Rights
+    jurisdiction: US-federal
+    trigger: discovery of a breach of unsecured protected health information
+    deadline_hours: 1440
+    deadline_business_days: null
+    deadline_text: "without unreasonable delay and in no case later than 60 calendar days after discovery of a breach"
+    applies_when:
+      data_types: [PHI]
+      countries: [US]
+    source_url: https://www.ecfr.gov/current/title-45/subtitle-A/subchapter-C/part-164/subpart-D/section-164.404
+    citation: "45 CFR 164.404(b)"
+    tier: researched
+    verified_date: 2026-11-03
+    verifier: "pack_research skill (Claude), not yet human-checked"
+    notes: "Text confirmed via law.cornell.edu mirror on 2026-11-03. The 60 days is an outer limit; the standard is without unreasonable delay. Discovery is the first day the breach is known or should reasonably have been known (164.404(a)(2)). A breach is presumed unless the four-factor risk assessment in 164.402 shows a low probability of compromise."
+
+  - id: hipaa_hhs_notice_500_or_more
+    name: HIPAA Breach Notification Rule, notice to the Secretary (500 or more individuals)
+    regulator: HHS Office for Civil Rights
+    jurisdiction: US-federal
+    trigger: discovery of a breach of unsecured PHI involving 500 or more individuals
+    deadline_hours: 1440
+    deadline_business_days: null
+    deadline_text: "contemporaneously with the notice required by 164.404(a), without unreasonable delay and in no case later than 60 calendar days after discovery"
+    applies_when:
+      data_types: [PHI]
+      countries: [US]
+      min_affected: 500
+    source_url: https://www.ecfr.gov/current/title-45/subtitle-A/subchapter-C/part-164/subpart-D/section-164.408
+    citation: "45 CFR 164.408(b)"
+    tier: researched
+    verified_date: 2026-11-03
+    verifier: "pack_research skill (Claude), not yet human-checked"
+    notes: "Text confirmed via law.cornell.edu mirror on 2026-11-03. Filed through the HHS breach portal. Breaches under 500 are logged and reported within 60 days after the end of the calendar year (164.408(c))."
+
+  - id: hipaa_media_notice
+    name: HIPAA Breach Notification Rule, notice to prominent media outlets
+    regulator: HHS Office for Civil Rights
+    jurisdiction: US-federal
+    trigger: discovery of a breach of unsecured PHI involving more than 500 residents of a state or jurisdiction
+    deadline_hours: 1440
+    deadline_business_days: null
+    deadline_text: "without unreasonable delay and in no case later than 60 calendar days after discovery of a breach"
+    applies_when:
+      data_types: [PHI]
+      countries: [US]
+      min_affected: 501
+    source_url: https://www.ecfr.gov/current/title-45/subtitle-A/subchapter-C/part-164/subpart-D/section-164.406
+    citation: "45 CFR 164.406"
+    tier: researched
+    verified_date: 2026-11-03
+    verifier: "pack_research skill (Claude), not yet human-checked"
+    notes: "Text confirmed via law.cornell.edu mirror on 2026-11-03. The threshold is more than 500 residents of a single state or jurisdiction, not 500 individuals in total; the engine approximates with the total affected estimate and the facilitator should confirm the per-state count."
+
+  - id: hipaa_business_associate_notice
+    name: HIPAA Breach Notification Rule, business associate notice to the covered entity
+    regulator: HHS Office for Civil Rights
+    jurisdiction: US-federal
+    trigger: a business associate discovers a breach of unsecured PHI it holds for the covered entity
+    deadline_hours: 1440
+    deadline_business_days: null
+    deadline_text: "without unreasonable delay and in no case later than 60 calendar days after discovery of a breach"
+    applies_when:
+      data_types: [PHI]
+      countries: [US]
+      flags: [business_associate]
+    source_url: https://www.ecfr.gov/current/title-45/subtitle-A/subchapter-C/part-164/subpart-D/section-164.410
+    citation: "45 CFR 164.410(b)"
+    tier: researched
+    verified_date: 2026-11-03
+    verifier: "pack_research skill (Claude), not yet human-checked"
+    notes: "Text confirmed via law.cornell.edu mirror on 2026-11-03. Business associate agreements commonly set a much shorter contractual window; the org plan or contract wins when stricter."
+
+  - id: ny_hospital_cyber_incident_72h
+    name: New York hospital cybersecurity incident report to the Department of Health
+    regulator: New York State Department of Health
+    jurisdiction: US-NY
+    trigger: determination that a cybersecurity incident has occurred at a general hospital licensed under Article 28
+    deadline_hours: 72
+    deadline_business_days: null
+    deadline_text: "notify the department as promptly as possible, but no later than 72 hours after determining that a cybersecurity incident has occurred"
+    applies_when:
+      countries: [US]
+      states: [NY]
+      flags: [article_28_hospital]
+    source_url: https://regs.health.ny.gov/content/section-40546-hospital-cybersecurity-requirements
+    citation: "10 NYCRR 405.46(f)"
+    tier: researched
+    verified_date: 2026-11-03
+    verifier: "pack_research skill (Claude), not yet human-checked"
+    notes: "Quote taken from the NYSDOH hospital cybersecurity page FAQ on 2026-11-03, which cites the regulation effective 2024-10-02; the regulation text link above was not opened directly. Verify the paragraph letter before use."
+
+  - id: ca_health_facility_unauthorized_access_15bd
+    name: California licensed health facility report of unlawful or unauthorized access
+    regulator: California Department of Public Health
+    jurisdiction: US-CA
+    trigger: detection of unlawful or unauthorized access to, or use or disclosure of, a patient's medical information
+    deadline_hours: null
+    deadline_business_days: 15
+    deadline_text: "report to the department and the affected patient no later than 15 business days after the unlawful or unauthorized access, use, or disclosure has been detected"
+    applies_when:
+      countries: [US]
+      states: [CA]
+      data_types: [PHI]
+      flags: [ca_licensed_health_facility]
+    source_url: https://leginfo.legislature.ca.gov/faces/codes_displaySection.xhtml?lawCode=HSC&sectionNum=1280.15
+    citation: "California Health and Safety Code 1280.15(b)"
+    tier: researched
+    verified_date: 2026-11-03
+    verifier: "pack_research skill (Claude), not yet human-checked"
+    notes: "source not fetched; verify before use. leginfo.legislature.ca.gov returned 403 to the automated fetch on 2026-11-03, so the wording is from the drafter's reading of the statute and must be checked by a human."
+
+  - id: ftc_hbnr_individual_notice
+    name: FTC Health Breach Notification Rule, notice to individuals (non-HIPAA health records and apps)
+    regulator: Federal Trade Commission
+    jurisdiction: US-federal
+    trigger: discovery of a breach of security of unsecured identifiable health information held by a vendor of personal health records or a related entity
+    deadline_hours: 1440
+    deadline_business_days: null
+    deadline_text: "without unreasonable delay and in no case later than 60 calendar days after the discovery of a breach of security"
+    applies_when:
+      countries: [US]
+      flags: [non_hipaa_health_records_vendor]
+    source_url: https://www.ecfr.gov/current/title-16/chapter-I/subchapter-C/part-318
+    citation: "16 CFR 318.4(a)"
+    tier: researched
+    verified_date: 2026-11-03
+    verifier: "pack_research skill (Claude), not yet human-checked"
+    notes: "Text confirmed via law.cornell.edu mirror on 2026-11-03. The 2024 amendment changed the FTC-notice timing for 500 or more individuals; that separate clock is left out until a human confirms the current text."
+
+exercise_requirements:
+  - id: cms_emergency_preparedness_exercises
+    name: CMS Emergency Preparedness Rule, hospital training and testing program
+    requirement: "participate in an annual full-scale exercise (community-based, or facility-based functional if not accessible) and conduct an additional annual exercise, which may be a tabletop exercise or workshop led by a facilitator with a group discussion"
+    frequency: annual
+    source_url: https://www.ecfr.gov/current/title-42/chapter-IV/subchapter-G/part-482/subpart-B/section-482.15
+    citation: "42 CFR 482.15(d)(2)"
+    tier: researched
+    verified_date: 2026-11-03
+    verifier: "pack_research skill (Claude), not yet human-checked"
+
+  - id: hipaa_security_rule_contingency_testing
+    name: HIPAA Security Rule, testing and revision of contingency plans
+    requirement: "implement procedures for periodic testing and revision of contingency plans (addressable), and implement policies and procedures to address security incidents"
+    frequency: periodic
+    source_url: https://www.ecfr.gov/current/title-45/subtitle-A/subchapter-C/part-164/subpart-C/section-164.308
+    citation: "45 CFR 164.308(a)(7)(ii)(D) and 164.308(a)(6)(i)"
+    tier: researched
+    verified_date: 2026-11-03
+    verifier: "pack_research skill (Claude), not yet human-checked"

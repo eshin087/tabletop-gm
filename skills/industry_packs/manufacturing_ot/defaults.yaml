@@ -1,0 +1,104 @@
+# Pack defaults used when the organization uploads no plan. score_engine reads
+# expected_actions and notify_parties; scenario_design reads roles and phases.
+pack: manufacturing_ot
+
+roles:
+  - id: incident_commander
+    name: Head of Security Operations or IT Director (incident commander)
+    decides: [incident_declaration, containment_actions, forensic_scope]
+  - id: ciso
+    name: CISO
+    decides: [severity_rating, regulator_notification, it_ot_boundary_isolation]
+  - id: plant_manager
+    name: Plant Manager
+    decides: [production_halt, safe_shutdown, manual_operations, restart_authorization]
+  - id: ot_engineering
+    name: OT Engineering Lead (controls engineering)
+    decides: [control_network_isolation, controller_integrity_checks, vendor_remote_access_cutoff, logic_restore]
+  - id: ehs
+    name: Environmental Health and Safety Lead
+    decides: [safety_of_shutdown, safety_system_verification, process_safety_reporting]
+  - id: operations_vp
+    name: VP Manufacturing Operations
+    decides: [multi_site_priorities, production_reallocation]
+  - id: supply_chain
+    name: VP Supply Chain
+    decides: [customer_delivery_commitments, supplier_notifications, inventory_release]
+  - id: quality
+    name: Quality Director
+    decides: [batch_quarantine, product_release, recall_evaluation]
+  - id: legal
+    name: General Counsel
+    decides: [notification_obligations, law_enforcement_contact, contract_force_majeure]
+  - id: comms
+    name: Communications Lead
+    decides: [public_statement, customer_statement, workforce_messaging]
+  - id: cfo
+    name: CFO
+    decides: [business_interruption_claim, disclosure_materiality]
+  - id: ceo
+    name: Chief Executive
+    decides: [ransom_decision, business_shutdown, board_briefing]
+
+notify_parties:
+  - id: executive_leadership
+    name: Executive leadership and board
+  - id: legal_counsel
+    name: Legal counsel (in-house and outside)
+  - id: cyber_insurer
+    name: Cyber and business interruption insurance carriers
+  - id: law_enforcement
+    name: Law enforcement (FBI or national equivalent)
+  - id: cisa
+    name: CISA (CIRCIA via clocks_common.yaml; TSA Security Directive reporting when flagged)
+  - id: tsa
+    name: TSA Cybersecurity Coordinator channel (pipeline and rail owners only)
+  - id: csirt_competent_authority
+    name: National CSIRT or competent authority (NIS2, when in scope)
+  - id: key_customers
+    name: Key customers and OEMs with delivery commitments
+  - id: suppliers_integrators
+    name: Suppliers, system integrators, and OT vendors with remote access
+  - id: control_system_vendor
+    name: Control system vendor support line
+  - id: workforce
+    name: Workforce, shift supervisors, and union representatives
+  - id: safety_regulators
+    name: Process safety and environmental regulators (if a safety event occurs)
+
+expected_actions:
+  detection:
+    - id: d1
+      text: Confirm the alert with a second source (historian anomalies, HMI behavior, or plant floor reports) before declaring
+    - id: d2
+      text: Open an incident ticket and start a timeline with site, line, cell, and asset identifiers
+    - id: d3
+      text: Capture volatile evidence (engineering workstation images, firewall and jump host logs) before equipment is power-cycled
+  escalation:
+    - id: e1
+      text: Notify the incident commander and the plant manager together and declare severity
+    - id: e2
+      text: Engage legal counsel and the cyber insurer before outside OT forensics is engaged
+    - id: e3
+      text: Bring the OT engineering lead and EHS onto the bridge before any isolation step that affects a running process
+  containment:
+    - id: c1
+      text: Isolate the affected control network zone at the IT/OT boundary and cut vendor remote access without tripping a running process
+    - id: c2
+      text: Move affected lines to manual or islanded operation under EHS supervision, or execute a safe shutdown
+    - id: c3
+      text: Reset credentials for domain, HMI, vendor, and remote access accounts believed compromised
+  recovery:
+    - id: r1
+      text: Confirm clean backups or golden images for controller logic, HMI projects, the historian, and MES exist and are restorable
+    - id: r2
+      text: Agree the restart order with the plant manager, quality, and supply chain (safety systems, then utilities, then lines by customer commitment)
+    - id: r3
+      text: Validate controller logic and setpoints against the engineering baseline before restart
+  notification:
+    - id: n1
+      text: Decide which clocks apply (CIRCIA, TSA directive if flagged, NIS2 if in scope, SEC if public, states for PII, DFARS if a defense contractor) and assign an owner to each
+    - id: n2
+      text: Notify the cyber insurer before engaging outside help
+    - id: n3
+      text: Tell key customers and suppliers about delivery impact with one consistent fact set, before they hear it from the market

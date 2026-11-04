@@ -1,0 +1,101 @@
+# Pack defaults used when the organization uploads no plan. score_engine reads
+# expected_actions and notify_parties; scenario_design reads roles and phases.
+pack: retail_ecommerce
+
+roles:
+  - id: incident_commander
+    name: Director of Security Operations (incident commander)
+    decides: [incident_declaration, containment_actions, forensic_scope]
+  - id: ciso
+    name: CISO
+    decides: [severity_rating, regulator_notification, pci_scope_determination]
+  - id: store_ops
+    name: VP Store Operations
+    decides: [lane_closures, store_fallback_procedures, store_closures, field_communications]
+  - id: payments
+    name: Head of Payments
+    decides: [acquirer_notification, card_brand_notice, payment_channel_shutdown, terminal_fleet_rebuild]
+  - id: ecommerce
+    name: VP Digital and E-commerce
+    decides: [checkout_disable, third_party_script_removal, site_takedown]
+  - id: loyalty_crm
+    name: Head of Loyalty and CRM
+    decides: [account_lockout, points_freeze, customer_password_reset]
+  - id: legal
+    name: General Counsel
+    decides: [notification_obligations, law_enforcement_contact, pfi_engagement]
+  - id: privacy
+    name: Privacy Officer
+    decides: [consumer_notice_content, state_attorney_general_notices]
+  - id: comms
+    name: Communications and PR Lead
+    decides: [public_statement, customer_messaging, store_signage]
+  - id: cfo
+    name: CFO
+    decides: [chargeback_reserve, insurance_claim, revenue_impact_disclosure]
+  - id: ceo
+    name: Chief Executive
+    decides: [ransom_decision, business_shutdown, board_briefing]
+
+notify_parties:
+  - id: executive_leadership
+    name: Executive leadership and board
+  - id: legal_counsel
+    name: Legal counsel (in-house and outside)
+  - id: cyber_insurer
+    name: Cyber insurance carrier
+  - id: law_enforcement
+    name: Law enforcement (FBI, Secret Service, or local)
+  - id: acquiring_bank
+    name: Acquiring bank (merchant acquirer)
+  - id: card_brands
+    name: Card brands, via the acquirer (Visa, Mastercard, and others on the merchant agreement)
+  - id: payment_processor
+    name: Payment processor, gateway, and POS vendor
+  - id: pci_forensic_investigator
+    name: PCI Forensic Investigator (PFI), if the brands require one
+  - id: state_attorneys_general
+    name: State attorneys general and consumer protection offices (via clocks_common.yaml)
+  - id: ftc
+    name: Federal Trade Commission (Safeguards Rule, when a non-bank financial institution)
+  - id: store_managers
+    name: Store managers and franchisees
+  - id: affected_customers
+    name: Affected customers and loyalty members
+
+expected_actions:
+  detection:
+    - id: d1
+      text: Confirm the alert with a second source (acquirer common-point-of-purchase notice, terminal logs, or checkout page integrity check) before declaring
+    - id: d2
+      text: Open an incident ticket and start a timeline with store, lane, terminal, and order identifiers
+    - id: d3
+      text: Preserve POS, payment gateway, and e-commerce logs before any reimaging or script changes
+  escalation:
+    - id: e1
+      text: Notify the incident commander and declare severity under the PCI incident response plan
+    - id: e2
+      text: Engage legal counsel and the payments lead before any acquirer or card brand contact
+    - id: e3
+      text: Alert the cyber insurer and confirm whether a panel forensics firm or a PFI is required
+  containment:
+    - id: c1
+      text: Isolate affected lanes, terminals, or checkout flows without wiping devices that hold evidence
+    - id: c2
+      text: Disable the compromised payment path (checkout script, gateway credential, remote support tool) and move stores to fallback procedures
+    - id: c3
+      text: Reset credentials for store, vendor, and integration accounts believed compromised
+  recovery:
+    - id: r1
+      text: Confirm backups of order, inventory, and loyalty systems are intact and restorable
+    - id: r2
+      text: Agree the restore order with store operations and e-commerce (checkout and lanes before loyalty and marketing)
+    - id: r3
+      text: Validate rebuilt terminals and checkout pages against a known-good build before reopening lanes
+  notification:
+    - id: n1
+      text: Decide which clocks apply (card brands via the acquirer, states, FTC if a non-bank financial institution, SEC if public) and assign an owner to each
+    - id: n2
+      text: Notify the acquirer, who notifies the card brands, inside the Visa three-calendar-day window measured from reasonable suspicion
+    - id: n3
+      text: Draft consumer and state attorney general notices with counsel and align them with the public statement and store signage

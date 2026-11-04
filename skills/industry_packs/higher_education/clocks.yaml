@@ -1,0 +1,107 @@
+# Clocks for the higher_education pack. This file is the only place deadlines live.
+# clock_engine reads it; the validator fails the build on any clock without
+# source_url, verified_date, tier, and deadline_text.
+#
+# tier:
+#   verified    a human opened source_url on verified_date and confirmed the deadline. Used silently.
+#   researched  drafted by the pack_research skill from an authoritative source, not yet human-checked.
+#               Every output that uses it carries a "verify before exercise" banner.
+#
+# applies_when: all listed keys must hold (AND). List-valued keys hold when any value matches (OR).
+#   industries        pack slugs; omit for any industry (used by clocks_common.yaml)
+#   data_types        PHI, PII, PCI, PFI, FERPA, CUI, OT, trade_secrets
+#   countries         ISO 3166-1 alpha-2
+#   states            US state codes
+#   public_company    true or false
+#   flags             intake.regulated flags that must all be present, for example title_iv_institution
+#   min_affected      the clock applies only when intake.affected_estimate is at least this number
+#
+# FERPA has no breach notification deadline. 34 CFR Part 99 requires a record of each disclosure
+# (99.32(a)(1)) and nothing more; the Department's own PTAC checklist says FERPA does not require
+# notifying students of an unauthorized release. Do not add a FERPA notification clock.
+# HIPAA clocks for campus health are loaded from the healthcare pack. GDPR (EU students), SEC Form 8-K,
+# state breach laws, and CIRCIA come from clocks_common.yaml.
+# eCFR blocks automated fetches; CFR text below was confirmed on the law.cornell.edu mirror.
+
+pack: higher_education
+display_name: Colleges and universities
+includes_common: true
+
+clocks:
+  - id: ftc_safeguards_314_4_j_ftc_notice
+    name: FTC Safeguards Rule, notification event notice to the Commission
+    regulator: Federal Trade Commission
+    jurisdiction: US-federal
+    trigger: discovery of a notification event (unauthorized acquisition of unencrypted customer information) involving at least 500 consumers
+    deadline_hours: 720
+    deadline_business_days: null
+    deadline_text: "you must notify the Federal Trade Commission as soon as possible, and no later than 30 days after discovery of the event"
+    applies_when:
+      industries: [higher_education]
+      flags: [title_iv_institution]
+      min_affected: 500
+    source_url: https://www.ecfr.gov/current/title-16/chapter-I/subchapter-C/part-314/section-314.4
+    citation: "16 CFR 314.4(j); notification event defined at 16 CFR 314.2(m)"
+    tier: researched
+    verified_date: 2026-11-03
+    verifier: "pack_research skill (Claude), not yet human-checked"
+    notes: "text confirmed via law.cornell.edu mirror on 2026-11-03. 30 days expressed as 720 hours. Title IV institutions are financial institutions under the Safeguards Rule through their Program Participation Agreement, which is why the flag is title_iv_institution. Customer information means student financial aid records and similar nonpublic personal information, not every education record. The notice goes through the FTC's online form and must state the institution's name and contact, the types of information involved, the date or date range if determinable, the number of consumers affected, a general description of the event, and whether law enforcement has requested a delay in public disclosure."
+
+  - id: fsa_breach_report_to_department
+    name: Federal Student Aid, breach report to the Department of Education
+    regulator: U.S. Department of Education, Federal Student Aid
+    jurisdiction: US-federal
+    trigger: a breach of security of student records and information, actual or suspected, at a Title IV institution
+    deadline_hours: null
+    deadline_business_days: null
+    deadline_text: "schools must immediately notify the Department when there is breach of security of student records and information"
+    applies_when:
+      industries: [higher_education]
+      flags: [title_iv_institution]
+    source_url: https://fsapartners.ed.gov/knowledge-center/fsa-handbook/2025-2026/vol2/ch7-record-keeping-privacy-electronic-processes
+    citation: "2025-2026 Federal Student Aid Handbook, Volume 2, Chapter 7, Reporting Security Breaches to Students and the Department; SAIG Enrollment Agreement as described in Dear Colleague Letter GEN-15-18"
+    tier: researched
+    verified_date: 2026-11-03
+    verifier: "pack_research skill (Claude), not yet human-checked"
+    notes: "No hour count: the Handbook says immediately, so deadline_hours is null and the host should treat it as due at the first decision point. Report through the Cybersecurity Breach Intake form on fsapartners.ed.gov with the date of breach (suspected or known), impact, method, the information security program point of contact, remediation status, and next steps. GEN-15-18 (2015) describes the SAIG Enrollment Agreement requirement to immediately notify FSA of an actual or suspected breach; the Handbook also says the Department strongly encourages notifying students at the same time. A 2019 electronic announcement on breach reporting was rescinded and should not be relied on."
+
+  - id: ferpa_99_32_disclosure_record
+    name: FERPA, record of disclosure (no notification deadline)
+    regulator: U.S. Department of Education, Student Privacy Policy Office
+    jurisdiction: US-federal
+    trigger: any disclosure of personally identifiable information from education records, including an unauthorized release
+    deadline_hours: null
+    deadline_business_days: null
+    deadline_text: "maintain a record of each request for access to and each disclosure of personally identifiable information from the education records of each student; the record is kept with the education records of the student as long as the records are maintained"
+    applies_when:
+      industries: [higher_education]
+      data_types: [FERPA]
+    source_url: https://www.ecfr.gov/current/title-34/subtitle-A/part-99/subpart-D/section-99.32
+    citation: "34 CFR 99.32(a)(1) and (a)(2)"
+    tier: researched
+    verified_date: 2026-11-03
+    verifier: "pack_research skill (Claude), not yet human-checked"
+    notes: "text confirmed via law.cornell.edu mirror on 2026-11-03. FERPA has no notification deadline. This entry is a recordkeeping obligation with no clock, kept so the host console shows FERPA addressed rather than missing. The Department's PTAC Data Breach Response Checklist states that FERPA does not require an educational agency or institution to notify students that information from their education records was stolen or otherwise subject to an unauthorized release, although it does require the agency or institution to maintain a record of each disclosure. State breach laws, the Safeguards Rule, and HIPAA supply the actual notice clocks."
+
+exercise_requirements:
+  - id: ftc_safeguards_314_4_h_incident_response_plan
+    name: FTC Safeguards Rule, written incident response plan
+    requirement: "Establish a written incident response plan designed to promptly respond to, and recover from, any security event materially affecting the confidentiality, integrity, or availability of customer information in your control"
+    frequency: none stated (the plan must exist and 314.4(h)(7) requires its evaluation and revision following a security event; institutions maintaining information on fewer than 5,000 consumers are exempt from this element)
+    source_url: https://www.ecfr.gov/current/title-16/chapter-I/subchapter-C/part-314/section-314.4
+    citation: "16 CFR 314.4(h)"
+    tier: researched
+    verified_date: 2026-11-03
+    verifier: "pack_research skill (Claude), not yet human-checked"
+    notes: "text confirmed via law.cornell.edu mirror on 2026-11-03"
+
+  - id: ftc_safeguards_314_4_d_2_testing
+    name: FTC Safeguards Rule, monitoring and testing of safeguards
+    requirement: "continuous monitoring or periodic penetration testing and vulnerability assessments; absent effective continuous monitoring, annual penetration testing and vulnerability assessments at least every six months and whenever there are material changes to your operations or business arrangements"
+    frequency: annual penetration testing and vulnerability assessments at least every six months, unless effective continuous monitoring is in place
+    source_url: https://www.ecfr.gov/current/title-16/chapter-I/subchapter-C/part-314/section-314.4
+    citation: "16 CFR 314.4(d)(2)"
+    tier: researched
+    verified_date: 2026-11-03
+    verifier: "pack_research skill (Claude), not yet human-checked"
+    notes: "text confirmed via law.cornell.edu mirror on 2026-11-03. This is a technical testing requirement, not a tabletop mandate; the tabletop satisfies the incident response plan evaluation in 314.4(h), not this paragraph."

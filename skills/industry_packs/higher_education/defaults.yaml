@@ -1,0 +1,114 @@
+# Pack defaults used when the organization uploads no plan. score_engine reads
+# expected_actions and notify_parties; scenario_design reads roles and phases.
+pack: higher_education
+
+roles:
+  - id: incident_commander
+    name: Incident Commander (Director of Information Security Operations)
+    decides: [incident_declaration, containment_actions]
+  - id: ciso
+    name: Chief Information Security Officer
+    decides: [severity_rating, regulator_notification]
+  - id: cio
+    name: Chief Information Officer or Vice President for Information Technology
+    decides: [system_shutdown, restore_order, network_isolation]
+  - id: general_counsel
+    name: General Counsel
+    decides: [notification_obligations, law_enforcement_contact, privilege_strategy]
+  - id: provost
+    name: Provost
+    decides: [academic_continuity, class_cancellation]
+  - id: registrar
+    name: Registrar
+    decides: [education_record_disclosure_log, transcript_hold]
+  - id: dean_of_students
+    name: Dean of Students
+    decides: [student_communication, student_support_services]
+  - id: financial_aid_director
+    name: Director of Financial Aid
+    decides: [fsa_breach_report, aid_disbursement_hold]
+  - id: vp_research
+    name: Vice President for Research
+    decides: [sponsor_notification, research_system_isolation]
+  - id: campus_health_privacy_officer
+    name: Campus Health Privacy Officer
+    decides: [phi_breach_determination, hipaa_notification]
+  - id: campus_police_chief
+    name: Chief of Campus Police or Public Safety
+    decides: [criminal_referral, physical_security_response]
+  - id: comms
+    name: Vice President for Communications
+    decides: [public_statement, community_messaging]
+  - id: cfo
+    name: Chief Financial Officer or Bursar
+    decides: [payment_system_suspension, ransom_funding]
+  - id: president
+    name: President or Chancellor
+    decides: [ransom_decision, campus_closure, board_briefing]
+
+notify_parties:
+  - id: executive_leadership
+    name: President's cabinet and the board of trustees
+  - id: legal_counsel
+    name: General counsel and outside breach counsel
+  - id: cyber_insurer
+    name: Cyber insurance carrier
+  - id: law_enforcement
+    name: Law enforcement (FBI field office or IC3, and campus police)
+  - id: fsa
+    name: U.S. Department of Education, Federal Student Aid (Cybersecurity Breach Intake form)
+  - id: ftc
+    name: Federal Trade Commission (notification events of 500 or more consumers)
+  - id: state_attorney_general
+    name: State attorney general under the state breach law
+  - id: hhs_ocr
+    name: HHS Office for Civil Rights (campus health PHI, via the healthcare pack)
+  - id: eu_supervisory_authority
+    name: EU or UK supervisory authority (EU or UK students, via GDPR in the common file)
+  - id: research_sponsors
+    name: Federal research sponsors and contracting officers (CUI and sponsored data)
+  - id: ren_isac
+    name: Research and Education Networks ISAC
+  - id: students_and_families
+    name: Affected students, applicants, alumni, parents, and employees
+  - id: vendors
+    name: Student information system, learning management, and financial aid vendors
+
+expected_actions:
+  detection:
+    - id: d1
+      text: Confirm the alert with a second source before acting on it
+    - id: d2
+      text: Open an incident ticket and start a timeline with timestamps
+    - id: d3
+      text: Identify which data populations are involved (education records, financial aid data, campus health PHI, sponsored research data, EU residents)
+  escalation:
+    - id: e1
+      text: Notify the incident commander and the CISO, and assign a provisional severity
+    - id: e2
+      text: Engage general counsel and outside breach counsel to set privilege
+    - id: e3
+      text: Bring in the registrar, financial aid director, and campus health privacy officer when their data is in scope
+  containment:
+    - id: c1
+      text: Isolate affected systems without destroying evidence, keeping the learning management system and emergency notification running
+    - id: c2
+      text: Reset credentials believed compromised, including shared departmental and research accounts
+    - id: c3
+      text: Decide whether to block federated and research network access and tell partner institutions first
+  recovery:
+    - id: r1
+      text: Confirm backups of the student information system and financial aid data are intact and restorable
+    - id: r2
+      text: Agree the restore order with the provost, registrar, and financial aid, with disbursement deadlines in view
+    - id: r3
+      text: Stand up manual workarounds for registration, grading, and aid disbursement during the restore window
+  notification:
+    - id: n1
+      text: Decide which clocks apply and name an owner for each notification
+    - id: n2
+      text: File the FSA breach report immediately through the Cybersecurity Breach Intake form once a breach is suspected
+    - id: n3
+      text: Record every unauthorized disclosure in the education record disclosure log, because FERPA requires the record and not a notice
+    - id: n4
+      text: Notify the cyber insurer before engaging outside forensic help

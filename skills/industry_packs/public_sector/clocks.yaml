@@ -1,0 +1,191 @@
+# Clocks for the public_sector pack. This file is the only place deadlines live.
+# clock_engine reads it; the validator fails the build on any clock without
+# source_url, verified_date, tier, and deadline_text.
+#
+# tier:
+#   verified    a human opened source_url on verified_date and confirmed the deadline. Used silently.
+#   researched  drafted by the pack_research skill from an authoritative source, not yet human-checked.
+#               Every output that uses it carries a "verify before exercise" banner.
+#
+# applies_when: all listed keys must hold (AND). List-valued keys hold when any value matches (OR).
+#   industries        pack slugs; omit for any industry (used by clocks_common.yaml)
+#   data_types        PHI, PII, PCI, PFI, FERPA, CUI, OT, trade_secrets
+#   countries         ISO 3166-1 alpha-2
+#   states            US state codes
+#   public_company    true or false
+#   flags             intake.regulated flags that must all be present, for example state_agency
+#   min_affected      the clock applies only when intake.affected_estimate is at least this number
+#
+# State breach notification laws, GDPR, SEC Form 8-K, and CIRCIA live in clocks_common.yaml and are
+# not duplicated here. CIRCIA reporting is not yet in force: CISA published a proposed rule on
+# April 4, 2024 and no final rule had taken effect when this file was drafted. FBI/IC3 and MS-ISAC
+# reporting are conventions, not deadlines, and are recorded as expected actions in defaults.yaml.
+#
+# Flags used by this pack: state_agency, local_government, k12_district, tribal_government.
+# Flags are ANDed, so a clock that covers several entity types is filtered by state only and its
+# notes say which entity types the statute reaches.
+
+pack: public_sector
+display_name: State, local, tribal, and K-12 public sector
+includes_common: true
+
+clocks:
+  - id: tx_gov_2054_603_dir_notice
+    name: Texas DIR, security incident notice from a state agency or local government
+    regulator: Texas Department of Information Resources (or the Secretary of State for election data)
+    jurisdiction: US-TX
+    trigger: discovery of a security incident (a breach or suspected breach of system security, or the introduction of ransomware) affecting computerized data that includes sensitive personal information, confidential information, or information whose disclosure is regulated by law
+    deadline_hours: 48
+    deadline_business_days: null
+    deadline_text: "not later than 48 hours after the discovery of the security incident, notify: (A) the department, including the chief information security officer; or (B) if the security incident involves election data, the secretary of state"
+    applies_when:
+      industries: [public_sector]
+      states: [TX]
+    source_url: https://capitol.texas.gov/tlodocs/88R/billtext/html/SB00271F.htm
+    citation: "Texas Government Code 2054.603(b)(2), as enacted by SB 271 (88th Legislature, 2023), effective September 1, 2023"
+    tier: researched
+    verified_date: 2026-11-03
+    verifier: "pack_research skill (Claude), not yet human-checked"
+    notes: "Applies to state agencies and local governments; the DIR page on SB 271 confirms the 48-hour requirement and says a call to the DIR incident response hotline satisfies it. Not filtered by flag because the statute reaches both state agencies and local governments; it does not reach tribal governments. The codified text at statutes.capitol.texas.gov is served by a script-driven app that automated fetches could not read, so the enrolled bill text on the Legislature's site is the source; confirm no later amendment before use."
+
+  - id: tx_gov_2054_603_dir_cause_analysis
+    name: Texas DIR, post-incident details and cause analysis
+    regulator: Texas Department of Information Resources
+    jurisdiction: US-TX
+    trigger: eradication, closure, and recovery from a security incident
+    deadline_hours: null
+    deadline_business_days: 10
+    deadline_text: "Not later than the 10th business day after the date of the eradication, closure, and recovery from a security incident, a state agency or local government shall notify the department, including the chief information security officer, of the details of the security incident and include in the notification an analysis of the cause of the security incident"
+    applies_when:
+      industries: [public_sector]
+      states: [TX]
+    source_url: https://capitol.texas.gov/tlodocs/88R/billtext/html/SB00271F.htm
+    citation: "Texas Government Code 2054.603(c), as enacted by SB 271 (88th Legislature, 2023)"
+    tier: researched
+    verified_date: 2026-11-03
+    verifier: "pack_research skill (Claude), not yet human-checked"
+    notes: "The DIR page paraphrases this as 10 days; the enrolled statute says 10th business day. Same entity scope and source caveat as tx_gov_2054_603_dir_notice."
+
+  - id: va_2_2_5514_fusion_center_report
+    name: Virginia Fusion Intelligence Center, public body incident report
+    regulator: Virginia Fusion Intelligence Center (shared with the Chief Information Officer at VITA)
+    jurisdiction: US-VA
+    trigger: discovery of an incident that threatens the security of the Commonwealth's data, exposes data protected by federal or state law, or compromises the public body's systems with the potential to cause major disruption
+    deadline_hours: 24
+    deadline_business_days: null
+    deadline_text: "Such reports shall be made to the Virginia Fusion Intelligence Center within 24 hours from when the incident was discovered."
+    applies_when:
+      industries: [public_sector]
+      states: [VA]
+    source_url: https://law.lis.virginia.gov/vacode/title2.2/chapter55.3/section2.2-5514/
+    citation: "Va. Code 2.2-5514(C)"
+    tier: researched
+    verified_date: 2026-11-03
+    verifier: "pack_research skill (Claude), not yet human-checked"
+    notes: "The statute's definition of public body covers state agencies, legislative bodies, courts, political subdivisions including counties, cities, and towns, school boards, institutions of higher education, and entities supported wholly or principally by public funds. Not filtered by flag for that reason; tribal governments are not public bodies of the Commonwealth. The Fusion Center shares reports with the CIO at VITA promptly on receipt."
+
+  - id: nc_143b_1379_dit_report
+    name: North Carolina DIT, significant cybersecurity incident report by a state agency
+    regulator: North Carolina Department of Information Technology
+    jurisdiction: US-NC
+    trigger: confirmation of a significant cybersecurity incident at a principal department or Council of State agency
+    deadline_hours: 24
+    deadline_business_days: null
+    deadline_text: "provide details of all the agency's significant cybersecurity incidents within 24 hours of confirmation"
+    applies_when:
+      industries: [public_sector]
+      states: [NC]
+      flags: [state_agency]
+    source_url: https://www.ncleg.gov/EnactedLegislation/Statutes/HTML/BySection/Chapter_143B/GS_143B-1379.html
+    citation: "N.C. Gen. Stat. 143B-1379(a)(1)"
+    tier: researched
+    verified_date: 2026-11-03
+    verifier: "pack_research skill (Claude), not yet human-checked"
+    notes: "The 24-hour clock applies to state agencies. Subsection (c) requires local government entities (defined in G.S. 143-800(c)(1) to include cities, counties, local school administrative units, and community colleges) to report cybersecurity incidents to the Department but states no deadline, so no separate clock is recorded for them. G.S. 143-800 also bars state agencies and local government entities from paying a ransom and requires consultation with DIT."
+
+  - id: fl_282_3185_ransomware_report
+    name: Florida local government, ransomware incident report
+    regulator: Florida Cybersecurity Operations Center, Cybercrime Office of the Department of Law Enforcement, and the sheriff with jurisdiction
+    jurisdiction: US-FL
+    trigger: discovery of a ransomware incident at a local government
+    deadline_hours: 12
+    deadline_business_days: null
+    deadline_text: "as soon as possible but no later than 12 hours after discovery of the ransomware incident"
+    applies_when:
+      industries: [public_sector]
+      states: [FL]
+      flags: [local_government]
+    source_url: http://www.leg.state.fl.us/statutes/index.cfm?App_mode=Display_Statute&URL=0200-0299/0282/Sections/0282.3185.html
+    citation: "Fla. Stat. 282.3185(5)(b)1."
+    tier: researched
+    verified_date: 2026-11-03
+    verifier: "pack_research skill (Claude), not yet human-checked"
+    notes: "Section 282.3185 governs local governments; the definition of local government in that section was not quoted in the fetch, so confirm whether a school district or special district is covered before use."
+
+  - id: fl_282_3185_severity_incident_report
+    name: Florida local government, severity level 3 to 5 cybersecurity incident report
+    regulator: Florida Cybersecurity Operations Center, Cybercrime Office of the Department of Law Enforcement, and the sheriff with jurisdiction
+    jurisdiction: US-FL
+    trigger: discovery of a cybersecurity incident rated at severity level 3, 4, or 5 under the statute's scale
+    deadline_hours: 48
+    deadline_business_days: null
+    deadline_text: "no later than 48 hours after discovery of the cybersecurity incident"
+    applies_when:
+      industries: [public_sector]
+      states: [FL]
+      flags: [local_government]
+    source_url: http://www.leg.state.fl.us/statutes/index.cfm?App_mode=Display_Statute&URL=0200-0299/0282/Sections/0282.3185.html
+    citation: "Fla. Stat. 282.3185(5)(b)1."
+    tier: researched
+    verified_date: 2026-11-03
+    verifier: "pack_research skill (Claude), not yet human-checked"
+    notes: "Severity levels 3 to 5 are the statute's scale for incidents with significant or greater impact. Same entity scope caveat as fl_282_3185_ransomware_report."
+
+  - id: fl_282_3185_after_action_report
+    name: Florida local government, after-action report to the Florida Digital Service
+    regulator: Florida Digital Service
+    jurisdiction: US-FL
+    trigger: remediation of a cybersecurity incident or ransomware incident
+    deadline_hours: 168
+    deadline_business_days: null
+    deadline_text: "within 1 week after the remediation of a cybersecurity incident or ransomware incident"
+    applies_when:
+      industries: [public_sector]
+      states: [FL]
+      flags: [local_government]
+    source_url: http://www.leg.state.fl.us/statutes/index.cfm?App_mode=Display_Statute&URL=0200-0299/0282/Sections/0282.3185.html
+    citation: "Fla. Stat. 282.3185(6)"
+    tier: researched
+    verified_date: 2026-11-03
+    verifier: "pack_research skill (Claude), not yet human-checked"
+    notes: "One week expressed as 168 hours. The report summarizes the incident, its resolution, and lessons learned."
+
+  - id: ny_8nycrr_121_10_cpo_report
+    name: New York State Education Department, educational agency report to the Chief Privacy Officer
+    regulator: NYSED Chief Privacy Officer
+    jurisdiction: US-NY
+    trigger: discovery or third-party contractor notification of a breach or unauthorized release of student data or teacher or principal APPR data
+    deadline_hours: 240
+    deadline_business_days: null
+    deadline_text: "report every discovery or report of a breach or unauthorized release of student, teacher or principal data to the Chief Privacy Officer no more than 10 calendar days after such discovery"
+    applies_when:
+      industries: [public_sector]
+      states: [NY]
+      flags: [k12_district]
+    source_url: https://www.nysed.gov/sites/default/files/programs/data-privacy-security/annual-report-on-data-privacy-and-security-2022_0.pdf
+    citation: "8 NYCRR 121.10(d), implementing Education Law 2-d, as quoted in the NYSED Chief Privacy Officer's 2022 annual report"
+    tier: researched
+    verified_date: 2026-11-03
+    verifier: "pack_research skill (Claude), not yet human-checked"
+    notes: "10 calendar days expressed as 240 hours. The deadline language was confirmed from the Chief Privacy Officer's own annual report on nysed.gov, which quotes 121.10(d); the regulation text was not fetched from an official compilation, so verify against the current 8 NYCRR Part 121 before use. Education Law 2-d(6) itself uses only the phrase 'in the most expedient way possible and without unreasonable delay' with no day count. Reports are filed on the NYSED Data Incident Reporting Form. Part 121 also sets a 7-day contractor notice and a 60-day parent, student, teacher, and principal notice that were not confirmed on an official page and are not recorded here."
+
+exercise_requirements:
+  - id: nist_sp_800_84_exercise_guidance
+    name: NIST SP 800-84, test, training, and exercise program guidance
+    requirement: "assist organizations in designing, developing, conducting, and evaluating test, training, and exercise (TT&E) events so that an organization can maximize its ability to prepare for, respond to, manage, and recover from disasters"
+    frequency: none mandated; guidance only (no state statute requiring a tabletop exercise was confirmed for this pack; Florida 282.3185(3) requires annual cybersecurity training, which is training rather than an exercise)
+    source_url: https://csrc.nist.gov/pubs/sp/800/84/final
+    citation: "NIST SP 800-84, Guide to Test, Training, and Exercise Programs for IT Plans and Capabilities (September 2006)"
+    tier: researched
+    verified_date: 2026-11-03
+    verifier: "pack_research skill (Claude), not yet human-checked"

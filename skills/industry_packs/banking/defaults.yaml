@@ -1,0 +1,110 @@
+# Banking pack defaults. Used when the organization uploads no plan, and as the
+# role vocabulary for scenario_design. The uploaded org plan always wins when present.
+pack: banking
+
+roles:
+  - id: incident_commander
+    name: Incident Commander
+    decides: [incident_declaration, containment_actions]
+  - id: ciso
+    name: Chief Information Security Officer
+    decides: [severity_rating, forensic_engagement, notification_incident_determination]
+  - id: cio
+    name: Chief Information Officer
+    decides: [system_shutdown, restore_order, core_failover]
+  - id: cro
+    name: Chief Risk Officer
+    decides: [risk_acceptance, board_risk_reporting]
+  - id: bsa_officer
+    name: BSA/AML Officer
+    decides: [sar_filing]
+  - id: compliance_officer
+    name: Chief Compliance Officer
+    decides: [regulator_notification]
+  - id: general_counsel
+    name: General Counsel
+    decides: [customer_notification, law_enforcement_contact, ransom_decision_input]
+  - id: head_of_operations
+    name: Head of Operations and Treasury
+    decides: [wire_suspension, ach_suspension, cash_positioning]
+  - id: head_of_digital
+    name: Head of Retail and Digital Banking
+    decides: [online_banking_shutdown, branch_procedures]
+  - id: communications
+    name: Director of Communications
+    decides: [public_statement, customer_messaging]
+  - id: ceo
+    name: Chief Executive Officer
+    decides: [ransom_decision, business_shutdown, board_notification]
+  - id: vendor_manager
+    name: Third-Party Risk Manager
+    decides: [vendor_escalation]
+
+notify_parties:
+  - id: executive_leadership
+    name: Executive leadership and the board
+  - id: primary_federal_regulator
+    name: Primary federal regulator (OCC, Federal Reserve, FDIC, or NCUA)
+  - id: state_regulator
+    name: State banking regulator
+  - id: legal_counsel
+    name: General Counsel and outside breach counsel
+  - id: cyber_insurer
+    name: Cyber insurance carrier
+  - id: fbi
+    name: FBI field office or IC3
+  - id: fincen
+    name: FinCEN (SAR)
+  - id: fs_isac
+    name: FS-ISAC
+  - id: core_processor
+    name: Core processor and critical service providers
+  - id: card_networks
+    name: Card networks and card processor
+  - id: correspondent_bank
+    name: Correspondent bank and Federal Reserve Bank operations contact
+  - id: customers
+    name: Affected customers
+
+expected_actions:
+  detection:
+    - id: d1
+      text: Confirm the alert with a second source before declaring
+    - id: d2
+      text: Open an incident record and start a timestamped timeline
+    - id: d3
+      text: Identify affected lines of business, payment rails, and customer-facing channels
+  escalation:
+    - id: e1
+      text: Notify the CISO and Incident Commander and assign a severity level
+    - id: e2
+      text: Record the time of the notification incident determination and who made it
+    - id: e3
+      text: Engage General Counsel, Compliance, and the BSA Officer
+    - id: e4
+      text: Notify the cyber insurer before retaining outside forensics or negotiators
+  containment:
+    - id: c1
+      text: Isolate the affected systems and the entry asset while preserving forensic evidence
+    - id: c2
+      text: Reset credentials believed compromised, starting with privileged and service accounts
+    - id: c3
+      text: Decide whether to suspend wires, ACH origination, or online banking, and who approves
+    - id: c4
+      text: Escalate to the core processor and confirm their incident status
+  recovery:
+    - id: r1
+      text: Verify backups are intact, offline, and restorable before any rebuild
+    - id: r2
+      text: Agree the restore order with business owners (core, payments, digital channels)
+    - id: r3
+      text: Reconcile transactions processed during the outage
+  notification:
+    - id: n1
+      text: Decide which clocks apply and name the owner for each notification
+    - id: n2
+      text: Notify the primary federal regulator within the 36-hour or 72-hour window
+    - id: n3
+      text: Prepare customer notice with legal review and a call-center script
+    - id: n4
+      text: File the SAR within 30 days and share indicators with FS-ISAC

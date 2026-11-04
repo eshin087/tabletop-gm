@@ -1,0 +1,46 @@
+# Column mapping for findings and asset exports. seed_engine normalizes every
+# header (lowercase, punctuation to spaces, collapsed whitespace) and matches
+# exact aliases first, then containment, so Tenable CSV and JSON exports both
+# load. Add aliases here to support another scanner's export.
+
+findings:
+  finding_id: ["finding id", "finding_id", "vulnerability id", "vuln id", "id"]
+  asset_id: ["asset uuid", "asset.uuid", "asset_uuid", "asset id", "uuid"]
+  hostname: ["asset.hostname", "hostname", "host name", "host", "dns name", "asset name", "netbios"]
+  fqdn: ["asset.fqdn", "fqdn"]
+  ipv4: ["asset.ipv4", "ip address", "ipv4", "ip"]
+  plugin_id: ["plugin.id", "plugin id", "plugin"]
+  plugin_name: ["plugin.name", "plugin name", "name", "title"]
+  cve: ["plugin.cve", "cve", "cves"]
+  vpr: ["plugin.vpr.score", "vpr score", "vpr"]
+  epss: ["plugin.epss_score", "epss score", "epss"]
+  kev: ["plugin.vpr.on_cisa_kev", "on cisa kev", "cisa kev", "kev", "known exploited", "cisa known exploited"]
+  exploit_available: ["plugin.exploit_available", "exploit available", "exploit?", "exploitable", "exploit"]
+  severity: ["severity", "risk factor", "risk"]
+  cvss3: ["plugin.cvss3_base_score", "cvss v3.0 base score", "cvss v3 base score", "cvss3 base score", "cvss3", "cvssv3"]
+  cvss2: ["plugin.cvss_base_score", "cvss v2.0 base score", "cvss v2 base score", "cvss base score", "cvss"]
+  state: ["state", "vulnerability state", "status"]
+  first_found: ["first_found", "first found", "first seen", "first discovered"]
+  last_found: ["last_found", "last found", "last seen"]
+  port: ["port.port", "port"]
+  protocol: ["port.protocol", "protocol"]
+  os: ["asset.operating_system", "operating system", "os"]
+  device_type: ["asset.device_type", "device type"]
+  source: ["source"]
+
+assets:
+  id: ["id", "asset uuid", "uuid", "asset id"]
+  hostnames: ["hostnames", "hostname", "host name", "host", "name"]
+  fqdns: ["fqdns", "fqdn", "dns name"]
+  ipv4s: ["ipv4s", "ipv4", "ip addresses", "ip address", "ip"]
+  acr: ["ratings.acr.score", "acr_score", "acr score", "acr", "asset criticality rating"]
+  exposure_score: ["exposure_score", "exposure score", "aes"]
+  tags: ["tags"]
+  system_types: ["system_types", "system types", "system type"]
+  operating_systems: ["operating_systems", "operating systems", "operating system", "os"]
+  installed_software: ["installed_software", "installed software", "software"]
+  sources: ["sources"]
+  device_type: ["device_type", "device type"]
+  internet_exposed: ["internet_exposed", "internet exposed", "is_public", "is public", "network_exposure", "network exposure", "exposure"]
+  aws_instance_id: ["aws_ec2_instance_id", "aws instance id", "aws_instance_id"]
+  azure_resource_id: ["azure_resource_id", "azure resource id", "azure_vm_id"]

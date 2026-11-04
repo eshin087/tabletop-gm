@@ -1,0 +1,158 @@
+# Clocks for the manufacturing_ot pack. This file is the only place deadlines live.
+# clock_engine reads it; the validator fails the build on any clock without
+# source_url, verified_date, tier, and deadline_text.
+#
+# tier:
+#   verified    a human opened source_url on verified_date and confirmed the deadline. Used silently.
+#   researched  drafted by the pack_research skill from an authoritative source, not yet human-checked.
+#               Every output that uses it carries a "verify before exercise" banner.
+#
+# applies_when: all listed keys must hold (AND). List-valued keys hold when any value matches (OR).
+#   industries        pack slugs; omit for any industry (used by clocks_common.yaml)
+#   data_types        PHI, PII, PCI, PFI, FERPA, CUI, OT, trade_secrets
+#   countries         ISO 3166-1 alpha-2
+#   states            US state codes
+#   public_company    true or false
+#   flags             intake.regulated flags that must all be present, for example nydfs_licensed
+#   min_affected      the clock applies only when intake.affected_estimate is at least this number
+#
+# CIRCIA, SEC Form 8-K, US state breach laws, and GDPR are not repeated here; they come from
+# clocks_common.yaml (includes_common: true). The DFARS 252.204-7012 72-hour clock for defense
+# contractors lives in the federal_contractors pack. CFATS is excluded: CISA states its statutory
+# authority lapsed in July 2023 and it has not been reauthorized (checked 2026-11-03).
+# ISA/IEC 62443 sets no notification clock; see exercise_requirements.
+# "One month" deadlines are coded as 720 hours (30 days).
+
+pack: manufacturing_ot
+display_name: Manufacturing and operational technology
+includes_common: true
+
+clocks:
+  - id: mfg_tsa_pipeline_cisa_incident_report
+    name: TSA Security Directive Pipeline-2021-01G, cybersecurity incident report to CISA
+    regulator: CISA Central (reporting required by TSA Security Directive; CISA shares reports with TSA)
+    jurisdiction: US-federal
+    trigger: the Owner/Operator identifies a cybersecurity incident involving IT or OT systems of a TSA-designated critical pipeline system or facility
+    deadline_hours: 72
+    deadline_business_days: null
+    deadline_text: "Owner/Operators must report the information required by Section II.C., as soon as practicable, but no later than 72 hours after the Owner/Operator identifies a cybersecurity incident; if all the required information is not available at the time of reporting, submit an initial report within the specified timeframe and provide supplemental information within 24 hours of it becoming available"
+    applies_when:
+      industries: [manufacturing_ot]
+      countries: [US]
+      flags: [tsa_pipeline_owner]
+    source_url: https://www.tsa.gov/sites/default/files/signed_security-directive-pipeline-2021-01g-and-transmittal-memo_508c.pdf
+    citation: "TSA Security Directive Pipeline-2021-01G, Enhancing Pipeline Cybersecurity, Section II.C.3 and II.C.4, effective January 16, 2026, expires January 15, 2027"
+    tier: researched
+    verified_date: 2026-11-03
+    verifier: "pack_research skill (Claude), not yet human-checked"
+    notes: "Earlier letters in the series (through Pipeline-2021-01E) required reporting within 24 hours; Pipeline-2021-01F (effective October 25, 2025) changed it to 72 hours with supplemental information within 24 hours, and 01G carried that forward. The series renews about once a year with a new letter, so confirm the current letter and dates at https://www.tsa.gov/sd-and-ea before each exercise. Reports go to CISA's Incident Reporting System at www.cisa.gov/report or (844) 729-2472. Applies only to Owner/Operators that TSA has notified that their hazardous liquid or natural gas pipeline or LNG facility is critical."
+
+  - id: mfg_tsa_rail_cisa_incident_report
+    name: TSA Security Directives 1580-21-01E and 1582-21-01E, cybersecurity incident report to CISA
+    regulator: CISA Central (reporting required by TSA Security Directive; CISA shares reports with TSA)
+    jurisdiction: US-federal
+    trigger: the Owner/Operator identifies a cybersecurity incident involving IT or OT systems of a covered freight railroad, passenger railroad, or rail transit system
+    deadline_hours: 72
+    deadline_business_days: null
+    deadline_text: "Owner/Operators must report the incidents required by Section II.C., as soon as practicable, but no later than 72 hours after the Owner/Operator identifies a cybersecurity incident"
+    applies_when:
+      industries: [manufacturing_ot]
+      countries: [US]
+      flags: [tsa_rail_owner]
+    source_url: https://www.tsa.gov/sites/default/files/signed_security-directive-1580-21-01e-and-transmittal-memo_508c.pdf
+    citation: "TSA Security Directive 1580-21-01E, Enhancing Rail Cybersecurity, Section II.C.2, effective January 16, 2026, expires January 15, 2027 (freight railroad carriers under 49 CFR 1580.101 and other TSA-designated freight railroads)"
+    tier: researched
+    verified_date: 2026-11-03
+    verifier: "pack_research skill (Claude), not yet human-checked"
+    notes: "SD 1582-21-01E (passenger railroad carriers and rail transit systems under 49 CFR 1582.101) carries the identical 72-hour requirement at Section II.C.2 with the same dates: https://www.tsa.gov/sites/default/files/signed_security-directive-1582-21-01e-and-transmittal-memo_508c.pdf (read 2026-11-03). One clock covers both so a rail owner's timeline shows it once; cite the directive that matches the organization. Supplemental information is due within 24 hours of becoming available. Relevant to this pack for manufacturers that own or operate a covered railroad (for example a plant railroad with its own carrier designation); the series renews about once a year, so confirm the current letter at https://www.tsa.gov/sd-and-ea."
+
+  - id: mfg_nis2_art23_early_warning
+    name: EU NIS2, early warning to the CSIRT or competent authority
+    regulator: National CSIRT or competent authority of the EU member state (per national transposition)
+    jurisdiction: EU
+    trigger: becoming aware of a significant incident (Article 23(3), severe operational disruption or financial loss, or considerable damage to others)
+    deadline_hours: 24
+    deadline_business_days: null
+    deadline_text: "without undue delay and in any event within 24 hours of becoming aware of the significant incident, an early warning, which, where applicable, shall indicate whether the significant incident is suspected of being caused by unlawful or malicious acts or could have a cross-border impact"
+    applies_when:
+      industries: [manufacturing_ot]
+      countries: [AT, BE, BG, HR, CY, CZ, DK, EE, FI, FR, DE, GR, HU, IE, IT, LV, LT, LU, MT, NL, PL, PT, RO, SK, SI, ES, SE]
+      flags: [nis2_essential_or_important_entity]
+    source_url: https://eur-lex.europa.eu/legal-content/EN/TXT/HTML/?uri=CELEX:32022L2555
+    citation: "Directive (EU) 2022/2555 (NIS2), Article 23(4)(a); Annex II, point 5 (Manufacturing)"
+    tier: researched
+    verified_date: 2026-11-03
+    verifier: "pack_research skill (Claude), not yet human-checked"
+    notes: "Annex II point 5 lists manufacture of medical devices and in vitro diagnostic medical devices; computer, electronic and optical products (NACE C26); electrical equipment (C27); machinery and equipment n.e.c. (C28); motor vehicles, trailers and semi-trailers (C29); and other transport equipment (C30). Chemicals and food are separate Annex II sectors, and energy and transport operators sit in Annex I. Size thresholds and national transposition decide whether a given plant is in scope; record the designation as an intake flag. National law sets the portal and form; recipients of the service must also be told without undue delay where the incident is likely to affect them (Article 23(1))."
+
+  - id: mfg_nis2_art23_incident_notification
+    name: EU NIS2, incident notification to the CSIRT or competent authority
+    regulator: National CSIRT or competent authority of the EU member state (per national transposition)
+    jurisdiction: EU
+    trigger: becoming aware of a significant incident (Article 23(3))
+    deadline_hours: 72
+    deadline_business_days: null
+    deadline_text: "without undue delay and in any event within 72 hours of becoming aware of the significant incident, an incident notification, which, where applicable, shall update the information referred to in point (a) and indicate an initial assessment of the significant incident, including its severity and impact, as well as, where available, the indicators of compromise"
+    applies_when:
+      industries: [manufacturing_ot]
+      countries: [AT, BE, BG, HR, CY, CZ, DK, EE, FI, FR, DE, GR, HU, IE, IT, LV, LT, LU, MT, NL, PL, PT, RO, SK, SI, ES, SE]
+      flags: [nis2_essential_or_important_entity]
+    source_url: https://eur-lex.europa.eu/legal-content/EN/TXT/HTML/?uri=CELEX:32022L2555
+    citation: "Directive (EU) 2022/2555 (NIS2), Article 23(4)(b)"
+    tier: researched
+    verified_date: 2026-11-03
+    verifier: "pack_research skill (Claude), not yet human-checked"
+    notes: "Runs from the same awareness moment as the early warning. The CSIRT or competent authority may also request intermediate status reports at any time (Article 23(4)(c))."
+
+  - id: mfg_nis2_art23_final_report
+    name: EU NIS2, final report to the CSIRT or competent authority
+    regulator: National CSIRT or competent authority of the EU member state (per national transposition)
+    jurisdiction: EU
+    trigger: submission of the 72-hour incident notification (not the awareness moment)
+    deadline_hours: 720
+    deadline_business_days: null
+    deadline_text: "a final report not later than one month after the submission of the incident notification under point (b), including a detailed description of the incident, including its severity and impact; the type of threat or root cause that is likely to have triggered the incident; applied and ongoing mitigation measures; where applicable, the cross-border impact of the incident"
+    applies_when:
+      industries: [manufacturing_ot]
+      countries: [AT, BE, BG, HR, CY, CZ, DK, EE, FI, FR, DE, GR, HU, IE, IT, LV, LT, LU, MT, NL, PL, PT, RO, SK, SI, ES, SE]
+      flags: [nis2_essential_or_important_entity]
+    source_url: https://eur-lex.europa.eu/legal-content/EN/TXT/HTML/?uri=CELEX:32022L2555
+    citation: "Directive (EU) 2022/2555 (NIS2), Article 23(4)(d) and (e)"
+    tier: researched
+    verified_date: 2026-11-03
+    verifier: "pack_research skill (Claude), not yet human-checked"
+    notes: "One month coded as 720 hours and keyed to the incident notification, so on a timeline that starts at awareness the outer bound is roughly 72 hours plus 30 days. If the incident is still ongoing at that point, a progress report is due then and the final report within one month of handling the incident (Article 23(4)(e))."
+
+exercise_requirements:
+  - id: mfg_isa_iec_62443_security_program
+    name: ISA/IEC 62443-2-1, security program requirements for IACS asset owners (no notification clock)
+    requirement: "ISA/IEC 62443 sets no incident notification deadline. Part 2-1 (2024) defines security program requirements for industrial automation and control system asset owners, and Part 2-4 (2018) the equivalent for service providers; incident response capability is part of that program, and a tabletop that exercises the OT response procedures with plant and engineering staff is the usual evidence that the program works"
+    frequency: "per the asset owner's security program; the standard page does not fix an interval"
+    source_url: https://www.isa.org/standards-and-publications/isa-standards/isa-iec-62443-series-of-standards
+    citation: "ISA/IEC 62443-2-1 (2024), Security program requirements for IACS asset owners; ISA/IEC 62443-2-4 (2018), Security program requirements for IACS service providers"
+    tier: researched
+    verified_date: 2026-11-03
+    verifier: "pack_research skill (Claude), not yet human-checked"
+    notes: "The ISA overview page lists the parts and their titles and does not quote the incident-response requirements; the standard text is paid. Verify the specific requirement numbers in 62443-2-1 before citing them in a deliverable. The IEC overview page at https://www.iec.ch/blog/understanding-iec-62443 returned HTTP 403 on 2026-11-03 and was not read."
+
+  - id: mfg_tsa_pipeline_annual_exercise
+    name: TSA Security Directive Pipeline-2021-02G, annual exercise of the Cybersecurity Incident Response Plan
+    requirement: "Exercises to test the effectiveness of procedures, and personnel responsible for implementing measures, in this Cybersecurity Incident Response Plan, no less than annually; the exercises must test at least two objectives of the plan no less than annually and include the employees identified by position as active participants"
+    frequency: annual
+    source_url: https://www.tsa.gov/sites/default/files/signed_security_directive_pipeline-2021-02g_and_transmittal_memo_508c.pdf
+    citation: "TSA Security Directive Pipeline-2021-02G, Pipeline Cybersecurity Mitigation Actions, Contingency Planning, and Testing, Section F.1.e (Cybersecurity Incident Response Plan), effective May 3, 2026, expires May 2, 2027"
+    tier: researched
+    verified_date: 2026-11-03
+    verifier: "pack_research skill (Claude), not yet human-checked"
+    notes: "Applies to Owner/Operators notified by TSA that their pipeline system or facility is critical (flag tsa_pipeline_owner). The transmittal memo states the 02G renewal made no substantive revisions. A Tabletop GM exercise that names the two plan objectives tested and lists participants by position satisfies the evidence requirement."
+
+  - id: mfg_tsa_rail_annual_exercise
+    name: TSA Security Directives 1580-21-01E and 1582-21-01E, annual situational exercise of the Cybersecurity Incident Response Plan
+    requirement: "The Owner/Operator must conduct situational exercises to test the effectiveness of procedures, and personnel responsible for implementing measures, in the Cybersecurity Incident Response Plan, no less than annually; the exercises must test at least two objectives of the plan no less than annually and include the employees identified by position as active participants"
+    frequency: annual
+    source_url: https://www.tsa.gov/sites/default/files/signed_security-directive-1580-21-01e-and-transmittal-memo_508c.pdf
+    citation: "TSA Security Directive 1580-21-01E, Enhancing Rail Cybersecurity, Section II.D.3, effective January 16, 2026, expires January 15, 2027; SD 1582-21-01E carries the same requirement for passenger rail and rail transit"
+    tier: researched
+    verified_date: 2026-11-03
+    verifier: "pack_research skill (Claude), not yet human-checked"
+    notes: "Applies to covered freight railroad carriers (1580-21-01E) and passenger railroad carriers and rail transit systems (1582-21-01E), flag tsa_rail_owner. Both directives were read on 2026-11-03."

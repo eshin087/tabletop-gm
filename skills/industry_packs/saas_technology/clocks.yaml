@@ -1,0 +1,229 @@
+# Clocks for the saas_technology pack. This file is the only place deadlines live.
+# clock_engine reads it; the validator fails the build on any clock without
+# source_url, verified_date, tier, and deadline_text.
+#
+# tier:
+#   verified    a human opened source_url on verified_date and confirmed the deadline. Used silently.
+#   researched  drafted by the pack_research skill from an authoritative source, not yet human-checked.
+#               Every output that uses it carries a "verify before exercise" banner.
+#
+# applies_when: all listed keys must hold (AND). List-valued keys hold when any value matches (OR).
+#   industries        pack slugs; omit for any industry (used by clocks_common.yaml)
+#   data_types        PHI, PII, PCI, PFI, FERPA, CUI, OT, trade_secrets
+#   countries         ISO 3166-1 alpha-2
+#   states            US state codes
+#   public_company    true or false
+#   flags             intake.regulated flags that must all be present, for example nydfs_licensed
+#   min_affected      the clock applies only when intake.affected_estimate is at least this number
+#
+# GDPR, SEC Form 8-K, US state breach laws, and CIRCIA are not repeated here; they come from
+# clocks_common.yaml (includes_common: true). Customer contractual notice windows are not law
+# and live in pack.md only. SOC 2 has no notification deadline; see exercise_requirements.
+# "One month" deadlines are coded as 720 hours (30 days); adjust if the engine gains
+# calendar-month support.
+
+pack: saas_technology
+display_name: SaaS and technology companies
+includes_common: true
+
+clocks:
+  - id: saas_nis2_art23_early_warning
+    name: EU NIS2, early warning to the CSIRT or competent authority
+    regulator: National CSIRT or competent authority of the EU member state (per national transposition)
+    jurisdiction: EU
+    trigger: becoming aware of a significant incident (Article 23(3), severe operational disruption or financial loss, or considerable damage to others)
+    deadline_hours: 24
+    deadline_business_days: null
+    deadline_text: "without undue delay and in any event within 24 hours of becoming aware of the significant incident, an early warning, which, where applicable, shall indicate whether the significant incident is suspected of being caused by unlawful or malicious acts or could have a cross-border impact"
+    applies_when:
+      industries: [saas_technology]
+      countries: [AT, BE, BG, HR, CY, CZ, DK, EE, FI, FR, DE, GR, HU, IE, IT, LV, LT, LU, MT, NL, PL, PT, RO, SK, SI, ES, SE]
+      flags: [nis2_essential_or_important_entity]
+    source_url: https://eur-lex.europa.eu/legal-content/EN/TXT/HTML/?uri=CELEX:32022L2555
+    citation: "Directive (EU) 2022/2555 (NIS2), Article 23(4)(a)"
+    tier: researched
+    verified_date: 2026-11-03
+    verifier: "pack_research skill (Claude), not yet human-checked"
+    notes: "Entities notify the CSIRT or competent authority designated by the member state where they are established; national law sets the portal and form. Annex I lists cloud computing service providers, data centre service providers, content delivery network providers, and trust service providers under digital infrastructure, and managed service providers and managed security service providers under ICT service management; Annex II lists providers of online marketplaces, online search engines, and social networking services platforms. Trust service providers must file the full incident notification itself within 24 hours (Article 23(4), second subparagraph). Recipients of the service must also be told without undue delay where the incident is likely to affect them (Article 23(1))."
+
+  - id: saas_nis2_art23_incident_notification
+    name: EU NIS2, incident notification to the CSIRT or competent authority
+    regulator: National CSIRT or competent authority of the EU member state (per national transposition)
+    jurisdiction: EU
+    trigger: becoming aware of a significant incident (Article 23(3))
+    deadline_hours: 72
+    deadline_business_days: null
+    deadline_text: "without undue delay and in any event within 72 hours of becoming aware of the significant incident, an incident notification, which, where applicable, shall update the information referred to in point (a) and indicate an initial assessment of the significant incident, including its severity and impact, as well as, where available, the indicators of compromise"
+    applies_when:
+      industries: [saas_technology]
+      countries: [AT, BE, BG, HR, CY, CZ, DK, EE, FI, FR, DE, GR, HU, IE, IT, LV, LT, LU, MT, NL, PL, PT, RO, SK, SI, ES, SE]
+      flags: [nis2_essential_or_important_entity]
+    source_url: https://eur-lex.europa.eu/legal-content/EN/TXT/HTML/?uri=CELEX:32022L2555
+    citation: "Directive (EU) 2022/2555 (NIS2), Article 23(4)(b)"
+    tier: researched
+    verified_date: 2026-11-03
+    verifier: "pack_research skill (Claude), not yet human-checked"
+    notes: "Runs from the same awareness moment as the early warning. The CSIRT or competent authority may also request intermediate status reports at any time (Article 23(4)(c))."
+
+  - id: saas_nis2_art23_final_report
+    name: EU NIS2, final report to the CSIRT or competent authority
+    regulator: National CSIRT or competent authority of the EU member state (per national transposition)
+    jurisdiction: EU
+    trigger: submission of the 72-hour incident notification (not the awareness moment)
+    deadline_hours: 720
+    deadline_business_days: null
+    deadline_text: "a final report not later than one month after the submission of the incident notification under point (b), including a detailed description of the incident, including its severity and impact; the type of threat or root cause that is likely to have triggered the incident; applied and ongoing mitigation measures; where applicable, the cross-border impact of the incident"
+    applies_when:
+      industries: [saas_technology]
+      countries: [AT, BE, BG, HR, CY, CZ, DK, EE, FI, FR, DE, GR, HU, IE, IT, LV, LT, LU, MT, NL, PL, PT, RO, SK, SI, ES, SE]
+      flags: [nis2_essential_or_important_entity]
+    source_url: https://eur-lex.europa.eu/legal-content/EN/TXT/HTML/?uri=CELEX:32022L2555
+    citation: "Directive (EU) 2022/2555 (NIS2), Article 23(4)(d) and (e)"
+    tier: researched
+    verified_date: 2026-11-03
+    verifier: "pack_research skill (Claude), not yet human-checked"
+    notes: "One month coded as 720 hours and keyed to the incident notification, so on a timeline that starts at awareness the outer bound is roughly 72 hours plus 30 days. If the incident is still ongoing at that point, a progress report is due then and the final report within one month of handling the incident (Article 23(4)(e))."
+
+  - id: saas_dora_art19_initial_notification
+    name: EU DORA, initial notification of a major ICT-related incident (supporting financial-entity customers)
+    regulator: Competent authority of the financial-entity customer (DORA Article 46); the financial entity files, the provider supplies the facts
+    jurisdiction: EU
+    trigger: the financial entity becomes aware of the ICT-related incident (outer bound); classification of the incident as major (inner bound of four hours)
+    deadline_hours: 24
+    deadline_business_days: null
+    deadline_text: "for the initial report: as early as possible, but in any case, within four hours from the classification of the ICT-related incident as a major ICT-related incident and no later than 24 hours from the moment the financial entity has become aware of the ICT-related incident"
+    applies_when:
+      industries: [saas_technology]
+      countries: [AT, BE, BG, HR, CY, CZ, DK, EE, FI, FR, DE, GR, HU, IE, IT, LV, LT, LU, MT, NL, PL, PT, RO, SK, SI, ES, SE]
+      flags: [dora_in_scope]
+    source_url: https://eur-lex.europa.eu/legal-content/EN/TXT/HTML/?uri=CELEX:32025R0301
+    citation: "Commission Delegated Regulation (EU) 2025/301, Article 5(1)(a) and 5(2), supplementing Regulation (EU) 2022/2554 (DORA) Articles 19(4) and 20"
+    tier: researched
+    verified_date: 2026-11-03
+    verifier: "pack_research skill (Claude), not yet human-checked"
+    notes: "DORA Article 19(1) places the reporting duty on the financial entity, not on its ICT provider; the regulation itself defers the time limits to technical standards (Article 20(a)(ii)), which is why the delegated regulation is the source. A SaaS provider serving banks, insurers, or investment firms is usually bound by contract to supply incident facts fast enough for the customer to meet this clock, so the exercise should time the provider's first substantive notice to those customers against it. Coded with the 24-hour outer bound from awareness; if the incident is classified as major later than 24 hours after awareness, the initial notification is due within four hours of classification (Article 5(2)). Weekend and bank holiday relief in Article 5(4) does not apply to credit institutions, central counterparties, trading venues, or NIS2 essential or important entities (Article 5(5))."
+
+  - id: saas_dora_art19_intermediate_report
+    name: EU DORA, intermediate report on a major ICT-related incident
+    regulator: Competent authority of the financial-entity customer (DORA Article 46); filed by the financial entity
+    jurisdiction: EU
+    trigger: submission of the initial notification
+    deadline_hours: 72
+    deadline_business_days: null
+    deadline_text: "for the intermediate report: at the latest within 72 hours from the submission of the initial notification, even where the status or the handling of the incident have not changed"
+    applies_when:
+      industries: [saas_technology]
+      countries: [AT, BE, BG, HR, CY, CZ, DK, EE, FI, FR, DE, GR, HU, IE, IT, LV, LT, LU, MT, NL, PL, PT, RO, SK, SI, ES, SE]
+      flags: [dora_in_scope]
+    source_url: https://eur-lex.europa.eu/legal-content/EN/TXT/HTML/?uri=CELEX:32025R0301
+    citation: "Commission Delegated Regulation (EU) 2025/301, Article 5(1)(b)"
+    tier: researched
+    verified_date: 2026-11-03
+    verifier: "pack_research skill (Claude), not yet human-checked"
+    notes: "An updated intermediate report is also due without undue delay when regular activities are recovered."
+
+  - id: saas_dora_art19_final_report
+    name: EU DORA, final report on a major ICT-related incident
+    regulator: Competent authority of the financial-entity customer (DORA Article 46); filed by the financial entity
+    jurisdiction: EU
+    trigger: submission of the intermediate report, or of the latest updated intermediate report
+    deadline_hours: 720
+    deadline_business_days: null
+    deadline_text: "for the final report: no later than one month after either the submission of the intermediate report, or, where applicable, after the latest updated intermediate report"
+    applies_when:
+      industries: [saas_technology]
+      countries: [AT, BE, BG, HR, CY, CZ, DK, EE, FI, FR, DE, GR, HU, IE, IT, LV, LT, LU, MT, NL, PL, PT, RO, SK, SI, ES, SE]
+      flags: [dora_in_scope]
+    source_url: https://eur-lex.europa.eu/legal-content/EN/TXT/HTML/?uri=CELEX:32025R0301
+    citation: "Commission Delegated Regulation (EU) 2025/301, Article 5(1)(c); content per Article 4"
+    tier: researched
+    verified_date: 2026-11-03
+    verifier: "pack_research skill (Claude), not yet human-checked"
+    notes: "One month coded as 720 hours. The final report must cover root causes, resolution dates and times, and direct and indirect costs and losses, which the provider is usually asked to supply."
+
+  - id: saas_uk_nis_rdsp_incident_notice
+    name: UK NIS Regulations, relevant digital service provider incident notice to the Information Commissioner
+    regulator: UK Information Commissioner (competent authority for relevant digital service providers)
+    jurisdiction: GB
+    trigger: the RDSP is first aware that an incident having a substantial impact on an online marketplace, online search engine, or cloud computing service it provides has occurred
+    deadline_hours: 72
+    deadline_business_days: null
+    deadline_text: "without undue delay and in any event no later than 72 hours after the RDSP is first aware that an incident has occurred"
+    applies_when:
+      industries: [saas_technology]
+      countries: [GB]
+      flags: [uk_nis_rdsp]
+    source_url: https://www.legislation.gov.uk/uksi/2018/506/regulation/12
+    citation: "The Network and Information Systems Regulations 2018 (S.I. 2018/506), regulation 12(3) and 12(6)(a)"
+    tier: researched
+    verified_date: 2026-11-03
+    verifier: "pack_research skill (Claude), not yet human-checked"
+    notes: "Applies only where the provider has information enabling it to judge that the impact is substantial (regulation 12(4)). Operators of essential services have a parallel 72-hour duty to their sector competent authority under regulation 11, not coded here because SaaS companies are rarely designated OES. The regulations have been amended since 2018; check the current text before use."
+
+  - id: saas_certin_incident_report
+    name: India CERT-In, mandatory cyber incident report
+    regulator: Indian Computer Emergency Response Team (CERT-In), Ministry of Electronics and Information Technology
+    jurisdiction: IN
+    trigger: noticing a cyber incident of a type listed in Annexure I, or being brought to notice of it
+    deadline_hours: 6
+    deadline_business_days: null
+    deadline_text: "shall mandatorily report cyber incidents as mentioned in Annexure I to CERT-In within 6 hours of noticing such incidents or being brought to notice about such incidents"
+    applies_when:
+      industries: [saas_technology]
+      countries: [IN]
+    source_url: https://www.cert-in.org.in/PDF/CERT-In_Directions_70B_28.04.2022.pdf
+    citation: "CERT-In Directions under sub-section (6) of section 70B of the Information Technology Act, 2000, No. 20(3)/2022-CERT-In, dated 28 April 2022, direction (ii)"
+    tier: researched
+    verified_date: 2026-11-03
+    verifier: "pack_research skill (Claude), not yet human-checked"
+    notes: "Applies to any service provider, intermediary, data centre, body corporate, and government organisation. Reports go by email, phone, or fax to the contacts in the direction. The same directions require ICT system logs to be kept for a rolling 180 days within Indian jurisdiction and produced with the report (direction (iv)). The directions index page at https://www.cert-in.org.in/Directions70B.jsp links the PDF and an FAQ."
+
+  - id: saas_oaic_ndb_assessment
+    name: Australia Notifiable Data Breaches scheme, assessment of a suspected eligible data breach
+    regulator: Office of the Australian Information Commissioner (OAIC)
+    jurisdiction: AU
+    trigger: the entity becomes aware of reasonable grounds to suspect that there may have been an eligible data breach
+    deadline_hours: 720
+    deadline_business_days: null
+    deadline_text: "take all reasonable steps to complete the assessment within 30 calendar days after the day the entity became aware of the grounds (or information) that caused it to suspect an eligible data breach"
+    applies_when:
+      industries: [saas_technology]
+      countries: [AU]
+      data_types: [PII]
+    source_url: https://www.oaic.gov.au/privacy/notifiable-data-breaches/preventing-preparing-for-and-responding-to-data-breaches/data-breach-preparation-and-response/part-4-notifiable-data-breach-ndb-scheme
+    citation: "Privacy Act 1988 (Cth), Part IIIC, s 26WH(2), as described in OAIC, Data breach preparation and response, Part 4"
+    tier: researched
+    verified_date: 2026-11-03
+    verifier: "pack_research skill (Claude), not yet human-checked"
+    notes: "An internal deadline the Commissioner enforces: the OAIC expects 30 days to be treated as a maximum and reasons for any delay to be documented. If the assessment concludes earlier that an eligible data breach occurred, the statement clock below starts then."
+
+  - id: saas_oaic_ndb_commissioner_statement
+    name: Australia Notifiable Data Breaches scheme, statement to the Commissioner and notice to individuals
+    regulator: Office of the Australian Information Commissioner (OAIC), then affected individuals
+    jurisdiction: AU
+    trigger: the entity becomes aware that there are reasonable grounds to believe an eligible data breach has occurred
+    deadline_hours: null
+    deadline_business_days: null
+    deadline_text: "prepare and give a copy of the statement to the Commissioner as soon as practicable after becoming aware of the eligible data breach; then notify individuals as soon as practicable after completing the statement"
+    applies_when:
+      industries: [saas_technology]
+      countries: [AU]
+      data_types: [PII]
+    source_url: https://www.oaic.gov.au/privacy/notifiable-data-breaches/preventing-preparing-for-and-responding-to-data-breaches/data-breach-preparation-and-response/part-4-notifiable-data-breach-ndb-scheme
+    citation: "Privacy Act 1988 (Cth), Part IIIC, s 26WK(2) (statement) and s 26WL(3) (individuals), as described in OAIC, Data breach preparation and response, Part 4"
+    tier: researched
+    verified_date: 2026-11-03
+    verifier: "pack_research skill (Claude), not yet human-checked"
+    notes: "No fixed hour count in the Act; the OAIC expects prompt lodgement unless something reasonably hinders it. Present this on the timeline as a milestone that follows the assessment rather than as a countdown. An OAIC submission to the Privacy Act review proposed a hard 30-day outer limit; not confirmed as enacted on 2026-11-03."
+
+exercise_requirements:
+  - id: saas_soc2_tsc_incident_response_evaluation
+    name: SOC 2 Trust Services Criteria, incident response program and periodic evaluation (no notification deadline)
+    requirement: "SOC 2 sets no incident notification deadline. The 2017 Trust Services Criteria (with revised points of focus, 2022) under CC7 System Operations expect the entity to respond to identified security incidents through a defined incident response program and to evaluate and recover from them; a periodic test of the incident response and recovery plans is the usual evidence an auditor asks for, and a documented tabletop satisfies it"
+    frequency: "periodic per the criteria; annual in common audit practice, aligned to the attestation period"
+    source_url: https://www.aicpa-cima.com/resources/download/2017-trust-services-criteria-with-revised-points-of-focus-2022
+    citation: "AICPA, 2017 Trust Services Criteria for Security, Availability, Processing Integrity, Confidentiality, and Privacy (With Revised Points of Focus, 2022), CC7.3 to CC7.5"
+    tier: researched
+    verified_date: 2026-11-03
+    verifier: "pack_research skill (Claude), not yet human-checked"
+    notes: "The AICPA page was opened and confirms the document and its scope, but the criteria text sits in a PDF behind a form that could not be fetched; the CC7.3 to CC7.5 numbering and the periodic-testing point of focus come from prior knowledge of the criteria and must be checked against the PDF before use. The SOC suite landing page at https://www.aicpa-cima.com/resources/landing/system-and-organization-controls-soc-suite-of-services notes exposure drafts of proposed 2027 criteria, so the numbering may change."

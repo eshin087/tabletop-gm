@@ -1,0 +1,178 @@
+# Clocks for the banking and credit union pack. This file is the only place these deadlines live.
+# Every clock was drafted by Claude Code from the primary source on 2026-11-03 and is
+# therefore researched tier until a human opens source_url and promotes it.
+# Shared clocks (GDPR, SEC Form 8-K, state breach laws, CIRCIA) come from clocks_common.yaml.
+# NYDFS 23 NYCRR 500.17 lives in the insurance pack and loads for any intake with the
+# nydfs_licensed flag.
+
+pack: banking
+display_name: Banks and credit unions
+includes_common: true
+
+clocks:
+  - id: occ_notification_incident_36h
+    name: OCC computer-security incident notification (national banks and federal savings associations)
+    regulator: Office of the Comptroller of the Currency
+    jurisdiction: US-federal
+    trigger: the banking organization determines that a notification incident has occurred
+    deadline_hours: 36
+    deadline_business_days: null
+    deadline_text: "as soon as possible and no later than 36 hours after the banking organization determines that a notification incident has occurred"
+    applies_when:
+      countries: [US]
+      flags: [occ_supervised]
+    source_url: https://www.ecfr.gov/current/title-12/chapter-I/part-53
+    citation: "12 CFR 53.3"
+    tier: researched
+    verified_date: 2026-11-03
+    verifier: "pack_research skill (Claude), not yet human-checked"
+    notes: "Text confirmed via law.cornell.edu mirror on 2026-11-03. A notification incident is one that has materially disrupted or degraded, or is reasonably likely to, operations, lines of business, or financial stability. The clock starts at determination, not at detection; the exercise should force the team to say when determination happened."
+
+  - id: frb_notification_incident_36h
+    name: Federal Reserve computer-security incident notification (state member banks, holding companies)
+    regulator: Board of Governors of the Federal Reserve System
+    jurisdiction: US-federal
+    trigger: the banking organization determines that a notification incident has occurred
+    deadline_hours: 36
+    deadline_business_days: null
+    deadline_text: "as soon as possible and no later than 36 hours after the banking organization determines that a notification incident has occurred"
+    applies_when:
+      countries: [US]
+      flags: [frb_supervised]
+    source_url: https://www.ecfr.gov/current/title-12/chapter-II/subchapter-A/part-225/subpart-N
+    citation: "12 CFR 225.302"
+    tier: researched
+    verified_date: 2026-11-03
+    verifier: "pack_research skill (Claude), not yet human-checked"
+    notes: "Text confirmed via law.cornell.edu mirror on 2026-11-03."
+
+  - id: fdic_notification_incident_36h
+    name: FDIC computer-security incident notification (state nonmember banks)
+    regulator: Federal Deposit Insurance Corporation
+    jurisdiction: US-federal
+    trigger: the banking organization determines that a notification incident has occurred
+    deadline_hours: 36
+    deadline_business_days: null
+    deadline_text: "as soon as possible and no later than 36 hours after the banking organization determines that a notification incident has occurred"
+    applies_when:
+      countries: [US]
+      flags: [fdic_supervised]
+    source_url: https://www.ecfr.gov/current/title-12/chapter-III/subchapter-B/part-304/subpart-C
+    citation: "12 CFR 304.23"
+    tier: researched
+    verified_date: 2026-11-03
+    verifier: "pack_research skill (Claude), not yet human-checked"
+    notes: "Text confirmed via law.cornell.edu mirror on 2026-11-03."
+
+  - id: bank_service_provider_notice
+    name: Bank service provider notice to banking organization customers
+    regulator: OCC, Federal Reserve, FDIC (joint rule)
+    jurisdiction: US-federal
+    trigger: the service provider determines a computer-security incident has materially disrupted or degraded, or is reasonably likely to, covered services for four or more hours
+    deadline_hours: null
+    deadline_business_days: null
+    deadline_text: "as soon as possible when the bank service provider determines that it has experienced a computer-security incident that has materially disrupted or degraded, or is reasonably likely to materially disrupt or degrade, covered services provided to such banking organization for four or more hours"
+    applies_when:
+      countries: [US]
+      flags: [bank_service_provider]
+    source_url: https://www.ecfr.gov/current/title-12/chapter-I/part-53
+    citation: "12 CFR 53.4(a)"
+    tier: researched
+    verified_date: 2026-11-03
+    verifier: "pack_research skill (Claude), not yet human-checked"
+    notes: "Text confirmed via law.cornell.edu mirror on 2026-11-03. Banks should exercise the receiving side: a core processor's four-hour notice may be the first signal of a notification incident of their own."
+
+  - id: ncua_reportable_cyber_incident_72h
+    name: NCUA reportable cyber incident notification (federally insured credit unions)
+    regulator: National Credit Union Administration
+    jurisdiction: US-federal
+    trigger: the credit union reasonably believes it has experienced a reportable cyber incident, or is notified of one by a third party
+    deadline_hours: 72
+    deadline_business_days: null
+    deadline_text: "as soon as possible but no later than 72 hours after the credit union reasonably believes that it has experienced a reportable cyber incident"
+    applies_when:
+      countries: [US]
+      flags: [credit_union]
+    source_url: https://www.ecfr.gov/current/title-12/chapter-VII/subchapter-A/part-748/section-748.1
+    citation: "12 CFR 748.1(c)"
+    tier: researched
+    verified_date: 2026-11-03
+    verifier: "pack_research skill (Claude), not yet human-checked"
+    notes: "Text confirmed via law.cornell.edu mirror on 2026-11-03. For third-party incidents the 72 hours runs from when the credit union is notified, if sooner."
+
+  - id: glba_interagency_customer_notice
+    name: Interagency Guidance on Response Programs, regulator and customer notice
+    regulator: OCC, Federal Reserve, FDIC (Supplement A to the Interagency Guidelines Establishing Information Security Standards)
+    jurisdiction: US-federal
+    trigger: the institution becomes aware of an incident of unauthorized access to sensitive customer information
+    deadline_hours: null
+    deadline_business_days: null
+    deadline_text: "notify its primary Federal regulator as soon as possible when the institution becomes aware of an incident; notify affected customers as soon as possible where misuse of sensitive customer information has occurred or is reasonably possible"
+    applies_when:
+      countries: [US]
+      data_types: [PFI, PII]
+      flags: [bank_federally_insured]
+    source_url: https://www.ecfr.gov/current/title-12/chapter-I/part-30/appendix-Appendix%20B%20to%20Part%2030
+    citation: "12 CFR Part 30, Appendix B, Supplement A (OCC); parallel text at 12 CFR Part 364 Appendix B (FDIC) and 12 CFR Part 225 Appendix F (FRB)"
+    tier: researched
+    verified_date: 2026-11-03
+    verifier: "pack_research skill (Claude), not yet human-checked"
+    notes: "Text confirmed via law.cornell.edu mirror (appendix B to part 30) on 2026-11-03. No fixed number; the exercise scores whether the team set its own deadline and owner."
+
+  - id: fincen_sar_30_days
+    name: FinCEN Suspicious Activity Report for cyber-enabled or cyber events
+    regulator: Financial Crimes Enforcement Network
+    jurisdiction: US-federal
+    trigger: initial detection of facts that may constitute a basis for filing a SAR (including cyber events affecting transactions)
+    deadline_hours: 720
+    deadline_business_days: null
+    deadline_text: "no later than 30 calendar days after the date of initial detection of facts that may constitute a basis for filing a SAR; an additional 30 calendar days to identify a suspect, with filing in no case later than 60 calendar days"
+    applies_when:
+      countries: [US]
+      flags: [bank_federally_insured]
+    source_url: https://www.ecfr.gov/current/title-31/subtitle-B/chapter-X/part-1020/subpart-C/section-1020.320
+    citation: "31 CFR 1020.320(b)(3)"
+    tier: researched
+    verified_date: 2026-11-03
+    verifier: "pack_research skill (Claude), not yet human-checked"
+    notes: "Text confirmed via law.cornell.edu mirror on 2026-11-03. Credit unions file under 31 CFR 1021.320 with the same timing. The BSA Officer owns this clock; it is the one most often forgotten in cyber tabletops."
+
+  - id: ftc_safeguards_nonbank_30_days
+    name: FTC Safeguards Rule notification event report (non-bank financial institutions)
+    regulator: Federal Trade Commission
+    jurisdiction: US-federal
+    trigger: discovery of a notification event involving the information of at least 500 consumers
+    deadline_hours: 720
+    deadline_business_days: null
+    deadline_text: "as soon as possible, and no later than 30 days after discovery of the event"
+    applies_when:
+      countries: [US]
+      flags: [nonbank_financial_institution]
+      min_affected: 500
+    source_url: https://www.ecfr.gov/current/title-16/chapter-I/subchapter-C/part-314/section-314.4
+    citation: "16 CFR 314.4(j)"
+    tier: researched
+    verified_date: 2026-11-03
+    verifier: "pack_research skill (Claude), not yet human-checked"
+    notes: "Text confirmed via law.cornell.edu mirror on 2026-11-03. Applies to mortgage lenders, finance companies, and other non-bank institutions under FTC jurisdiction, not to banks and credit unions."
+
+exercise_requirements:
+  - id: ffiec_bcm_exercises_and_tests
+    name: FFIEC IT Examination Handbook, Business Continuity Management, exercises and tests
+    requirement: "management should develop and implement an enterprise-wide testing program that includes exercises and tests of the business continuity plan, including cyber events, and report results to the board"
+    frequency: annual (examiner expectation)
+    source_url: https://ithandbook.ffiec.gov/it-booklets/business-continuity-management/
+    citation: "FFIEC IT Handbook, Business Continuity Management booklet (2019), section VI"
+    tier: researched
+    verified_date: 2026-11-03
+    verifier: "pack_research skill (Claude), not yet human-checked"
+
+  - id: glba_safeguards_incident_response_plan
+    name: FTC Safeguards Rule, written incident response plan
+    requirement: "establish a written incident response plan designed to promptly respond to, and recover from, any security event materially affecting the confidentiality, integrity, or availability of customer information"
+    frequency: continuous (plan must exist and be maintained)
+    source_url: https://www.ecfr.gov/current/title-16/chapter-I/subchapter-C/part-314/section-314.4
+    citation: "16 CFR 314.4(h)"
+    tier: researched
+    verified_date: 2026-11-03
+    verifier: "pack_research skill (Claude), not yet human-checked"
