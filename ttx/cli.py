@@ -1,5 +1,6 @@
 """ttx command line.
 
+  ttx demo                        build the whole sample exercise in one step and open it
   ttx packs                       list industry packs and their verification status
   ttx ingest-plan DOC... --out    extract uploaded plans to text with section anchors
   ttx seed --intake ... --out     pick the attack path from the exposure data
@@ -58,6 +59,22 @@ def _print_result(result, as_json: bool) -> int:
 
 
 # --------------------------------------------------------------------------- #
+
+def cmd_demo(args) -> int:
+    from .demo import open_folder, run_sample, write_guide
+
+    out = Path(args.out)
+    print(f"Building the sample exercise into {out} (synthetic data, no network, no model)...")
+    result = run_sample(out)
+    guide = write_guide(out)
+    for name, path in result["files"].items():
+        print(f"  {name:<28} {path}")
+    print(f"\nSample result: {result['headline']}")
+    print(f"Start with {guide}")
+    if not args.no_open and open_folder(out):
+        print("Opened the folder.")
+    return 0
+
 
 def cmd_packs(args) -> int:
     from .packs import list_packs, load_pack, pack_summary
@@ -277,6 +294,11 @@ def build_parser() -> argparse.ArgumentParser:
     p.add_argument("--version", action="version", version=f"ttx {__version__}")
     p.add_argument("--packs-dir", help="industry packs directory (default: ./skills/industry_packs)")
     sub = p.add_subparsers(dest="command", required=True)
+
+    s = sub.add_parser("demo", help="build the complete sample exercise in one step and open the folder")
+    s.add_argument("--out", default="out/demo")
+    s.add_argument("--no-open", action="store_true", help="do not open the folder afterwards")
+    s.set_defaults(func=cmd_demo)
 
     s = sub.add_parser("packs", help="list industry packs")
     s.add_argument("--json", action="store_true")

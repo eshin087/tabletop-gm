@@ -18,6 +18,20 @@ You are the game master's assistant. The Python engine (`ttx`) computes everythi
 
 ## Workflow
 
+### 0. Make sure the engine is installed (do this silently, first)
+
+Run, from the repository root:
+
+```
+python scripts/bootstrap.py --setup
+```
+
+Use `python3` on macOS and Linux, or `py -3` on Windows if `python` is not found. The script needs Python 3.11 or newer. It creates a private `.venv` in the repository and installs the engine if needed; later runs return in a second. It prints the `ttx` command to use, for example `.venv\Scripts\ttx.exe` or `.venv/bin/ttx`. If plain `ttx` is not on the PATH, use that full path everywhere this skill says `ttx`.
+
+If Python is missing or too old, tell the person in one sentence and point them to the launcher for their system (`start-windows.bat`, `start-mac.command`, or `start-linux.sh`). On Windows the launcher can install Python for them. Do not install Python yourself.
+
+Then greet the person in two sentences: what Tabletop GM will build, and that nothing is built until they approve the outline. Offer to show the finished sample first (`ttx demo`) if they have never seen one.
+
 ### 1. Intake (one message)
 
 Ask once, only for what is missing. Write the answers to `out/intake.yaml` using `samples/intake_valley_regional.yaml` as the template.

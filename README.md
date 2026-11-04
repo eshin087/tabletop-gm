@@ -8,6 +8,8 @@ Tabletop GM builds a cybersecurity tabletop exercise in an afternoon. It tailors
 
 It ships as a Claude Code skill (`/tabletop`) on top of a deterministic Python engine (`ttx`). The engine computes everything that must be correct: the attack path, the deadlines, the citations, the validation, the documents, and the scores. Claude does the judgment work: the interview, reading your plans, writing and reviewing the story, and explaining the results. Every document can be rebuilt from the approved exercise pack with no API key and no model call.
 
+**Try it:** download the ZIP, double-click the launcher for your computer, and choose 1. See [Quick start](#quick-start).
+
 ## What it does
 
 1. **Intake.** One chat message covers organization, industry, jurisdictions, data types, regulated status, severity 1 to 4, audience, and duration (60, 90, or 180 minutes).
@@ -43,102 +45,47 @@ Every clock is at the researched tier: drafted from a primary source with a cita
 
 ## Prerequisites
 
-- Python 3.11 or newer.
-- git.
-- No API keys for the engine, the sample run, or any document build.
-- Claude Code for the guided `/tabletop` workflow (intake, policy ingest, narrative, review, AAR narrative).
-- Optional: read-only Tenable Vulnerability Management or Tenable One API keys in `.env` for live mode.
-- Optional: the `pytenable` package. Live mode falls back to the standard library when it is not installed.
+- **To see the sample exercise:** nothing. The launcher sets everything up.
+- **Python 3.11 or newer.** The Windows launcher offers to install it for you. On macOS it offers Homebrew if you have it, or opens the download page.
+- **Internet on the first run only,** to download the document libraries. After that, everything except the guided workflow runs offline.
+- **To build an exercise for your own organization:** Claude Code (terminal, desktop app, or IDE) and a Claude account. The launcher tells you how to install it if it's missing.
+- **Optional:** read-only Tenable Vulnerability Management or Tenable One API keys, for live exposure data.
 
-Dependencies are pure Python: python-pptx, python-docx, openpyxl, pyyaml, pypdf, and jinja2. There is no Docker, Node, database, cloud service, or account.
+There is no git, Docker, Node, database, or cloud service to set up. The dependencies are pure Python: python-pptx, python-docx, openpyxl, pyyaml, pypdf, and jinja2.
 
 ## How to run
 
-All commands run from the repository root.
+### Quick start
 
-Install:
+1. **Download.** On this GitHub page, click **Code**, then **Download ZIP**, and unzip it anywhere. Or clone it with git.
+2. **Double-click the launcher for your computer:**
+   - Windows: `start-windows.bat`
+   - macOS: `start-mac.command`. The first time, macOS may warn about an unidentified developer: right-click the file, choose **Open**, then **Open** again.
+   - Linux: run `./start-linux.sh` in a terminal.
+3. **Pick from the menu:**
+   - **1. See a finished sample exercise.** About 10 seconds, no account. It builds the complete Valley Regional exercise (a fictional health system) and opens the folder. Start with `START_HERE.txt`.
+   - **2. Build an exercise for my organization.** This opens Claude Code in the folder and starts the `/tabletop` interview.
 
-```bash
-git clone https://github.com/eshin087/tabletop-gm.git
-cd tabletop-gm
-python -m venv .venv
-```
+The first run takes a minute or two. The launcher creates a private `.venv` folder inside the download and installs into it, so nothing else on your computer changes. Later runs go straight to the menu.
 
-Activate the venv. On macOS or Linux:
+### What happens in option 2
 
-```bash
-source .venv/bin/activate
-```
+Claude asks one round of questions:
 
-On Windows (PowerShell):
+- Your organization, industry, and where it operates
+- The data you hold and the regulators you answer to
+- Severity, audience, and length (60, 90, or 180 minutes)
+- Where your exposure data comes from
 
-```powershell
-.venv\Scripts\Activate.ps1
-```
+You can drop your IR plan, playbooks, or scan exports into the `uploads/` folder. Claude then shows you the outline: each inject, the decision it forces, who owns it, and which of your procedures it tests. Nothing is built until you approve it.
 
-Then:
+Your documents land in `out/build/`. After the exercise, fill in the decision tracker, ask Claude to score it, and you get the after-action report.
 
-```bash
-pip install -e ".[dev]"
-pytest -q
-```
+If you already use Claude Code, you can skip the launcher. Open the downloaded folder in Claude Code and type `/tabletop`; it installs what it needs on its own.
 
-### Rebuild the sample exercise (no keys, no network, no model)
+### Command line
 
-The repository ships an approved sample exercise for Valley Regional Health System, a fictional 1,200-employee health system. These commands rebuild every document from it and re-score its synthetic completed tracker:
-
-```bash
-ttx validate exercise-pack samples/exercise_pack_sample.json
-ttx build samples/exercise_pack_sample.json --out out/sample_build
-ttx score --pack samples/exercise_pack_sample.json --tracker samples/outputs/decision_tracker_completed.xlsx --out out/score.json
-ttx aar --pack samples/exercise_pack_sample.json --score out/score.json --out out/sample_build/after_action_report.docx
-```
-
-### Run the full pipeline step by step
-
-```bash
-ttx packs
-ttx validate packs
-ttx ingest-plan samples/sample_ir_plan.md --out out/plan_text.json
-ttx validate org-plan samples/org_plan_sample.json --plan-text out/plan_text.json
-ttx seed --intake samples/intake_valley_regional.yaml --out out/seed.json
-ttx clocks --intake samples/intake_valley_regional.yaml --out out/clocks.json
-ttx outline --intake samples/intake_valley_regional.yaml --seed out/seed.json --clocks out/clocks.json --org-plan samples/org_plan_sample.json --out out/exercise_pack.json
-ttx narrate out/exercise_pack.json samples/narrative_overlay_sample.json
-```
-
-`ttx narrate` applies the narrative the scenario_design skill writes. It changes narrative fields only and refuses any change to sources, procedures, expected actions, or clocks.
-
-`ttx build` refuses an unapproved outline (exit code 2, "not approved"). Review the outline, approve it, then build:
-
-```bash
-ttx approve out/exercise_pack.json --by "Your Name"
-ttx build out/exercise_pack.json --out out/build
-```
-
-After the exercise, fill `out/build/decision_tracker.xlsx` (Decisions and Clocks sheets), then:
-
-```bash
-ttx score --pack out/exercise_pack.json --tracker out/build/decision_tracker.xlsx --out out/score.json
-ttx aar --pack out/exercise_pack.json --score out/score.json --out out/build/after_action_report.docx
-```
-
-Regenerate everything in `samples/outputs/` (this overwrites the committed sample files):
-
-```bash
-python samples/make_sample_run.py
-```
-
-### Use your own data
-
-- **Export mode.** Put a findings export in `uploads/` (CSV, JSON, or .nessus), plus an optional asset export. Set `environment.mode: export` and `environment.estate_file` in your intake, or pass `--mode export --estate uploads/findings.csv --assets uploads/assets.csv`. Column mapping is config-driven with fuzzy header matching (`schemas/export_columns.yaml`). It was built from the Tenable field names recorded in the build spec and is tested against Tenable-shaped CSV and JSON. Add aliases there for another scanner.
-- **Live mode.** Copy `.env.example` to `.env`, fill in `TENABLE_ACCESS_KEY` and `TENABLE_SECRET_KEY`, and run `ttx seed --mode tenable --save`. `--save` writes the pulled estate to `uploads/` so the same run can be replayed in export mode.
-- **KEV cross-check.** Add `--kev-check` to `ttx seed` to compare the scanner's KEV flags with the public CISA catalog. Use `--kev-file` to compare against a local copy instead.
-- **Your plans.** Put them in `uploads/` and run `ttx ingest-plan uploads/<files> --out out/plan_text.json`. In Claude Code, the `policy_ingest` skill fills `out/org_plan.json` from them.
-
-### Guided workflow in Claude Code
-
-Open Claude Code in the repository root and type `/tabletop`. The project skill in `.claude/skills/tabletop/` loads the entry skill `SKILL.md`. That skill interviews you, runs the commands above, writes the narrative with the ten sub-skills in `skills/`, and stops at the approval gate for your sign-off.
+Everything the launcher and Claude do is a plain `ttx` command, and every document can be rebuilt with no model call. See [docs/CLI.md](docs/CLI.md) for manual install, the full pipeline step by step, export and live Tenable modes, and every command.
 
 ## Outputs
 
@@ -153,7 +100,7 @@ Open Claude Code in the repository root and type `/tabletop`. The project skill 
 | `attendance_signin.xlsx`, `signoff_sheet.docx` | Audit evidence | Sign-in and roles-present sheets. The sign-off covers scope, approval record, documents exercised, requirements supported, clocks, and an attestation. |
 | `after_action_report.docx` (from `ttx aar`) | Leadership, auditors | Headline, scores by dimension and decision, and regulatory exposure: each clock met or missed by hours, plus the plan's own standards. Plan, people, and technical gaps with citation, fix, owner, and due date. Plan coverage map, decision log, and an evidence page with hashes. |
 
-`samples/outputs/` holds one complete synthetic run: the documents above plus `seed.json`, `clocks.json`, `exercise_pack.json`, a synthetic completed tracker, and `score.json`. The sample scores 82.8%. Its regulatory clock line is the HIPAA media notice, missed by 60 hours. The California health department report had no owner. The sample report lists 2 plan gaps, 11 people gaps, and 3 technical gaps.
+Option 1 in the launcher (or `ttx demo`) rebuilds the same sample into `out/demo/` with a `START_HERE.txt` guide. `samples/outputs/` holds one complete synthetic run: the documents above plus `seed.json`, `clocks.json`, `exercise_pack.json`, a synthetic completed tracker, and `score.json`. The sample scores 82.8%. Its regulatory clock line is the HIPAA media notice, missed by 60 hours. The California health department report had no owner. The sample report lists 2 plan gaps, 11 people gaps, and 3 technical gaps.
 
 ## Known limitations
 
@@ -170,6 +117,7 @@ Open Claude Code in the repository root and type `/tabletop`. The project skill 
 - **The CLI never calls a model.** `ttx outline` writes template prose that is valid and buildable but generic. The tailored narrative comes from Claude in the `/tabletop` workflow.
 - **Scoring is only as good as the tracker.** It is deterministic given the tracker, but timeliness uses the minutes the host records.
 - **Samples are synthetic.** Valley Regional, its estate, its IR plan, and its completed tracker are invented. CVE identifiers are real public identifiers, used so the KEV logic means something. IP addresses use documentation ranges.
+- **Launchers were tested on Windows only.** The Windows launcher was run from a fresh copy. The macOS and Linux launchers are plain shell scripts but have not been run on a Mac or a Linux desktop yet. macOS Gatekeeper asks for a right-click Open the first time.
 - **Only one host workflow ships.** The browser host console (`host.html`) and `ttx host` are not shipped. Run the exercise from the facilitator guide and the tracker; see Roadmap.
 
 ## Roadmap

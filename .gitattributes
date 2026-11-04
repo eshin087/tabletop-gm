@@ -3,3 +3,6 @@
 *.docx binary
 *.xlsx binary
 *.pdf binary
+*.bat -text
+*.command text eol=lf
+*.sh text eol=lf

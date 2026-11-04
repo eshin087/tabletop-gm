@@ -9,6 +9,16 @@ The `ttx` engine makes no network calls unless you ask for one of the two below.
 | Tenable Vulnerability Management / Tenable One API | Only `ttx seed --mode tenable` | `https://cloud.tenable.com` (`/vulns/export`, `/assets/export` and their status and chunk endpoints), or the same endpoints through pytenable when it is installed | Your API keys in the `X-ApiKeys` header; export filters (severity critical and high, state open and reopened) | Nothing in your data. The export endpoints create temporary export jobs that Tenable expires. No scan, asset, finding, tag, or setting is created, changed, or deleted. Read-only keys are enough. |
 | CISA Known Exploited Vulnerabilities feed | Only `ttx seed --kev-check` | `https://www.cisa.gov/sites/default/files/feeds/known_exploited_vulnerabilities.json` | One unauthenticated GET with a `Tabletop-GM/<version>` user agent | Nothing. Use `--kev-file` with a local copy to stay offline. |
 
+The launchers (`start-windows.bat`, `start-mac.command`, `start-linux.sh`) make these calls on the first run only:
+
+| Call | When | What changes |
+|---|---|---|
+| PyPI (`pip install`) | First run, through `scripts/bootstrap.py` | Downloads the pure-Python dependencies into a private `.venv` folder inside the download. Nothing is installed system-wide. |
+| winget (Windows) or Homebrew (macOS) | Only when Python 3.11+ is missing and you answer yes at the prompt | Installs Python 3.12 for your user account from the official package. |
+| Browser opens python.org | Only when Python is missing and cannot be installed automatically | Nothing; you install Python yourself. |
+
+The launcher never installs Claude Code. When Claude Code is missing it prints the official install commands for you to run.
+
 The guided workflow runs inside Claude Code, which has its own outbound traffic:
 
 | Call | When | What is sent |
