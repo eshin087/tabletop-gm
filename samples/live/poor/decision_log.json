@@ -1,0 +1,200 @@
+{
+  "schema_version": 1,
+  "generator": "Tabletop GM ttx 0.1.0",
+  "pack_path": "samples/exercise_pack_sample.json",
+  "pack_title": "Valley Regional Health System: Ransomware tabletop exercise (severity 3, 90 minutes)",
+  "organization": "Valley Regional Health System",
+  "approval_hash": "b444028205cceb8aad4d45f5451163d024b245b2cafe3a1196cb252aa6feb5e2",
+  "approved_by": "Sample approver (synthetic run; a human signs here in real use)",
+  "facilitator": "Scripted facilitator (synthetic poor run)",
+  "started_at": "2026-11-06T17:00:00+00:00",
+  "resumed_at": [],
+  "last_activity_at": "2026-11-06T19:22:00+00:00",
+  "entries": [
+    {
+      "n": 1,
+      "at": "2026-11-06T17:02:00+00:00",
+      "type": "mark",
+      "inject_id": "I1",
+      "event": "presented"
+    },
+    {
+      "n": 2,
+      "at": "2026-11-06T17:27:00+00:00",
+      "type": "decision",
+      "inject_id": "I1",
+      "unplanned": false,
+      "decision": "Parked the alert as another false alarm from the gateway and kept watching.",
+      "decided_by_role": "cfo",
+      "notified": [],
+      "actions_completed": [],
+      "plan_step_followed": "no",
+      "documented": "no",
+      "scenario_minutes": 40.0,
+      "discussion_minutes": 25.0,
+      "note": null
+    },
+    {
+      "n": 3,
+      "at": "2026-11-06T17:30:00+00:00",
+      "type": "mark",
+      "inject_id": "I2",
+      "event": "presented"
+    },
+    {
+      "n": 4,
+      "at": "2026-11-06T17:52:00+00:00",
+      "type": "decision",
+      "inject_id": "I2",
+      "unplanned": false,
+      "decision": "Called the CIO at home and waited for a call back before telling anyone else.",
+      "decided_by_role": "other",
+      "notified": [
+        "executive_leadership"
+      ],
+      "actions_completed": [
+        "I2-P35"
+      ],
+      "plan_step_followed": "partial",
+      "documented": "partial",
+      "scenario_minutes": 70.0,
+      "discussion_minutes": 22.0,
+      "note": "The on-call help desk lead decided."
+    },
+    {
+      "n": 5,
+      "at": "2026-11-06T17:55:00+00:00",
+      "type": "mark",
+      "inject_id": "I3",
+      "event": "presented"
+    },
+    {
+      "n": 6,
+      "at": "2026-11-06T18:20:00+00:00",
+      "type": "decision",
+      "inject_id": "I3",
+      "unplanned": false,
+      "decision": "Pulled the network to every site at once; nobody told the hospitals first.",
+      "decided_by_role": "ceo",
+      "notified": [],
+      "actions_completed": [],
+      "plan_step_followed": "no",
+      "documented": "no",
+      "scenario_minutes": 90.0,
+      "discussion_minutes": 25.0,
+      "note": null
+    },
+    {
+      "n": 7,
+      "at": "2026-11-06T18:21:00+00:00",
+      "type": "decision",
+      "inject_id": "I3",
+      "unplanned": true,
+      "decision": "Asked the gateway vendor to shut the appliance down remotely.",
+      "decided_by_role": "other",
+      "notified": [],
+      "actions_completed": [],
+      "plan_step_followed": null,
+      "documented": null,
+      "scenario_minutes": null,
+      "discussion_minutes": 1.0,
+      "note": "The help desk lead called the vendor on their own."
+    },
+    {
+      "n": 8,
+      "at": "2026-11-06T18:22:00+00:00",
+      "type": "mark",
+      "inject_id": "I4",
+      "event": "presented"
+    },
+    {
+      "n": 9,
+      "at": "2026-11-06T18:40:00+00:00",
+      "type": "decision",
+      "inject_id": "I4",
+      "unplanned": false,
+      "decision": "Agreed to open a negotiation and see what the attackers want.",
+      "decided_by_role": "cfo",
+      "notified": [],
+      "actions_completed": [],
+      "plan_step_followed": "n/a",
+      "documented": "no",
+      "scenario_minutes": null,
+      "discussion_minutes": 18.0,
+      "note": null
+    },
+    {
+      "n": 10,
+      "at": "2026-11-06T18:41:00+00:00",
+      "type": "mark",
+      "inject_id": "I5",
+      "event": "skipped"
+    },
+    {
+      "n": 11,
+      "at": "2026-11-06T18:42:00+00:00",
+      "type": "mark",
+      "inject_id": "I6",
+      "event": "presented"
+    },
+    {
+      "n": 12,
+      "at": "2026-11-06T19:00:00+00:00",
+      "type": "decision",
+      "inject_id": "I6",
+      "unplanned": false,
+      "decision": "Communications will tell patients when there is something to say; nobody named the regulators.",
+      "decided_by_role": "communications",
+      "notified": [
+        "patients"
+      ],
+      "actions_completed": [],
+      "plan_step_followed": "no",
+      "documented": "no",
+      "scenario_minutes": null,
+      "discussion_minutes": 18.0,
+      "note": null
+    },
+    {
+      "n": 13,
+      "at": "2026-11-06T19:02:00+00:00",
+      "type": "clocks",
+      "owners": {
+        "hipaa_media_notice": "communications"
+      },
+      "planned_notify_hours": {
+        "hipaa_media_notice": 1500.0,
+        "hipaa_individual_notice": 1200.0
+      }
+    },
+    {
+      "n": 14,
+      "at": "2026-11-06T19:03:00+00:00",
+      "type": "mark",
+      "inject_id": "I7",
+      "event": "presented"
+    },
+    {
+      "n": 15,
+      "at": "2026-11-06T19:20:00+00:00",
+      "type": "decision",
+      "inject_id": "I7",
+      "unplanned": false,
+      "decision": "Told the reporter it was an IT outage.",
+      "decided_by_role": "other",
+      "notified": [],
+      "actions_completed": [],
+      "plan_step_followed": "no",
+      "documented": "no",
+      "scenario_minutes": null,
+      "discussion_minutes": 17.0,
+      "note": "The on-call PR agency answered the call."
+    },
+    {
+      "n": 16,
+      "at": "2026-11-06T19:22:00+00:00",
+      "type": "note",
+      "text": "Exercise ended. Hot wash begins."
+    }
+  ]
+}
