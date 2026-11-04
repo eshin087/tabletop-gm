@@ -1,13 +1,13 @@
 ---
 name: facilitate
-description: Facilitate an approved tabletop exercise live in the Claude Code chat, with the chat on the projector. One inject at a time, the host types the room's decisions, the engine logs them with ttx log, and the same score and AAR pipeline runs at the end. Use on exercise day, in a fresh session, when the host says "run the exercise live".
+description: Facilitate an approved tabletop exercise live in the Claude Code chat, with the chat on the projector. One inject at a time, the host types the room's decisions, the engine logs them with ttx log, and the same score and AAR pipeline runs at the end. Use when the host picks "Run an exercise live" in /tabletop or says "run the exercise live".
 ---
 
 # Facilitate the exercise live in chat
 
 You are the game master. The chat window is on the projector; the room reads it. The host sits at the keyboard and types what the room decides. The Python engine (`ttx`) records every decision with its wall-clock time, and at the end it scores the session and builds the record set. You run the room; the engine keeps the record.
 
-The only input you need is the approved `out/exercise_pack.json`. No deck, no slides, no paper tracker.
+The only input you need is an approved exercise pack. No deck, no slides, no paper tracker. Below, `<pack>` is the pack picked in step 1.
 
 ## Rules you never break
 
@@ -22,15 +22,24 @@ A fresh session matters. The prep chat contains spoilers (expected answers, wher
 
 ## Session flow
 
-### 1. Bootstrap, silently
+### 1. Set up, with as few questions as possible
 
-Follow step 0 of the root `SKILL.md` to make sure the engine is installed and to learn how to run `ttx` without permission prompts (one `ttx` command per tool call, from the repository root, writing only under `out/`). Load `out/exercise_pack.json`. Then start the log:
+Follow step 0 of the root `SKILL.md` silently, to make sure the engine is installed and to learn how to run `ttx` without permission prompts (one `ttx` command per tool call, from the repository root, writing only under `out/`).
+
+**Pick the exercise.** Ask with the AskUserQuestion tool, one screen:
+
+- Which exercise. If `out/exercise_pack.json` exists: "<its title>" (Recommended), "The built-in sample (a fictional health system, ransomware, 90 minutes)", "Build a new exercise first". If it does not: the sample (Recommended) and "Build a new exercise first".
+- The facilitator's name, if you do not know it (typed answer under Other).
+
+The sample is `samples/exercise_pack_sample.json`. It is already approved, so it is the quickest way to try live mode or rehearse. "Build a new exercise first" goes to step 1 of the root `SKILL.md`; when it is built, tell the person to open a new chat for the live run.
+
+Then start the log:
 
 ```
-ttx log start --pack out/exercise_pack.json --out out/live --by "<facilitator name>"
+ttx log start --pack <pack> --out out/live --by "<facilitator name>"
 ```
 
-If the pack is missing or `ttx log start` refuses it (unapproved, or changed since approval), say so to the host in one line and stop. If a log already exists from an interrupted session, ask the host whether to continue it (`--resume`) or start fresh in another folder.
+If `ttx log start` refuses the pack (unapproved, or changed since approval), say so in one line and offer the sample instead. If a log already exists in `out/live`, ask one question: "Continue that session" (`--resume`) or "Start a new session" (use `--out out/live-2`, or the next free number, for this and every later command).
 
 ### 2. The ready card
 
@@ -106,20 +115,17 @@ ttx log edit --entry N --by "<host>" [--decision "..."] [--decided-by <role_id>]
 
 The original entry stays in the log marked superseded; the export uses the correction.
 
-3. Export, score, and build the record set, one command per tool call:
+3. Write the record set with one command:
 
 ```
-ttx log export --out out/live
-ttx score --pack out/exercise_pack.json --tracker out/live/decisions.csv --out out/live/score.json
-ttx build out/exercise_pack.json --out out/live/build
-ttx aar --pack out/exercise_pack.json --score out/live/score.json --log out/live/decision_log.json --out out/live/build/after_action_report.docx
+ttx report --log out/live/decision_log.json --open
 ```
 
-Skip `ttx build` if the documents were already built in prep; point the AAR at that folder instead. The AAR carries an appendix with the full decision timeline from the log.
+It exports the log in the tracker's shapes, scores it, and writes the after-action report (with a decision timeline appendix), the executive summary slides and memo, and `score.json` into `out/live/`, then opens the folder.
 
 4. Ask the pack's `hot_wash` questions, one at a time, and log notable answers with `ttx log note`.
 5. The recap, following `skills/scoring_aar/SKILL.md`: the headline line, the scores by dimension, the gaps with owners, the clock results (met, missed, not planned, with the hours from the score), and only now what the expected good answers were, inject by inject from `what_good_looks_like`. Every number comes from `out/live/score.json`.
-6. Tell the host where the record set is: `out/live/decision_log.json` (the audit original), `decisions.csv` and `decisions_clocks.csv`, `score.json`, and the documents in `out/live/build/`, including the sign-off sheet for signatures.
+6. Tell the host in two lines where the record set is: everything is in `out/live/`, and `decision_log.json` is the audit original.
 
 ## What you may and may not do
 

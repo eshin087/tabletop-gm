@@ -124,13 +124,13 @@ Every subcommand takes `--out DIR` (default `out/live`) and reads the pack path 
 | `ttx log clocks --owner id=role --planned-hours id=N` | The team's clock answers, same meaning as the tracker's Clocks sheet. Later answers override earlier ones. |
 | `ttx log export --out` | Writes `decisions.csv` and `decisions_clocks.csv` in exactly the tracker's columns (`schemas/tracker_columns.yaml`). `decision_log.json` stays as the audit original. |
 
-Then the usual pipeline, with the AAR carrying a decision timeline appendix:
+Then one command writes the record set. It exports the log, scores it, and writes the AAR with a decision timeline appendix plus the executive summary, all into the log's folder:
 
 ```bash
-ttx score --pack out/exercise_pack.json --tracker out/live/decisions.csv --out out/live/score.json
-ttx build out/exercise_pack.json --out out/live/build
-ttx aar --pack out/exercise_pack.json --score out/live/score.json --log out/live/decision_log.json --out out/live/build/after_action_report.docx
+ttx report --log out/live/decision_log.json --open
 ```
+
+The same steps one at a time: `ttx log export`, then `ttx score --tracker out/live/decisions.csv`, then `ttx aar --log out/live/decision_log.json`.
 
 Two scripted synthetic sessions ship under `samples/live/` (a team that follows the plan and one that does not); `python samples/make_live_logs.py` regenerates them.
 
@@ -146,7 +146,7 @@ Two scripted synthetic sessions ship under `samples/live/` (a team that follows 
 | Command | Does |
 |---|---|
 | `ttx demo` | Build the whole sample exercise and open it |
-| `ttx report` | After the exercise: score the tracker, write the AAR and executive summary |
+| `ttx report [--log]` | After the exercise: score the tracker, write the AAR and executive summary; `--log` does the same from a live session's decision log |
 | `ttx packs` | List industry packs and clock counts |
 | `ttx flags --industry SLUG --states CA,NV` | Plain-language regulated-status questions for the intake |
 | `ttx ingest-plan DOC... --out` | Extract uploaded plans with section anchors |

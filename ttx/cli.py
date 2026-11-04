@@ -68,7 +68,7 @@ def cmd_report(args) -> int:
     from .demo import open_folder
     from .report import run_report
 
-    result = run_report(args.pack, args.tracker, args.out, args.narrative)
+    result = run_report(args.pack, args.tracker, args.out, args.narrative, log_path=args.log)
     for note in result["notes"]:
         print(note)
     print(f"Exercise: {result['pack']}")
@@ -529,7 +529,8 @@ def build_parser() -> argparse.ArgumentParser:
     s.add_argument("--pack", help="approved exercise pack (default: out/exercise_pack.json)")
     s.add_argument("--tracker", help="filled tracker .xlsx or decision log .csv (default: newest filled tracker for this exercise)")
     s.add_argument("--narrative", help="optional narrative.json (headline, summary) from the scoring_aar skill")
-    s.add_argument("--out", help="output folder (default: out/report)")
+    s.add_argument("--log", help="a live session's decision_log.json: exports it, scores it, and adds the timeline appendix")
+    s.add_argument("--out", help="output folder (default: out/report, or the log's folder with --log)")
     s.add_argument("--open", action="store_true", help="open the folder afterwards")
     s.set_defaults(func=cmd_report)
 

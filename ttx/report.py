@@ -83,20 +83,32 @@ def find_tracker(pack: dict, explicit: str | None = None, root: Path | None = No
 
 
 def run_report(pack_path: str | None = None, tracker_path: str | None = None, out_dir: str | None = None,
-               narrative_path: str | None = None, root: Path | None = None) -> dict:
+               narrative_path: str | None = None, root: Path | None = None, log_path: str | None = None) -> dict:
     from .build.aar import build_aar, check_narrative
     from .build.exec_summary import build_content, build_exec_deck, build_exec_memo
     from .score_engine import score_tracker
 
     root = root or Path.cwd()
-    pack_file = find_pack(pack_path, root)
-    pack = read_json(pack_file)
-    if not (pack.get("approval") or {}).get("approved"):
-        raise ValueError(f"{pack_file} is not approved; approve the outline before scoring")
-    tracker, notes = find_tracker(pack, tracker_path, root)
+    log = None
+    if log_path:
+        # a live session: the decision log names its own pack, and its export is the tracker
+        from .decision_log import export, load_pack_for
+
+        log = read_json(log_path)
+        pack_file = Path(pack_path or log["pack_path"])
+        pack = load_pack_for(log, pack_file)
+        out = Path(out_dir) if out_dir else Path(log_path).parent
+        out.mkdir(parents=True, exist_ok=True)
+        tracker, notes = Path(export(log, pack, out)["decisions"]), []
+    else:
+        pack_file = find_pack(pack_path, root)
+        pack = read_json(pack_file)
+        if not (pack.get("approval") or {}).get("approved"):
+            raise ValueError(f"{pack_file} is not approved; approve the outline before scoring")
+        tracker, notes = find_tracker(pack, tracker_path, root)
+        out = Path(out_dir) if out_dir else root / "out" / "report"
+        out.mkdir(parents=True, exist_ok=True)
     narrative = read_json(narrative_path) if narrative_path else None
-    out = Path(out_dir) if out_dir else root / "out" / "report"
-    out.mkdir(parents=True, exist_ok=True)
 
     score = score_tracker(pack, tracker)
     write_json(out / "score.json", score)
@@ -106,7 +118,8 @@ def run_report(pack_path: str | None = None, tracker_path: str | None = None, ou
             raise ValueError(f"narrative contains numbers that the score and pack do not: {bad}")
     files = {
         "score": str(out / "score.json"),
-        "after_action_report": str(build_aar(pack, score, out / "after_action_report.docx", narrative=narrative)),
+        "after_action_report": str(build_aar(pack, score, out / "after_action_report.docx", narrative=narrative,
+                                             log=log, log_file=log_path)),
         "executive_summary_slides": str(build_exec_deck(pack, score, out / "executive_summary.pptx", narrative=narrative)),
         "executive_summary_memo": str(build_exec_memo(pack, score, out / "executive_summary.docx", narrative=narrative)),
     }

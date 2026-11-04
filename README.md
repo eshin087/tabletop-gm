@@ -67,12 +67,13 @@ There is no git, Docker, Node, database, or cloud service to set up. The depende
 3. **Pick from the menu:**
    - **1. See a finished sample exercise.** About 10 seconds, no account. It builds the complete Valley Regional exercise (a fictional health system) and opens the folder. Start with `START_HERE.txt`.
    - **2. Build an exercise for my organization.** This opens Claude Code in the folder and starts the `/tabletop` interview.
+   - **3. Run an exercise live in chat.** Claude facilitates in the chat. With nothing built yet, it runs the sample exercise. See [Run it live in chat](#run-it-live-in-chat).
 
 The first run takes a minute or two. The launcher creates a private `.venv` folder inside the download and installs into it, so nothing else on your computer changes. Later runs go straight to the menu.
 
 ### What happens in option 2
 
-`/tabletop` opens with three choices: build a new exercise, score one you've run, or see the sample.
+`/tabletop` opens with four choices: build a new exercise, score one you've run, run one live in chat, or see the sample.
 
 **Building takes a few minutes, mostly clicks:**
 
@@ -100,7 +101,14 @@ If you already use Claude Code, you can skip the launcher. Open the downloaded f
 
 ### Run it live in chat
 
-You can also run the exercise without the deck. On exercise day, open a **fresh** Claude Code session in the folder (the prep chat contains the expected answers) and say "Run the exercise live". The chat goes on the projector. Claude presents one inject at a time, the host types what the room decides, and `ttx log` records each decision with its time. At `END`, Claude shows the log for corrections, then exports it, scores it with the same `ttx score`, and builds the after-action report with a decision timeline appendix. The record set lands in `out/live/`.
+Skip the deck and let Claude run the room.
+
+1. Open a new chat in the folder, type `/tabletop`, and choose **Run an exercise live**. Use a new chat, not the one where you built the exercise, because that one holds the answers.
+2. Pick your exercise, or the built-in sample if you just want to try it.
+3. Put the chat on the projector. Claude shows one inject at a time. You type what the room decides.
+4. Type `END` when you're done. Claude shows the log for corrections, then writes the scored after-action report and executive summary into `out/live/`.
+
+You can type `PAUSE`, `RESUME`, or `SKIP` at any point.
 
 ### Command line
 
@@ -117,7 +125,7 @@ Everything the launcher and Claude do is a plain `ttx` command, and every docume
 | `participant_handout.docx` | Everyone | Roles, ground rules, a contact-list template, and note space. No inject content. |
 | `decision_tracker.xlsx` | Host, live | One color-coded block per inject with plain questions and dropdowns: who made the call, how fast, Yes/No for each expected action and notification, plan followed, written down. Only the two optional note rows are typed. A Notification clocks sheet records who owns each notice and when they'll send it. `ttx report` reads it. |
 | `attendance_signin.xlsx`, `signoff_sheet.docx` | Audit evidence | Sign-in and roles-present sheets. The sign-off covers scope, approval record, documents exercised, requirements supported, clocks, and an attestation. |
-| `after_action_report.docx` (from `ttx report`) | Security team, auditors | Headline, scores by dimension and decision, and regulatory exposure: each clock met or missed by hours, plus the plan's own standards. Plan, people, and technical gaps with citation, fix, owner, and due date. Plan coverage map, decision log, and an evidence page with hashes. With `ttx aar --log`, an appendix with the live session's decision timeline. |
+| `after_action_report.docx` (from `ttx report`) | Security team, auditors | Headline, scores by dimension and decision, and regulatory exposure: each clock met or missed by hours, plus the plan's own standards. Plan, people, and technical gaps with citation, fix, owner, and due date. Plan coverage map, decision log, and an evidence page with hashes. After a live run, an appendix with the session's decision timeline. |
 | `executive_summary.pptx`, `executive_summary.docx` (from `ttx report`) | Senior management | Six slides and a one-page memo: a plain-language bottom line, an overall readiness rating (Strong, Adequate, Needs work), regulatory exposure, the top three risks, the top five fixes with owners and dates, and the decisions needed from leadership. No finding IDs or rubric detail. |
 | `out/live/decision_log.json`, `decisions.csv`, `decisions_clocks.csv` (from `ttx log`) | Live mode | The append-only decision log of a chat-facilitated session (the audit original) and its export in the tracker's column shapes, which `ttx score` reads unchanged. |
 

@@ -48,3 +48,10 @@ def test_launch_scripts_are_shipped_correctly():
 def test_unknown_launcher_choice_fails_cleanly():
     r = subprocess.run([sys.executable, "scripts/launcher.py", "--choice", "nope"], cwd=REPO, capture_output=True, text=True)
     assert r.returncode == 2
+
+
+def test_launcher_offers_the_live_choice():
+    r = subprocess.run([sys.executable, "scripts/launcher.py", "--choice", "nope"], cwd=REPO, capture_output=True, text=True)
+    assert "live" in r.stdout
+    text = (REPO / "scripts" / "launcher.py").read_text(encoding="utf-8")
+    assert "Run an exercise live in chat" in text and "Run an exercise live in this chat" in text
