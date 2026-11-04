@@ -185,7 +185,11 @@ End with one sentence: after the exercise, run `/tabletop-report` (or `/tabletop
 
 ### 8. Run
 
-The deck goes on the projector. The facilitator runs from `facilitator_guide.docx` and records decisions in `decision_tracker.xlsx`. If the facilitator wants a private co-host in this chat, follow `skills/host_copilot/SKILL.md`.
+Two ways to run the exercise:
+
+**A. In the room with the deck.** The deck goes on the projector. The facilitator runs from `facilitator_guide.docx` and records decisions in `decision_tracker.xlsx`. If the facilitator wants a private co-host in this chat, follow `skills/host_copilot/SKILL.md`.
+
+**B. Live in this chat.** No deck: the chat itself goes on the projector, Claude presents one inject at a time, the host types the room's decisions, and `ttx log` records them. Tell the person to open a **fresh Claude Code session** in this folder on exercise day, say "Run the exercise live", and Claude follows `skills/facilitate/SKILL.md`. Running it in this prep chat would put the expected answers and the scoring notes in front of the room.
 
 ### 9. Score and report
 
@@ -205,3 +209,4 @@ Follow `.claude/skills/tabletop-report/SKILL.md`, the same flow as `/tabletop-re
 | `skills/deliverables/SKILL.md` | What each document contains |
 | `skills/scoring_aar/SKILL.md` | Rubric, gap labels, coverage map, AAR narrative |
 | `skills/host_copilot/SKILL.md` | Assisting the host privately during the run |
+| `skills/facilitate/SKILL.md` | Running the exercise live in chat, one inject at a time, logging decisions with `ttx log` |
