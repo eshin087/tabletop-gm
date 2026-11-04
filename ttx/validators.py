@@ -155,6 +155,10 @@ def validate_clock(clock: dict, r: Result, where: str) -> None:
             r.error(f"{label}: applies_when key '{key}' is not one of {sorted(allowed)}")
     if not re.match(r"^[a-z0-9_]+$", str(cid)):
         r.error(f"{label}: id must be snake_case")
+    if clock.get("after_clock") is not None and not re.match(r"^[a-z0-9_]+$", str(clock["after_clock"])):
+        r.error(f"{label}: after_clock must be a clock id")
+    if clock.get("after_clock") is not None and not re.match(r"^[a-z0-9_]+$", str(clock["after_clock"])):
+        r.error(f"{label}: after_clock must be a clock id")
 
 
 def validate_clocks_file(path: str | Path) -> Result:

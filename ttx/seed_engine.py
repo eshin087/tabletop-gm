@@ -816,8 +816,9 @@ def select_seed(estate: Estate, intake: dict) -> dict:
         _, _, _, pa, rule = pivot_cands[0]
         pf = _finding_on(pa["id"], estate.findings)
         if pf:
-            technique = f"exploitation of {pf['cve'][0] if pf['cve'] else pf['plugin_name']} on {pa['hostname']}"
-            pivot = {"finding_id": pf["finding_id"], "cve": pf["cve"][0] if pf["cve"] else None, "vpr": pf["vpr"], "kev": pf["kev"]}
+            technique = f"exploitation of {pf['cve'][0] if pf['cve'] else pf['plugin_name']}"
+            pivot = {"finding_id": pf["finding_id"], "cve": pf["cve"][0] if pf["cve"] else None, "vpr": pf["vpr"], "kev": pf["kev"],
+                     "plugin_name": pf["plugin_name"]}
         else:
             aid = assume(f"No open finding on {pa['hostname']} supports a specific exploit; the pivot technique is assumed to be credential reuse from the entry host.")
             technique = "credential reuse (assumed)"
@@ -845,6 +846,9 @@ def select_seed(estate: Estate, intake: dict) -> dict:
         tf = _finding_on(ta["id"], estate.findings)
         target = {
             "finding_id": tf["finding_id"] if tf else None,
+            "plugin_name": tf["plugin_name"] if tf else None,
+            "vpr": tf["vpr"] if tf else None,
+            "kev": tf["kev"] if tf else None,
             "asset_id": ta["id"],
             "asset": ta["hostname"],
             "criticality": ta.get("acr"),

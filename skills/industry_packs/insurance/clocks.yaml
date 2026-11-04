@@ -33,7 +33,6 @@ clocks:
     deadline_business_days: null
     deadline_text: "as promptly as possible but in no event later than 72 hours after determining that a cybersecurity incident has occurred at the covered entity, its affiliates, or a third-party service provider"
     applies_when:
-      industries: [insurance]
       flags: [nydfs_licensed]
     source_url: https://www.dfs.ny.gov/cybersecurity/23-NYCRR-Part-500
     citation: "23 NYCRR 500.17(a)(1)"
@@ -51,7 +50,6 @@ clocks:
     deadline_business_days: null
     deadline_text: "within 24 hours of the extortion payment, notice of the payment"
     applies_when:
-      industries: [insurance]
       flags: [nydfs_licensed]
     source_url: https://www.dfs.ny.gov/cybersecurity/23-NYCRR-Part-500
     citation: "23 NYCRR 500.17(c)(1)"
@@ -69,7 +67,6 @@ clocks:
     deadline_business_days: null
     deadline_text: "within 30 days of the extortion payment, a written description of the reasons payment was necessary, a description of alternatives to payment considered, all diligence performed to find alternatives to payment and all diligence performed to ensure compliance with applicable rules and regulations including those of the Office of Foreign Assets Control"
     applies_when:
-      industries: [insurance]
       flags: [nydfs_licensed]
     source_url: https://www.dfs.ny.gov/cybersecurity/23-NYCRR-Part-500
     citation: "23 NYCRR 500.17(c)(2)"

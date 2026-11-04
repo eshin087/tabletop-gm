@@ -1,0 +1,559 @@
+{
+  "schema_version": "1",
+  "generated_at": "2026-11-04T05:16:07+00:00",
+  "intake_summary": {
+    "industry": "healthcare",
+    "additional_packs": [],
+    "countries": [
+      "US"
+    ],
+    "states": [
+      "CA",
+      "NV"
+    ],
+    "data_types": [
+      "PHI",
+      "PII",
+      "PCI"
+    ],
+    "public_company": false,
+    "regulated": [
+      "hipaa_covered_entity",
+      "ca_licensed_health_facility",
+      "pci_merchant"
+    ],
+    "affected_estimate": 85000
+  },
+  "clocks": [
+    {
+      "id": "pci_visa_compromise_notice_3_days",
+      "pack": "common",
+      "name": "Visa What To Do If Compromised, notification of a suspected or confirmed Compromise Event to Visa",
+      "regulator": "Visa Global Risk Investigations (card brand rules, enforced through the acquiring bank)",
+      "jurisdiction": "Global (Visa payment system participants)",
+      "trigger": "discovery of evidence sufficient to raise a reasonable suspicion of, or to confirm, a Compromise Event involving Visa payment account data or a system that stores, processes, or transmits it",
+      "deadline_hours": 72,
+      "deadline_business_days": null,
+      "deadline_text": "An entity that suspects or confirms unauthorized access to any Visa payment account data, or to any payment system that stores, processes, or transmits Visa payment account data, is required to ensure that the Compromise Event is reported to Visa's Global Risk Investigations group within three (3) calendar days of either: a. The discovery of evidence sufficient to raise a reasonable suspicion of a Compromise Event, or b. The discovery of evidence sufficient to confirm the existence of a Compromise Event",
+      "source_url": "https://usa.visa.com/dam/VCOM/download/merchants/cisp-what-to-do-if-compromised.pdf",
+      "citation": "Visa, What To Do If Compromised, Visa Supplemental Requirements, Version 10.0, effective 25 June 2026, Section A-1.1",
+      "tier": "researched",
+      "verified_date": "2026-11-03",
+      "verifier": "pack_research skill (Claude), not yet human-checked",
+      "notes": "PDF opened and text extracted on 2026-11-03. Follow-on deadlines in the same document: an Incident Report to Visa and the acquiring bank within three calendar days of notifying Visa (A-2.1); at-risk account numbers to Visa within three calendar days of discovery, a Visa request, or determination of the window of exposure (A-4.1); if Visa requires a PCI Forensic Investigator, a signed PFI contract within five business days, a preliminary report within five business days of retaining the PFI, and a final report within ten business days of completing the investigation (A-5.1). Section A-3.1 says to immediately notify the issuing or acquiring bank. Mastercard's account data compromise rules were not fetched; add them before using this clock for a Mastercard-only dispute. State breach laws apply in parallel when card data counts as personal information.",
+      "after_clock": null,
+      "applies_when": {
+        "data_types": [
+          "PCI"
+        ],
+        "flags": [
+          "pci_merchant"
+        ]
+      },
+      "applies_because": [
+        "holds ['PCI']",
+        "flags ['pci_merchant']"
+      ]
+    },
+    {
+      "id": "state_ca_ag_sample_notice",
+      "pack": "common",
+      "name": "California, sample copy of the breach notification to the Attorney General (more than 500 residents)",
+      "regulator": "California Attorney General",
+      "jurisdiction": "US-CA",
+      "trigger": "notifying affected consumers of a breach that requires notice to more than 500 California residents",
+      "deadline_hours": 360,
+      "deadline_business_days": null,
+      "deadline_text": "shall electronically submit a single sample copy of that security breach notification, excluding any personally identifiable information, to the Attorney General within 15 calendar days of notifying affected consumers of the security breach",
+      "source_url": "https://leginfo.legislature.ca.gov/faces/codes_displaySection.xhtml?lawCode=CIV&sectionNum=1798.82",
+      "citation": "Cal. Civ. Code 1798.82(f)",
+      "tier": "researched",
+      "verified_date": "2026-11-03",
+      "verifier": "pack_research skill (Claude), not yet human-checked",
+      "notes": "Opened in the desktop browser pane on 2026-11-03. The clock runs from the date consumers are notified, not from discovery. Submitted through the Attorney General's online breach reporting form (https://oag.ca.gov/privacy/databreach/reporting, also opened on 2026-11-03).",
+      "after_clock": "state_ca_individual_notice",
+      "applies_when": {
+        "countries": [
+          "US"
+        ],
+        "states": [
+          "CA"
+        ],
+        "data_types": [
+          "PII"
+        ],
+        "min_affected": 501
+      },
+      "applies_because": [
+        "holds ['PII']",
+        "operates in ['US']",
+        "operates in ['CA']",
+        "affected estimate 85000 meets 501"
+      ],
+      "starts_from": "notification under state_ca_individual_notice"
+    },
+    {
+      "id": "ca_health_facility_unauthorized_access_15bd",
+      "pack": "healthcare",
+      "name": "California licensed health facility report of unlawful or unauthorized access",
+      "regulator": "California Department of Public Health",
+      "jurisdiction": "US-CA",
+      "trigger": "detection of unlawful or unauthorized access to, or use or disclosure of, a patient's medical information",
+      "deadline_hours": null,
+      "deadline_business_days": 15,
+      "deadline_text": "report to the department and the affected patient no later than 15 business days after the unlawful or unauthorized access, use, or disclosure has been detected",
+      "source_url": "https://leginfo.legislature.ca.gov/faces/codes_displaySection.xhtml?lawCode=HSC&sectionNum=1280.15",
+      "citation": "California Health and Safety Code 1280.15(b)",
+      "tier": "researched",
+      "verified_date": "2026-11-03",
+      "verifier": "pack_research skill (Claude), not yet human-checked",
+      "notes": "source not fetched; verify before use. leginfo.legislature.ca.gov returned 403 to the automated fetch on 2026-11-03, so the wording is from the drafter's reading of the statute and must be checked by a human.",
+      "after_clock": null,
+      "applies_when": {
+        "countries": [
+          "US"
+        ],
+        "states": [
+          "CA"
+        ],
+        "data_types": [
+          "PHI"
+        ],
+        "flags": [
+          "ca_licensed_health_facility"
+        ]
+      },
+      "applies_because": [
+        "holds ['PHI']",
+        "operates in ['US']",
+        "operates in ['CA']",
+        "flags ['ca_licensed_health_facility']"
+      ]
+    },
+    {
+      "id": "state_ca_individual_notice",
+      "pack": "common",
+      "name": "California, notice of a data breach to affected residents",
+      "regulator": "California Attorney General (enforcement)",
+      "jurisdiction": "US-CA",
+      "trigger": "discovery or notification of a breach of the security of the system involving unencrypted personal information of a California resident",
+      "deadline_hours": 720,
+      "deadline_business_days": null,
+      "deadline_text": "the disclosure required by this subdivision shall be made within 30 calendar days of discovery or notification of the data breach",
+      "source_url": "https://leginfo.legislature.ca.gov/faces/codes_displaySection.xhtml?lawCode=CIV&sectionNum=1798.82",
+      "citation": "Cal. Civ. Code 1798.82(a)(2)(A)",
+      "tier": "researched",
+      "verified_date": "2026-11-03",
+      "verifier": "pack_research skill (Claude), not yet human-checked",
+      "notes": "Opened in the desktop browser pane on 2026-11-03 (WebFetch returned 403). The page text read on 2026-11-03 contains a 30 calendar day limit at 1798.82(a)(2)(A); older summaries describe only the open-ended 'most expedient time possible and without unreasonable delay' standard, so this is a recent amendment and a human should confirm its effective date. Disclosure may be delayed for the legitimate needs of law enforcement (subdivision (c)) or as necessary to determine the scope of the breach and restore integrity (subdivision (a)(2)(B)).",
+      "after_clock": null,
+      "applies_when": {
+        "countries": [
+          "US"
+        ],
+        "states": [
+          "CA"
+        ],
+        "data_types": [
+          "PII"
+        ]
+      },
+      "applies_because": [
+        "holds ['PII']",
+        "operates in ['US']",
+        "operates in ['CA']"
+      ]
+    },
+    {
+      "id": "hipaa_hhs_notice_500_or_more",
+      "pack": "healthcare",
+      "name": "HIPAA Breach Notification Rule, notice to the Secretary (500 or more individuals)",
+      "regulator": "HHS Office for Civil Rights",
+      "jurisdiction": "US-federal",
+      "trigger": "discovery of a breach of unsecured PHI involving 500 or more individuals",
+      "deadline_hours": 1440,
+      "deadline_business_days": null,
+      "deadline_text": "contemporaneously with the notice required by 164.404(a), without unreasonable delay and in no case later than 60 calendar days after discovery",
+      "source_url": "https://www.ecfr.gov/current/title-45/subtitle-A/subchapter-C/part-164/subpart-D/section-164.408",
+      "citation": "45 CFR 164.408(b)",
+      "tier": "researched",
+      "verified_date": "2026-11-03",
+      "verifier": "pack_research skill (Claude), not yet human-checked",
+      "notes": "Text confirmed via law.cornell.edu mirror on 2026-11-03. Filed through the HHS breach portal. Breaches under 500 are logged and reported within 60 days after the end of the calendar year (164.408(c)).",
+      "after_clock": null,
+      "applies_when": {
+        "data_types": [
+          "PHI"
+        ],
+        "countries": [
+          "US"
+        ],
+        "min_affected": 500
+      },
+      "applies_because": [
+        "holds ['PHI']",
+        "operates in ['US']",
+        "affected estimate 85000 meets 500"
+      ]
+    },
+    {
+      "id": "hipaa_individual_notice",
+      "pack": "healthcare",
+      "name": "HIPAA Breach Notification Rule, notice to individuals",
+      "regulator": "HHS Office for Civil Rights",
+      "jurisdiction": "US-federal",
+      "trigger": "discovery of a breach of unsecured protected health information",
+      "deadline_hours": 1440,
+      "deadline_business_days": null,
+      "deadline_text": "without unreasonable delay and in no case later than 60 calendar days after discovery of a breach",
+      "source_url": "https://www.ecfr.gov/current/title-45/subtitle-A/subchapter-C/part-164/subpart-D/section-164.404",
+      "citation": "45 CFR 164.404(b)",
+      "tier": "researched",
+      "verified_date": "2026-11-03",
+      "verifier": "pack_research skill (Claude), not yet human-checked",
+      "notes": "Text confirmed via law.cornell.edu mirror on 2026-11-03. The 60 days is an outer limit; the standard is without unreasonable delay. Discovery is the first day the breach is known or should reasonably have been known (164.404(a)(2)). A breach is presumed unless the four-factor risk assessment in 164.402 shows a low probability of compromise.",
+      "after_clock": null,
+      "applies_when": {
+        "data_types": [
+          "PHI"
+        ],
+        "countries": [
+          "US"
+        ]
+      },
+      "applies_because": [
+        "holds ['PHI']",
+        "operates in ['US']"
+      ]
+    },
+    {
+      "id": "hipaa_media_notice",
+      "pack": "healthcare",
+      "name": "HIPAA Breach Notification Rule, notice to prominent media outlets",
+      "regulator": "HHS Office for Civil Rights",
+      "jurisdiction": "US-federal",
+      "trigger": "discovery of a breach of unsecured PHI involving more than 500 residents of a state or jurisdiction",
+      "deadline_hours": 1440,
+      "deadline_business_days": null,
+      "deadline_text": "without unreasonable delay and in no case later than 60 calendar days after discovery of a breach",
+      "source_url": "https://www.ecfr.gov/current/title-45/subtitle-A/subchapter-C/part-164/subpart-D/section-164.406",
+      "citation": "45 CFR 164.406",
+      "tier": "researched",
+      "verified_date": "2026-11-03",
+      "verifier": "pack_research skill (Claude), not yet human-checked",
+      "notes": "Text confirmed via law.cornell.edu mirror on 2026-11-03. The threshold is more than 500 residents of a single state or jurisdiction, not 500 individuals in total; the engine approximates with the total affected estimate and the facilitator should confirm the per-state count.",
+      "after_clock": null,
+      "applies_when": {
+        "data_types": [
+          "PHI"
+        ],
+        "countries": [
+          "US"
+        ],
+        "min_affected": 501
+      },
+      "applies_because": [
+        "holds ['PHI']",
+        "operates in ['US']",
+        "affected estimate 85000 meets 501"
+      ]
+    }
+  ],
+  "excluded": [
+    {
+      "id": "hipaa_business_associate_notice",
+      "pack": "healthcare",
+      "reason": "missing flags ['business_associate']"
+    },
+    {
+      "id": "ny_hospital_cyber_incident_72h",
+      "pack": "healthcare",
+      "reason": "not operating in states ['NY']"
+    },
+    {
+      "id": "ftc_hbnr_individual_notice",
+      "pack": "healthcare",
+      "reason": "missing flags ['non_hipaa_health_records_vendor']"
+    },
+    {
+      "id": "gdpr_art33_supervisory_authority",
+      "pack": "common",
+      "reason": "missing flags ['eu_data_subjects']"
+    },
+    {
+      "id": "gdpr_art34_data_subjects",
+      "pack": "common",
+      "reason": "missing flags ['eu_data_subjects']"
+    },
+    {
+      "id": "uk_gdpr_art33_ico",
+      "pack": "common",
+      "reason": "missing flags ['uk_data_subjects']"
+    },
+    {
+      "id": "sec_8k_item_105_material_incident",
+      "pack": "common",
+      "reason": "public company status does not match"
+    },
+    {
+      "id": "circia_covered_incident_72h",
+      "pack": "common",
+      "reason": "missing flags ['critical_infrastructure']"
+    },
+    {
+      "id": "circia_ransom_payment_24h",
+      "pack": "common",
+      "reason": "missing flags ['critical_infrastructure']"
+    },
+    {
+      "id": "state_tx_individual_notice",
+      "pack": "common",
+      "reason": "not operating in states ['TX']"
+    },
+    {
+      "id": "state_tx_ag_notice",
+      "pack": "common",
+      "reason": "not operating in states ['TX']"
+    },
+    {
+      "id": "state_fl_individual_notice",
+      "pack": "common",
+      "reason": "not operating in states ['FL']"
+    },
+    {
+      "id": "state_fl_dla_notice",
+      "pack": "common",
+      "reason": "not operating in states ['FL']"
+    },
+    {
+      "id": "state_ny_individual_notice",
+      "pack": "common",
+      "reason": "not operating in states ['NY']"
+    },
+    {
+      "id": "state_pa_individual_notice",
+      "pack": "common",
+      "reason": "not operating in states ['PA']"
+    },
+    {
+      "id": "state_pa_ag_notice",
+      "pack": "common",
+      "reason": "not operating in states ['PA']"
+    },
+    {
+      "id": "state_il_individual_notice",
+      "pack": "common",
+      "reason": "not operating in states ['IL']"
+    },
+    {
+      "id": "state_il_ag_notice",
+      "pack": "common",
+      "reason": "not operating in states ['IL']"
+    },
+    {
+      "id": "state_oh_individual_notice",
+      "pack": "common",
+      "reason": "not operating in states ['OH']"
+    },
+    {
+      "id": "state_ga_individual_notice",
+      "pack": "common",
+      "reason": "not operating in states ['GA']"
+    },
+    {
+      "id": "state_nc_individual_notice",
+      "pack": "common",
+      "reason": "not operating in states ['NC']"
+    },
+    {
+      "id": "state_mi_individual_notice",
+      "pack": "common",
+      "reason": "not operating in states ['MI']"
+    },
+    {
+      "id": "state_nj_individual_notice",
+      "pack": "common",
+      "reason": "not operating in states ['NJ']"
+    },
+    {
+      "id": "state_nj_state_police_notice",
+      "pack": "common",
+      "reason": "not operating in states ['NJ']"
+    },
+    {
+      "id": "state_va_individual_notice",
+      "pack": "common",
+      "reason": "not operating in states ['VA']"
+    },
+    {
+      "id": "state_wa_individual_notice",
+      "pack": "common",
+      "reason": "not operating in states ['WA']"
+    },
+    {
+      "id": "state_wa_ag_notice",
+      "pack": "common",
+      "reason": "not operating in states ['WA']"
+    },
+    {
+      "id": "state_az_individual_notice",
+      "pack": "common",
+      "reason": "not operating in states ['AZ']"
+    },
+    {
+      "id": "state_az_ag_notice",
+      "pack": "common",
+      "reason": "not operating in states ['AZ']"
+    },
+    {
+      "id": "state_tn_individual_notice",
+      "pack": "common",
+      "reason": "not operating in states ['TN']"
+    },
+    {
+      "id": "state_ma_individual_notice",
+      "pack": "common",
+      "reason": "not operating in states ['MA']"
+    },
+    {
+      "id": "state_in_individual_notice",
+      "pack": "common",
+      "reason": "not operating in states ['IN']"
+    },
+    {
+      "id": "state_md_individual_notice",
+      "pack": "common",
+      "reason": "not operating in states ['MD']"
+    },
+    {
+      "id": "state_md_ag_notice",
+      "pack": "common",
+      "reason": "not operating in states ['MD']"
+    },
+    {
+      "id": "state_mo_individual_notice",
+      "pack": "common",
+      "reason": "not operating in states ['MO']"
+    },
+    {
+      "id": "state_wi_individual_notice",
+      "pack": "common",
+      "reason": "not operating in states ['WI']"
+    },
+    {
+      "id": "state_co_individual_notice",
+      "pack": "common",
+      "reason": "not operating in states ['CO']"
+    },
+    {
+      "id": "state_co_ag_notice",
+      "pack": "common",
+      "reason": "not operating in states ['CO']"
+    },
+    {
+      "id": "state_al_individual_notice",
+      "pack": "common",
+      "reason": "not operating in states ['AL']"
+    },
+    {
+      "id": "state_al_ag_notice",
+      "pack": "common",
+      "reason": "not operating in states ['AL']"
+    },
+    {
+      "id": "state_ct_individual_notice",
+      "pack": "common",
+      "reason": "not operating in states ['CT']"
+    },
+    {
+      "id": "state_ct_ag_notice",
+      "pack": "common",
+      "reason": "not operating in states ['CT']"
+    },
+    {
+      "id": "state_de_individual_notice",
+      "pack": "common",
+      "reason": "not operating in states ['DE']"
+    },
+    {
+      "id": "state_de_ag_notice",
+      "pack": "common",
+      "reason": "not operating in states ['DE']"
+    },
+    {
+      "id": "state_la_individual_notice",
+      "pack": "common",
+      "reason": "not operating in states ['LA']"
+    },
+    {
+      "id": "state_me_individual_notice",
+      "pack": "common",
+      "reason": "not operating in states ['ME']"
+    },
+    {
+      "id": "state_nm_individual_notice",
+      "pack": "common",
+      "reason": "not operating in states ['NM']"
+    },
+    {
+      "id": "state_nm_ag_notice",
+      "pack": "common",
+      "reason": "not operating in states ['NM']"
+    },
+    {
+      "id": "state_or_individual_notice",
+      "pack": "common",
+      "reason": "not operating in states ['OR']"
+    },
+    {
+      "id": "state_or_ag_notice",
+      "pack": "common",
+      "reason": "not operating in states ['OR']"
+    },
+    {
+      "id": "state_ri_individual_notice",
+      "pack": "common",
+      "reason": "not operating in states ['RI']"
+    },
+    {
+      "id": "state_sd_individual_notice",
+      "pack": "common",
+      "reason": "not operating in states ['SD']"
+    },
+    {
+      "id": "state_vt_individual_notice",
+      "pack": "common",
+      "reason": "not operating in states ['VT']"
+    },
+    {
+      "id": "state_vt_ag_notice",
+      "pack": "common",
+      "reason": "not operating in states ['VT']"
+    },
+    {
+      "id": "state_ok_individual_notice",
+      "pack": "common",
+      "reason": "not operating in states ['OK']"
+    },
+    {
+      "id": "state_ok_ag_notice",
+      "pack": "common",
+      "reason": "not operating in states ['OK']"
+    }
+  ],
+  "researched_clock_ids": [
+    "pci_visa_compromise_notice_3_days",
+    "state_ca_ag_sample_notice",
+    "ca_health_facility_unauthorized_access_15bd",
+    "state_ca_individual_notice",
+    "hipaa_hhs_notice_500_or_more",
+    "hipaa_individual_notice",
+    "hipaa_media_notice"
+  ],
+  "missing_source_ids": [],
+  "banner": {
+    "show": true,
+    "text": "Verify before exercise: the following notification clocks were researched from primary sources but have not been human-verified: pci_visa_compromise_notice_3_days, state_ca_ag_sample_notice, ca_health_facility_unauthorized_access_15bd, state_ca_individual_notice, hipaa_hhs_notice_500_or_more, hipaa_individual_notice, hipaa_media_notice. Open each source URL and promote the clock in clocks.yaml (tier: verified) before relying on it."
+  },
+  "business_day_note": "Business-day deadlines skip weekends only; public holidays are not modeled."
+}

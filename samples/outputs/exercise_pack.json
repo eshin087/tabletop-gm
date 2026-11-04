@@ -1,0 +1,1839 @@
+{
+  "schema_version": "1",
+  "generated_at": "2026-11-04T05:16:07+00:00",
+  "generator": "ttx outline (deterministic skeleton; narrative to be refined by scenario_design)",
+  "title": "Valley Regional Health System: Ransomware tabletop exercise (severity 3, 90 minutes)",
+  "slug": "valley_regional_health_system_ransomware_ttx",
+  "organization": {
+    "name": "Valley Regional Health System",
+    "size_employees": 1200,
+    "description": "Fictional community health system with two hospitals and fourteen clinics in California and Nevada.",
+    "short_name": "VRHS"
+  },
+  "intake": {
+    "organization": {
+      "name": "Valley Regional Health System",
+      "size_employees": 1200,
+      "description": "Fictional community health system with two hospitals and fourteen clinics in California and Nevada.",
+      "short_name": "VRHS"
+    },
+    "industry": "healthcare",
+    "additional_packs": [],
+    "countries": [
+      "US"
+    ],
+    "states": [
+      "CA",
+      "NV"
+    ],
+    "data_types": [
+      "PHI",
+      "PII",
+      "PCI"
+    ],
+    "public_company": false,
+    "regulated": [
+      "hipaa_covered_entity",
+      "ca_licensed_health_facility",
+      "pci_merchant"
+    ],
+    "affected_estimate": 85000,
+    "severity_level": 3,
+    "audience": "mixed",
+    "duration_minutes": 90,
+    "scenario_family": "ransomware",
+    "environment": {
+      "mode": "sample",
+      "estate_file": "samples/synthetic_estate.json",
+      "internet_facing_tags": [
+        "Exposure: Internet"
+      ]
+    },
+    "documents": [
+      "samples/sample_ir_plan.md"
+    ],
+    "exercise": {
+      "date": "2026-11-06",
+      "facilitator": "Facilitator name",
+      "sponsor": "Chief Executive Officer",
+      "location": "Hospital Command Center, Valley Regional Medical Center"
+    }
+  },
+  "pack": "healthcare",
+  "pack_display_name": "Healthcare and health systems",
+  "severity_level": 3,
+  "severity_musts": {
+    "outage": true,
+    "ransom_note": true,
+    "restore_order": true
+  },
+  "duration_minutes": 90,
+  "audience": "mixed",
+  "scenario": {
+    "family": "ransomware",
+    "summary": "A ransomware incident at Valley Regional Health System that begins with CVE-2025-0282 on the internet-facing vpngw01, moves through the identity server dc1 by exploitation of CVE-2020-1472, and reaches sql2016, which holds PHI and PII.",
+    "path_source": "inferred"
+  },
+  "seed": {
+    "schema_version": "1",
+    "generated_at": "2026-11-04T05:16:07+00:00",
+    "source": "sample_estate:synthetic_estate.json",
+    "mode": "sample",
+    "entry": {
+      "finding_id": "F1042",
+      "asset": "vpngw01",
+      "plugin_id": "214055",
+      "plugin_name": "Ivanti Connect Secure stack-based buffer overflow (CVE-2025-0282)",
+      "cve": "CVE-2025-0282",
+      "cves": [
+        "CVE-2025-0282"
+      ],
+      "vpr": 9.6,
+      "epss": 0.92,
+      "cvss3": 9.0,
+      "kev": true,
+      "exploit_available": true,
+      "severity": "critical",
+      "first_found": "2026-09-14T03:12:00Z",
+      "port": 443,
+      "protocol": "TCP",
+      "asset_id": "a-0001",
+      "internet_facing": true,
+      "internet_facing_rule": "intake_tag",
+      "rule": "kev_internet_facing"
+    },
+    "pivot": {
+      "finding_id": "F2210",
+      "cve": "CVE-2020-1472",
+      "vpr": 9.0,
+      "kev": true,
+      "plugin_name": "Netlogon elevation of privilege (Zerologon, CVE-2020-1472)",
+      "asset_id": "a-0010",
+      "asset": "dc1",
+      "technique": "exploitation of CVE-2020-1472",
+      "rule": "identity_tier_hostname",
+      "acr": 9.0
+    },
+    "target": {
+      "finding_id": "F2301",
+      "plugin_name": "Microsoft SQL Server 2016 SP3 missing cumulative update",
+      "vpr": 6.7,
+      "kev": false,
+      "asset_id": "a-0020",
+      "asset": "sql2016",
+      "criticality": 9.0,
+      "exposure_score": 590.0,
+      "data": [
+        "PHI",
+        "PII"
+      ],
+      "rule": "tag_match",
+      "cve": "CVE-2023-36728",
+      "operating_systems": [
+        "Microsoft Windows Server 2016 Standard"
+      ]
+    },
+    "path_source": "inferred",
+    "findings_cited": [
+      "F1042",
+      "F2210",
+      "F2301"
+    ],
+    "assumptions": [],
+    "data_types_requested": [
+      "PHI",
+      "PII",
+      "PCI"
+    ],
+    "stats": {
+      "assets": 45,
+      "findings": 44,
+      "internet_facing_assets": 3,
+      "kev_findings": 13,
+      "entry_candidates": 3,
+      "pivot_candidates": 10,
+      "target_candidates": 15
+    },
+    "candidates": {
+      "entry": [
+        {
+          "finding_id": "F1042",
+          "asset": "vpngw01",
+          "plugin_id": "214055",
+          "plugin_name": "Ivanti Connect Secure stack-based buffer overflow (CVE-2025-0282)",
+          "cve": "CVE-2025-0282",
+          "cves": [
+            "CVE-2025-0282"
+          ],
+          "vpr": 9.6,
+          "epss": 0.92,
+          "cvss3": 9.0,
+          "kev": true,
+          "exploit_available": true,
+          "severity": "critical",
+          "first_found": "2026-09-14T03:12:00Z",
+          "port": 443,
+          "protocol": "TCP",
+          "internet_facing_rule": "intake_tag"
+        },
+        {
+          "finding_id": "F1101",
+          "asset": "win2019",
+          "plugin_id": "152854",
+          "plugin_name": "Microsoft Exchange Server remote code execution (ProxyShell, CVE-2021-34473)",
+          "cve": "CVE-2021-34473",
+          "cves": [
+            "CVE-2021-34473"
+          ],
+          "vpr": 9.2,
+          "epss": 0.97,
+          "cvss3": 9.8,
+          "kev": true,
+          "exploit_available": true,
+          "severity": "critical",
+          "first_found": "2026-09-14T03:12:00Z",
+          "port": 443,
+          "protocol": "TCP",
+          "internet_facing_rule": "intake_tag"
+        },
+        {
+          "finding_id": "F1102",
+          "asset": "win2019",
+          "plugin_id": "156003",
+          "plugin_name": "Microsoft IIS missing security update",
+          "cve": "CVE-2022-21907",
+          "cves": [
+            "CVE-2022-21907"
+          ],
+          "vpr": 7.4,
+          "epss": 0.3,
+          "cvss3": 9.8,
+          "kev": false,
+          "exploit_available": true,
+          "severity": "critical",
+          "first_found": "2026-09-14T03:12:00Z",
+          "port": 80,
+          "protocol": "TCP",
+          "internet_facing_rule": "intake_tag"
+        }
+      ],
+      "pivot": [
+        {
+          "asset": "dc1",
+          "acr": 9.0,
+          "rule": "identity_tier_hostname"
+        },
+        {
+          "asset": "dc2",
+          "acr": 9.0,
+          "rule": "identity_tier_hostname"
+        },
+        {
+          "asset": "sql2016",
+          "acr": 9.0,
+          "rule": "high_acr_server"
+        },
+        {
+          "asset": "target2",
+          "acr": 9.0,
+          "rule": "high_acr_server"
+        },
+        {
+          "asset": "ehr-app01",
+          "acr": 8.0,
+          "rule": "high_acr_server"
+        }
+      ],
+      "target": [
+        {
+          "asset": "sql2016",
+          "acr": 9.0,
+          "data": [
+            "PHI",
+            "PII"
+          ],
+          "rule": "tag_match"
+        },
+        {
+          "asset": "target2",
+          "acr": 9.0,
+          "data": [
+            "PHI"
+          ],
+          "rule": "tag_match"
+        },
+        {
+          "asset": "pacs01",
+          "acr": 8.0,
+          "data": [
+            "PHI"
+          ],
+          "rule": "tag_match"
+        },
+        {
+          "asset": "ehr-app01",
+          "acr": 8.0,
+          "data": [
+            "PHI",
+            "PII"
+          ],
+          "rule": "tag_match"
+        },
+        {
+          "asset": "revcycle01",
+          "acr": 7.0,
+          "data": [
+            "PCI"
+          ],
+          "rule": "tag_match"
+        }
+      ]
+    },
+    "notes": [
+      "synthetic estate 'Valley Regional Health System synthetic estate'"
+    ]
+  },
+  "clocks": [
+    {
+      "id": "state_ca_ag_sample_notice",
+      "pack": "common",
+      "name": "California, sample copy of the breach notification to the Attorney General (more than 500 residents)",
+      "regulator": "California Attorney General",
+      "jurisdiction": "US-CA",
+      "trigger": "notifying affected consumers of a breach that requires notice to more than 500 California residents",
+      "deadline_hours": 360,
+      "deadline_business_days": null,
+      "deadline_text": "shall electronically submit a single sample copy of that security breach notification, excluding any personally identifiable information, to the Attorney General within 15 calendar days of notifying affected consumers of the security breach",
+      "source_url": "https://leginfo.legislature.ca.gov/faces/codes_displaySection.xhtml?lawCode=CIV&sectionNum=1798.82",
+      "citation": "Cal. Civ. Code 1798.82(f)",
+      "tier": "researched",
+      "verified_date": "2026-11-03",
+      "verifier": "pack_research skill (Claude), not yet human-checked",
+      "notes": "Opened in the desktop browser pane on 2026-11-03. The clock runs from the date consumers are notified, not from discovery. Submitted through the Attorney General's online breach reporting form (https://oag.ca.gov/privacy/databreach/reporting, also opened on 2026-11-03).",
+      "after_clock": "state_ca_individual_notice",
+      "applies_when": {
+        "countries": [
+          "US"
+        ],
+        "states": [
+          "CA"
+        ],
+        "data_types": [
+          "PII"
+        ],
+        "min_affected": 501
+      },
+      "applies_because": [
+        "holds ['PII']",
+        "operates in ['US']",
+        "operates in ['CA']",
+        "affected estimate 85000 meets 501"
+      ],
+      "starts_from": "notification under state_ca_individual_notice"
+    },
+    {
+      "id": "ca_health_facility_unauthorized_access_15bd",
+      "pack": "healthcare",
+      "name": "California licensed health facility report of unlawful or unauthorized access",
+      "regulator": "California Department of Public Health",
+      "jurisdiction": "US-CA",
+      "trigger": "detection of unlawful or unauthorized access to, or use or disclosure of, a patient's medical information",
+      "deadline_hours": null,
+      "deadline_business_days": 15,
+      "deadline_text": "report to the department and the affected patient no later than 15 business days after the unlawful or unauthorized access, use, or disclosure has been detected",
+      "source_url": "https://leginfo.legislature.ca.gov/faces/codes_displaySection.xhtml?lawCode=HSC&sectionNum=1280.15",
+      "citation": "California Health and Safety Code 1280.15(b)",
+      "tier": "researched",
+      "verified_date": "2026-11-03",
+      "verifier": "pack_research skill (Claude), not yet human-checked",
+      "notes": "source not fetched; verify before use. leginfo.legislature.ca.gov returned 403 to the automated fetch on 2026-11-03, so the wording is from the drafter's reading of the statute and must be checked by a human.",
+      "after_clock": null,
+      "applies_when": {
+        "countries": [
+          "US"
+        ],
+        "states": [
+          "CA"
+        ],
+        "data_types": [
+          "PHI"
+        ],
+        "flags": [
+          "ca_licensed_health_facility"
+        ]
+      },
+      "applies_because": [
+        "holds ['PHI']",
+        "operates in ['US']",
+        "operates in ['CA']",
+        "flags ['ca_licensed_health_facility']"
+      ]
+    },
+    {
+      "id": "state_ca_individual_notice",
+      "pack": "common",
+      "name": "California, notice of a data breach to affected residents",
+      "regulator": "California Attorney General (enforcement)",
+      "jurisdiction": "US-CA",
+      "trigger": "discovery or notification of a breach of the security of the system involving unencrypted personal information of a California resident",
+      "deadline_hours": 720,
+      "deadline_business_days": null,
+      "deadline_text": "the disclosure required by this subdivision shall be made within 30 calendar days of discovery or notification of the data breach",
+      "source_url": "https://leginfo.legislature.ca.gov/faces/codes_displaySection.xhtml?lawCode=CIV&sectionNum=1798.82",
+      "citation": "Cal. Civ. Code 1798.82(a)(2)(A)",
+      "tier": "researched",
+      "verified_date": "2026-11-03",
+      "verifier": "pack_research skill (Claude), not yet human-checked",
+      "notes": "Opened in the desktop browser pane on 2026-11-03 (WebFetch returned 403). The page text read on 2026-11-03 contains a 30 calendar day limit at 1798.82(a)(2)(A); older summaries describe only the open-ended 'most expedient time possible and without unreasonable delay' standard, so this is a recent amendment and a human should confirm its effective date. Disclosure may be delayed for the legitimate needs of law enforcement (subdivision (c)) or as necessary to determine the scope of the breach and restore integrity (subdivision (a)(2)(B)).",
+      "after_clock": null,
+      "applies_when": {
+        "countries": [
+          "US"
+        ],
+        "states": [
+          "CA"
+        ],
+        "data_types": [
+          "PII"
+        ]
+      },
+      "applies_because": [
+        "holds ['PII']",
+        "operates in ['US']",
+        "operates in ['CA']"
+      ]
+    },
+    {
+      "id": "hipaa_hhs_notice_500_or_more",
+      "pack": "healthcare",
+      "name": "HIPAA Breach Notification Rule, notice to the Secretary (500 or more individuals)",
+      "regulator": "HHS Office for Civil Rights",
+      "jurisdiction": "US-federal",
+      "trigger": "discovery of a breach of unsecured PHI involving 500 or more individuals",
+      "deadline_hours": 1440,
+      "deadline_business_days": null,
+      "deadline_text": "contemporaneously with the notice required by 164.404(a), without unreasonable delay and in no case later than 60 calendar days after discovery",
+      "source_url": "https://www.ecfr.gov/current/title-45/subtitle-A/subchapter-C/part-164/subpart-D/section-164.408",
+      "citation": "45 CFR 164.408(b)",
+      "tier": "researched",
+      "verified_date": "2026-11-03",
+      "verifier": "pack_research skill (Claude), not yet human-checked",
+      "notes": "Text confirmed via law.cornell.edu mirror on 2026-11-03. Filed through the HHS breach portal. Breaches under 500 are logged and reported within 60 days after the end of the calendar year (164.408(c)).",
+      "after_clock": null,
+      "applies_when": {
+        "data_types": [
+          "PHI"
+        ],
+        "countries": [
+          "US"
+        ],
+        "min_affected": 500
+      },
+      "applies_because": [
+        "holds ['PHI']",
+        "operates in ['US']",
+        "affected estimate 85000 meets 500"
+      ]
+    },
+    {
+      "id": "hipaa_individual_notice",
+      "pack": "healthcare",
+      "name": "HIPAA Breach Notification Rule, notice to individuals",
+      "regulator": "HHS Office for Civil Rights",
+      "jurisdiction": "US-federal",
+      "trigger": "discovery of a breach of unsecured protected health information",
+      "deadline_hours": 1440,
+      "deadline_business_days": null,
+      "deadline_text": "without unreasonable delay and in no case later than 60 calendar days after discovery of a breach",
+      "source_url": "https://www.ecfr.gov/current/title-45/subtitle-A/subchapter-C/part-164/subpart-D/section-164.404",
+      "citation": "45 CFR 164.404(b)",
+      "tier": "researched",
+      "verified_date": "2026-11-03",
+      "verifier": "pack_research skill (Claude), not yet human-checked",
+      "notes": "Text confirmed via law.cornell.edu mirror on 2026-11-03. The 60 days is an outer limit; the standard is without unreasonable delay. Discovery is the first day the breach is known or should reasonably have been known (164.404(a)(2)). A breach is presumed unless the four-factor risk assessment in 164.402 shows a low probability of compromise.",
+      "after_clock": null,
+      "applies_when": {
+        "data_types": [
+          "PHI"
+        ],
+        "countries": [
+          "US"
+        ]
+      },
+      "applies_because": [
+        "holds ['PHI']",
+        "operates in ['US']"
+      ]
+    },
+    {
+      "id": "hipaa_media_notice",
+      "pack": "healthcare",
+      "name": "HIPAA Breach Notification Rule, notice to prominent media outlets",
+      "regulator": "HHS Office for Civil Rights",
+      "jurisdiction": "US-federal",
+      "trigger": "discovery of a breach of unsecured PHI involving more than 500 residents of a state or jurisdiction",
+      "deadline_hours": 1440,
+      "deadline_business_days": null,
+      "deadline_text": "without unreasonable delay and in no case later than 60 calendar days after discovery of a breach",
+      "source_url": "https://www.ecfr.gov/current/title-45/subtitle-A/subchapter-C/part-164/subpart-D/section-164.406",
+      "citation": "45 CFR 164.406",
+      "tier": "researched",
+      "verified_date": "2026-11-03",
+      "verifier": "pack_research skill (Claude), not yet human-checked",
+      "notes": "Text confirmed via law.cornell.edu mirror on 2026-11-03. The threshold is more than 500 residents of a single state or jurisdiction, not 500 individuals in total; the engine approximates with the total affected estimate and the facilitator should confirm the per-state count.",
+      "after_clock": null,
+      "applies_when": {
+        "data_types": [
+          "PHI"
+        ],
+        "countries": [
+          "US"
+        ],
+        "min_affected": 501
+      },
+      "applies_because": [
+        "holds ['PHI']",
+        "operates in ['US']",
+        "affected estimate 85000 meets 501"
+      ]
+    }
+  ],
+  "clocks_outside_scenario": [
+    {
+      "id": "pci_visa_compromise_notice_3_days",
+      "reason": "scenario data ['PHI', 'PII'] does not include ['PCI']"
+    }
+  ],
+  "clock_start_inject": "I6",
+  "exercise_requirements": [
+    {
+      "id": "cms_emergency_preparedness_exercises",
+      "name": "CMS Emergency Preparedness Rule, hospital training and testing program",
+      "requirement": "participate in an annual full-scale exercise (community-based, or facility-based functional if not accessible) and conduct an additional annual exercise, which may be a tabletop exercise or workshop led by a facilitator with a group discussion",
+      "frequency": "annual",
+      "source_url": "https://www.ecfr.gov/current/title-42/chapter-IV/subchapter-G/part-482/subpart-B/section-482.15",
+      "citation": "42 CFR 482.15(d)(2)",
+      "tier": "researched",
+      "verified_date": "2026-11-03",
+      "verifier": "pack_research skill (Claude), not yet human-checked",
+      "pack": "healthcare"
+    },
+    {
+      "id": "hipaa_security_rule_contingency_testing",
+      "name": "HIPAA Security Rule, testing and revision of contingency plans",
+      "requirement": "implement procedures for periodic testing and revision of contingency plans (addressable), and implement policies and procedures to address security incidents",
+      "frequency": "periodic",
+      "source_url": "https://www.ecfr.gov/current/title-45/subtitle-A/subchapter-C/part-164/subpart-C/section-164.308",
+      "citation": "45 CFR 164.308(a)(7)(ii)(D) and 164.308(a)(6)(i)",
+      "tier": "researched",
+      "verified_date": "2026-11-03",
+      "verifier": "pack_research skill (Claude), not yet human-checked",
+      "pack": "healthcare"
+    }
+  ],
+  "org_plan": {
+    "schema_version": "1",
+    "present": true,
+    "filled_by": "policy_ingest skill (hand-filled for the sample from samples/sample_ir_plan.md)",
+    "source_documents": [
+      {
+        "id": "D1",
+        "filename": "sample_ir_plan.md",
+        "title": "Valley Regional Health System Cybersecurity Incident Response Plan",
+        "version": "3.2",
+        "synthetic": true
+      }
+    ],
+    "items": [
+      {
+        "id": "P1",
+        "category": "role",
+        "role_id": "incident_commander",
+        "label": "Incident Commander",
+        "value": "Chief Information Security Officer; declares incidents, assigns severity, activates the CIRT, directs containment",
+        "quote": "The Chief Information Security Officer (CISO) serves as Incident Commander for all cybersecurity incidents.",
+        "document": "D1",
+        "document_title": "IR Plan",
+        "section": "2.1",
+        "page": null
+      },
+      {
+        "id": "P2",
+        "category": "decision_authority",
+        "label": "Incident declaration and severity",
+        "value": "Incident Commander",
+        "quote": "The Incident Commander has the authority to declare a cybersecurity incident, assign its severity level, activate the Cyber Incident Response Team, and direct containment actions.",
+        "document": "D1",
+        "document_title": "IR Plan",
+        "section": "2.1",
+        "page": null
+      },
+      {
+        "id": "P3",
+        "category": "role",
+        "role_id": "security_operations",
+        "label": "Director of Security Operations",
+        "value": "Deputy Incident Commander; runs detection and containment actions",
+        "quote": "When the CISO is unavailable, the Director of Security Operations serves as Incident Commander.",
+        "document": "D1",
+        "document_title": "IR Plan",
+        "section": "2.1",
+        "page": null
+      },
+      {
+        "id": "P4",
+        "category": "decision_authority",
+        "label": "Shutdown or isolation of a production clinical system",
+        "value": "Chief Information Officer, after consulting the Chief Medical Information Officer",
+        "quote": "The Chief Information Officer (CIO) authorizes the shutdown or isolation of any production clinical system, including the electronic health record, after consulting the Chief Medical Information Officer.",
+        "document": "D1",
+        "document_title": "IR Plan",
+        "section": "2.3",
+        "page": null
+      },
+      {
+        "id": "P5",
+        "category": "role",
+        "role_id": "cio",
+        "label": "Chief Information Officer",
+        "value": "Authorizes clinical system shutdown and the restore order",
+        "quote": "The Chief Information Officer (CIO) authorizes the shutdown or isolation of any production clinical system, including the electronic health record, after consulting the Chief Medical Information Officer.",
+        "document": "D1",
+        "document_title": "IR Plan",
+        "section": "2.3",
+        "page": null
+      },
+      {
+        "id": "P6",
+        "category": "escalation_step",
+        "phase": "containment",
+        "timing_minutes": 30,
+        "label": "SEV1 emergency isolation notice to the CIO",
+        "value": "Incident Commander may isolate immediately in SEV1 and must tell the CIO within 30 minutes",
+        "quote": "In a SEV1 incident the Incident Commander may isolate a system immediately and must notify the CIO within 30 minutes of doing so.",
+        "document": "D1",
+        "document_title": "IR Plan",
+        "section": "2.3",
+        "page": null
+      },
+      {
+        "id": "P7",
+        "category": "role",
+        "role_id": "privacy_officer",
+        "label": "Privacy Officer",
+        "value": "Owns the breach risk assessment and the reportable-breach decision with General Counsel",
+        "quote": "The Privacy Officer owns the breach risk assessment and decides, with General Counsel, whether an incident is a reportable breach of protected health information.",
+        "document": "D1",
+        "document_title": "IR Plan",
+        "section": "2.3",
+        "page": null
+      },
+      {
+        "id": "P8",
+        "category": "decision_authority",
+        "label": "Reportable breach determination",
+        "value": "Privacy Officer with General Counsel",
+        "quote": "The Privacy Officer owns the breach risk assessment and decides, with General Counsel, whether an incident is a reportable breach of protected health information.",
+        "document": "D1",
+        "document_title": "IR Plan",
+        "section": "2.3",
+        "page": null
+      },
+      {
+        "id": "P9",
+        "category": "role",
+        "role_id": "general_counsel",
+        "label": "General Counsel",
+        "value": "Only role that speaks to regulators, law enforcement, and the cyber insurer",
+        "quote": "General Counsel is the only role authorized to communicate with regulators, law enforcement, and the cyber insurance carrier on behalf of VRHS.",
+        "document": "D1",
+        "document_title": "IR Plan",
+        "section": "2.3",
+        "page": null
+      },
+      {
+        "id": "P10",
+        "category": "decision_authority",
+        "label": "Public statements, patient notifications, media response",
+        "value": "Chief Executive Officer on the recommendation of the Director of Communications and General Counsel",
+        "quote": "The Chief Executive Officer approves any public statement, patient-facing notification, or media response, on the recommendation of the Director of Communications and General Counsel.",
+        "document": "D1",
+        "document_title": "IR Plan",
+        "section": "2.3",
+        "page": null
+      },
+      {
+        "id": "P11",
+        "category": "role",
+        "role_id": "ceo",
+        "label": "Chief Executive Officer",
+        "value": "Approves public statements and patient notifications; informs the Board Chair",
+        "quote": "The Chief Executive Officer approves any public statement, patient-facing notification, or media response, on the recommendation of the Director of Communications and General Counsel.",
+        "document": "D1",
+        "document_title": "IR Plan",
+        "section": "2.3",
+        "page": null
+      },
+      {
+        "id": "P12",
+        "category": "role",
+        "role_id": "communications",
+        "label": "Director of Communications",
+        "value": "Drafts every external statement and workforce update",
+        "quote": "All external statements, including holding statements to the media, are drafted by the Director of Communications, reviewed by General Counsel, and approved by the Chief Executive Officer before release.",
+        "document": "D1",
+        "document_title": "IR Plan",
+        "section": "9.2",
+        "page": null
+      },
+      {
+        "id": "P13",
+        "category": "severity_level",
+        "label": "SEV1 (Critical)",
+        "value": "Clinical system, PHI system, or Active Directory compromised or unavailable, or any ransomware detonation; requires Hospital Command Center activation",
+        "quote": "SEV1 (Critical): confirmed compromise or loss of availability of a clinical system, a system containing protected health information, or the identity infrastructure (Active Directory), or any ransomware detonation.",
+        "document": "D1",
+        "document_title": "IR Plan",
+        "section": "3",
+        "page": null
+      },
+      {
+        "id": "P14",
+        "category": "severity_level",
+        "label": "SEV2 (High)",
+        "value": "Non-clinical business system compromise, a compromised privileged account, or suspected PHI access without loss of availability",
+        "quote": "SEV2 (High): confirmed compromise of a non-clinical business system, a compromised privileged account, or suspected unauthorized access to protected health information without confirmed loss of availability.",
+        "document": "D1",
+        "document_title": "IR Plan",
+        "section": "3",
+        "page": null
+      },
+      {
+        "id": "P15",
+        "category": "severity_level",
+        "label": "Severity assignment and re-rating",
+        "value": "Incident Commander assigns at declaration and may change it; every change logged with time and reason",
+        "quote": "The Incident Commander assigns the severity level at declaration and may raise or lower it as facts develop.",
+        "document": "D1",
+        "document_title": "IR Plan",
+        "section": "3",
+        "page": null
+      },
+      {
+        "id": "P16",
+        "category": "escalation_step",
+        "phase": "detection",
+        "timing_minutes": 15,
+        "label": "Security Operations to Incident Commander",
+        "value": "Within 15 minutes of identifying a suspected SEV1 or SEV2",
+        "quote": "Security Operations notifies the Incident Commander within 15 minutes of identifying a suspected SEV1 or SEV2 incident.",
+        "document": "D1",
+        "document_title": "IR Plan",
+        "section": "4.1",
+        "page": null
+      },
+      {
+        "id": "P17",
+        "category": "escalation_step",
+        "phase": "escalation",
+        "timing_minutes": 30,
+        "label": "Incident Commander to CIO and Privacy Officer",
+        "value": "Within 30 minutes of declaring SEV1 or SEV2",
+        "quote": "The Incident Commander notifies the CIO and the Privacy Officer within 30 minutes of declaring a SEV1 or SEV2 incident.",
+        "document": "D1",
+        "document_title": "IR Plan",
+        "section": "4.1",
+        "page": null
+      },
+      {
+        "id": "P18",
+        "category": "escalation_step",
+        "phase": "escalation",
+        "timing_minutes": 60,
+        "label": "CIO to CEO and General Counsel",
+        "value": "Within 1 hour of a SEV1 declaration",
+        "quote": "The CIO notifies the Chief Executive Officer and General Counsel within 1 hour of a SEV1 declaration.",
+        "document": "D1",
+        "document_title": "IR Plan",
+        "section": "4.1",
+        "page": null
+      },
+      {
+        "id": "P19",
+        "category": "escalation_step",
+        "phase": "escalation",
+        "timing_minutes": 1440,
+        "label": "CEO to Board Chair",
+        "value": "Within 24 hours of a SEV1 declaration",
+        "quote": "The Chief Executive Officer informs the Board Chair within 24 hours of a SEV1 declaration.",
+        "document": "D1",
+        "document_title": "IR Plan",
+        "section": "4.1",
+        "page": null
+      },
+      {
+        "id": "P20",
+        "category": "escalation_step",
+        "phase": "escalation",
+        "label": "Hospital Command Center activation",
+        "value": "Incident Commander requests activation through the Emergency Management Director for any SEV1",
+        "quote": "For any SEV1 incident, the Incident Commander requests activation of the Hospital Command Center through the Emergency Management Director.",
+        "document": "D1",
+        "document_title": "IR Plan",
+        "section": "4.2",
+        "page": null
+      },
+      {
+        "id": "P21",
+        "category": "escalation_step",
+        "phase": "containment",
+        "label": "Clinical downtime procedures",
+        "value": "Activated by the Chief Nursing Officer for affected units",
+        "quote": "Clinical downtime procedures are activated by the Chief Nursing Officer for affected units.",
+        "document": "D1",
+        "document_title": "IR Plan",
+        "section": "4.2",
+        "page": null
+      },
+      {
+        "id": "P22",
+        "category": "notification_procedure",
+        "phase": "escalation",
+        "timing_minutes": 1440,
+        "label": "Cyber insurance carrier notice",
+        "value": "General Counsel, within 24 hours of a SEV1 or SEV2 declaration and before any outside firm is engaged",
+        "quote": "General Counsel notifies the cyber insurance carrier within 24 hours of a SEV1 or SEV2 declaration and before any outside forensic firm, breach counsel, or negotiator is engaged.",
+        "document": "D1",
+        "document_title": "IR Plan",
+        "section": "4.3",
+        "page": null
+      },
+      {
+        "id": "P23",
+        "category": "notification_procedure",
+        "phase": "notification",
+        "label": "FBI notification",
+        "value": "General Counsel decides; expected for ransomware and any exfiltration",
+        "quote": "Notification is expected for any ransomware incident and any incident with evidence of data exfiltration.",
+        "document": "D1",
+        "document_title": "IR Plan",
+        "section": "4.4",
+        "page": null
+      },
+      {
+        "id": "P24",
+        "category": "notification_procedure",
+        "phase": "notification",
+        "timing_minutes": 4800,
+        "label": "Four-factor breach risk assessment",
+        "value": "Privacy Officer completes it within 10 business days of confirmed unauthorized PHI access",
+        "quote": "The Privacy Officer completes the four-factor breach risk assessment within 10 business days of the Incident Commander confirming that protected health information was accessed, acquired, used, or disclosed without authorization.",
+        "document": "D1",
+        "document_title": "IR Plan",
+        "section": "5.1",
+        "page": null
+      },
+      {
+        "id": "P25",
+        "category": "notification_procedure",
+        "phase": "notification",
+        "timing_minutes": 64800,
+        "internal_deadline_hours": 1080,
+        "applies_to_clock": "hipaa_individual_notice",
+        "label": "Individual notification internal standard",
+        "value": "45 calendar days from discovery, stricter than the regulatory 60",
+        "quote": "VRHS's internal standard is to issue individual notifications within 45 calendar days of discovery, which is stricter than the regulatory outer limit.",
+        "document": "D1",
+        "document_title": "IR Plan",
+        "section": "5.2",
+        "page": null
+      },
+      {
+        "id": "P26",
+        "category": "notification_procedure",
+        "phase": "notification",
+        "label": "Notification ownership",
+        "value": "General Counsel owns regulatory notices; Privacy Officer owns individual letters",
+        "quote": "General Counsel owns the regulatory notifications and the Privacy Officer owns the individual notification letters.",
+        "document": "D1",
+        "document_title": "IR Plan",
+        "section": "5.2",
+        "page": null
+      },
+      {
+        "id": "P27",
+        "category": "containment_procedure",
+        "phase": "containment",
+        "label": "Evidence before rebuild",
+        "value": "Forensic image captured or confirmed before any affected system is rebuilt or restored",
+        "quote": "Before any affected system is rebuilt or restored, Security Operations captures a forensic image or confirms that the outside forensic firm has done so.",
+        "document": "D1",
+        "document_title": "IR Plan",
+        "section": "6.1",
+        "page": null
+      },
+      {
+        "id": "P28",
+        "category": "containment_procedure",
+        "phase": "containment",
+        "label": "Standard containment actions",
+        "value": "Isolate, disable compromised accounts, reset privileged and service credentials used in the last 30 days, block attacker infrastructure",
+        "quote": "Security Operations isolates the affected system from the network, disables compromised accounts, resets credentials for all privileged and service accounts that authenticated to the affected system in the preceding 30 days, and blocks the attacker infrastructure at the perimeter.",
+        "document": "D1",
+        "document_title": "IR Plan",
+        "section": "6.2",
+        "page": null
+      },
+      {
+        "id": "P29",
+        "category": "containment_procedure",
+        "phase": "containment",
+        "label": "Medical device isolation",
+        "value": "Director of Clinical Engineering isolates devices and confirms downtime procedures with nursing",
+        "quote": "The Director of Clinical Engineering isolates affected medical devices and confirms with nursing leadership that patient care has moved to downtime procedures.",
+        "document": "D1",
+        "document_title": "IR Plan",
+        "section": "6.3",
+        "page": null
+      },
+      {
+        "id": "P30",
+        "category": "recovery_objective",
+        "phase": "recovery",
+        "system": "Electronic health record",
+        "rto_hours": 4,
+        "rpo_minutes": 15,
+        "label": "EHR recovery objectives",
+        "value": "RTO 4 hours, RPO 15 minutes",
+        "quote": "The electronic health record has a recovery time objective of 4 hours and a recovery point objective of 15 minutes.",
+        "document": "D1",
+        "document_title": "IR Plan",
+        "section": "7.1",
+        "page": null
+      },
+      {
+        "id": "P31",
+        "category": "recovery_objective",
+        "phase": "recovery",
+        "system": "Active Directory",
+        "rto_hours": 2,
+        "label": "Active Directory recovery objective",
+        "value": "RTO 2 hours",
+        "quote": "Active Directory has a recovery time objective of 2 hours.",
+        "document": "D1",
+        "document_title": "IR Plan",
+        "section": "7.1",
+        "page": null
+      },
+      {
+        "id": "P32",
+        "category": "recovery_objective",
+        "phase": "recovery",
+        "label": "Restore order",
+        "value": "Active Directory, network services, EHR and interface engine, ancillary clinical systems, business systems; CIO may change it with CMIO agreement",
+        "quote": "Systems are restored in this order: identity infrastructure (Active Directory), network services, the electronic health record and its interface engine, ancillary clinical systems, and then business systems.",
+        "document": "D1",
+        "document_title": "IR Plan",
+        "section": "7.2",
+        "page": null
+      },
+      {
+        "id": "P33",
+        "category": "recovery_objective",
+        "phase": "recovery",
+        "label": "Backup validation before restore",
+        "value": "Backup must predate the earliest known compromise and have a successful test restore",
+        "quote": "Before restoring from backup, the Director of Infrastructure confirms that the backup predates the earliest known compromise and that a test restore of the backup has completed successfully.",
+        "document": "D1",
+        "document_title": "IR Plan",
+        "section": "7.3",
+        "page": null
+      },
+      {
+        "id": "P34",
+        "category": "playbook_step",
+        "family": "ransomware",
+        "order": 1,
+        "phase": "containment",
+        "label": "Ransomware step 1: isolate and preserve",
+        "value": "Security Operations isolates affected systems and preserves the ransom note and attacker communication",
+        "quote": "Step 1. Security Operations isolates affected systems and preserves the ransom note and any attacker communication as evidence.",
+        "document": "D1",
+        "document_title": "IR Plan",
+        "section": "8",
+        "page": null
+      },
+      {
+        "id": "P35",
+        "category": "playbook_step",
+        "family": "ransomware",
+        "order": 2,
+        "phase": "escalation",
+        "label": "Ransomware step 2: declare SEV1",
+        "value": "Incident Commander declares SEV1 and requests Hospital Command Center activation",
+        "quote": "Step 2. The Incident Commander declares a SEV1 incident and requests Hospital Command Center activation.",
+        "document": "D1",
+        "document_title": "IR Plan",
+        "section": "8",
+        "page": null
+      },
+      {
+        "id": "P36",
+        "category": "playbook_step",
+        "family": "ransomware",
+        "order": 3,
+        "phase": "recovery",
+        "label": "Ransomware step 3: verify backups",
+        "value": "Director of Infrastructure verifies backups are offline and unaffected",
+        "quote": "Step 3. The Director of Infrastructure verifies that backups are offline and unaffected.",
+        "document": "D1",
+        "document_title": "IR Plan",
+        "section": "8",
+        "page": null
+      },
+      {
+        "id": "P37",
+        "category": "playbook_step",
+        "family": "ransomware",
+        "order": 4,
+        "phase": "notification",
+        "label": "Ransomware step 4: insurer and FBI",
+        "value": "General Counsel notifies the cyber insurance carrier and the FBI field office",
+        "quote": "Step 4. General Counsel notifies the cyber insurance carrier and the FBI field office.",
+        "document": "D1",
+        "document_title": "IR Plan",
+        "section": "8",
+        "page": null
+      },
+      {
+        "id": "P38",
+        "category": "playbook_step",
+        "family": "ransomware",
+        "order": 5,
+        "phase": "containment",
+        "label": "Ransomware step 5: reset credentials and rebuild identity",
+        "value": "Security Operations resets all privileged credentials and rebuilds identity infrastructure from a known-good state",
+        "quote": "Step 5. Security Operations resets all privileged credentials and rebuilds the identity infrastructure from a known-good state.",
+        "document": "D1",
+        "document_title": "IR Plan",
+        "section": "8",
+        "page": null
+      },
+      {
+        "id": "P39",
+        "category": "playbook_step",
+        "family": "ransomware",
+        "order": 6,
+        "phase": "recovery",
+        "label": "Ransomware step 6: CIO approves restore order",
+        "value": "CIO approves the restore order under section 7.2",
+        "quote": "Step 6. The CIO approves the restore order under section 7.2.",
+        "document": "D1",
+        "document_title": "IR Plan",
+        "section": "8",
+        "page": null
+      },
+      {
+        "id": "P40",
+        "category": "playbook_step",
+        "family": "ransomware",
+        "order": 7,
+        "phase": "notification",
+        "label": "Ransomware step 7: breach risk assessment",
+        "value": "Privacy Officer begins the breach risk assessment under section 5.1",
+        "quote": "Step 7. The Privacy Officer begins the breach risk assessment under section 5.1.",
+        "document": "D1",
+        "document_title": "IR Plan",
+        "section": "8",
+        "page": null
+      },
+      {
+        "id": "P41",
+        "category": "comms_template",
+        "label": "Workforce notice template",
+        "value": "Director of Communications, every 4 hours in SEV1, reviewed by the Incident Commander",
+        "quote": "The Director of Communications issues workforce updates at least every 4 hours during a SEV1 incident using the pre-approved workforce notice template, after review by the Incident Commander.",
+        "document": "D1",
+        "document_title": "IR Plan",
+        "section": "9.1",
+        "page": null
+      },
+      {
+        "id": "P42",
+        "category": "comms_template",
+        "label": "Holding statement template and approval chain",
+        "value": "Drafted by Communications, reviewed by General Counsel, approved by the CEO",
+        "quote": "All external statements, including holding statements to the media, are drafted by the Director of Communications, reviewed by General Counsel, and approved by the Chief Executive Officer before release.",
+        "document": "D1",
+        "document_title": "IR Plan",
+        "section": "9.2",
+        "page": null
+      },
+      {
+        "id": "P43",
+        "category": "comms_template",
+        "label": "Patient-facing notices about delayed or diverted care",
+        "value": "Approved by the Chief Medical Officer and the Chief Executive Officer",
+        "quote": "Patient-facing notices about delayed or diverted care are approved by the Chief Medical Officer and the Chief Executive Officer.",
+        "document": "D1",
+        "document_title": "IR Plan",
+        "section": "9.3",
+        "page": null
+      },
+      {
+        "id": "P44",
+        "category": "other",
+        "label": "Incident log",
+        "value": "Incident Commander logs the time of every decision, who made it, and who was notified",
+        "quote": "The Incident Commander maintains the incident log, including the time of every decision, who made it, and who was notified.",
+        "document": "D1",
+        "document_title": "IR Plan",
+        "section": "10",
+        "page": null
+      },
+      {
+        "id": "P45",
+        "category": "other",
+        "label": "Discovery date for business associate incidents",
+        "value": "The date VRHS was notified by the business associate",
+        "quote": "the Privacy Officer confirms that the business associate agreement's notification clause was met and records the date VRHS was notified as the discovery date.",
+        "document": "D1",
+        "document_title": "IR Plan",
+        "section": "5.3",
+        "page": null
+      }
+    ],
+    "gaps": [
+      {
+        "id": "G1",
+        "topic": "Ransom payment decision and attacker communication",
+        "note": "The plan names no role authorized to decide whether to pay a ransom or to communicate with the attacker. Section 8 preserves the ransom note as evidence but is silent on negotiation and payment authority, sanctions screening, and insurer consent."
+      },
+      {
+        "id": "G2",
+        "topic": "EMS diversion decision",
+        "note": "The plan does not say who decides to place the emergency department on EMS diversion during a cyber incident or how that decision reaches EMS partners and neighboring hospitals."
+      },
+      {
+        "id": "G3",
+        "topic": "State health department reporting",
+        "note": "The plan sets an internal 45-day standard for individual notices but is silent on the California Department of Public Health report, which the healthcare pack lists at 15 business days from detection."
+      },
+      {
+        "id": "G4",
+        "topic": "Staff social media posting",
+        "note": "The plan covers workforce updates and media statements but says nothing about staff posting about the incident on social media."
+      }
+    ]
+  },
+  "roles": [
+    {
+      "id": "incident_commander",
+      "name": "Incident Commander",
+      "authority": "Chief Information Security Officer; declares incidents, assigns severity, activates the CIRT, directs containment",
+      "source": "org_plan:P1"
+    },
+    {
+      "id": "security_operations",
+      "name": "Director of Security Operations",
+      "authority": "Deputy Incident Commander; runs detection and containment actions",
+      "source": "org_plan:P3"
+    },
+    {
+      "id": "cio",
+      "name": "Chief Information Officer",
+      "authority": "Authorizes clinical system shutdown and the restore order",
+      "source": "org_plan:P5"
+    },
+    {
+      "id": "privacy_officer",
+      "name": "Privacy Officer",
+      "authority": "Owns the breach risk assessment and the reportable-breach decision with General Counsel",
+      "source": "org_plan:P7"
+    },
+    {
+      "id": "general_counsel",
+      "name": "General Counsel",
+      "authority": "Only role that speaks to regulators, law enforcement, and the cyber insurer",
+      "source": "org_plan:P9"
+    },
+    {
+      "id": "ceo",
+      "name": "Chief Executive Officer",
+      "authority": "Approves public statements and patient notifications; informs the Board Chair",
+      "source": "org_plan:P11"
+    },
+    {
+      "id": "communications",
+      "name": "Director of Communications",
+      "authority": "Drafts every external statement and workforce update",
+      "source": "org_plan:P12"
+    },
+    {
+      "id": "ciso",
+      "name": "Chief Information Security Officer",
+      "authority": "severity_rating, containment_actions, forensic_engagement",
+      "source": "pack_default:healthcare"
+    },
+    {
+      "id": "cmio",
+      "name": "Chief Medical Information Officer",
+      "authority": "clinical_workaround_approval",
+      "source": "pack_default:healthcare"
+    },
+    {
+      "id": "cno",
+      "name": "Chief Nursing Officer",
+      "authority": "unit_downtime_activation",
+      "source": "pack_default:healthcare"
+    },
+    {
+      "id": "cfo",
+      "name": "Chief Financial Officer",
+      "authority": "cyber_insurance_claim, emergency_spend",
+      "source": "pack_default:healthcare"
+    },
+    {
+      "id": "clinical_engineering",
+      "name": "Director of Clinical Engineering",
+      "authority": "medical_device_isolation",
+      "source": "pack_default:healthcare"
+    },
+    {
+      "id": "emergency_management",
+      "name": "Emergency Management Director",
+      "authority": "command_center_activation",
+      "source": "pack_default:healthcare"
+    }
+  ],
+  "notify_parties": [
+    {
+      "id": "executive_leadership",
+      "name": "Executive leadership and the board"
+    },
+    {
+      "id": "privacy_officer",
+      "name": "Privacy Officer"
+    },
+    {
+      "id": "legal_counsel",
+      "name": "General Counsel and outside breach counsel"
+    },
+    {
+      "id": "cyber_insurer",
+      "name": "Cyber insurance carrier"
+    },
+    {
+      "id": "fbi",
+      "name": "FBI field office or IC3"
+    },
+    {
+      "id": "hhs_ocr",
+      "name": "HHS Office for Civil Rights"
+    },
+    {
+      "id": "state_health_department",
+      "name": "State health department"
+    },
+    {
+      "id": "health_isac",
+      "name": "Health-ISAC"
+    },
+    {
+      "id": "business_associates",
+      "name": "Affected business associates and vendors"
+    },
+    {
+      "id": "ems_partners",
+      "name": "EMS agencies and neighboring hospitals (diversion)"
+    },
+    {
+      "id": "patients",
+      "name": "Affected patients"
+    }
+  ],
+  "ground_rules": [
+    "This is a discussion, not a test of individuals. There are no wrong answers, only decisions and their consequences.",
+    "Respond as you would today with the plans, people, and tools you actually have, not the ones you wish you had.",
+    "The facilitator controls the clock. When the facilitator says time has passed, it has.",
+    "Decisions are recorded as the team states them. Say who decided and who was told.",
+    "Nothing discussed here is a finding against any person. The after-action report labels gaps in plans, roles, and technology.",
+    "Phones down unless you are playing the role of the person being called."
+  ],
+  "objectives": [
+    "Exercise the organization's own written procedures under a scenario built from its own exposure data.",
+    "Confirm who holds each decision and whether the escalation path works at speed.",
+    "Test the notification clocks that apply to this organization and who owns each one.",
+    "Find the points where the plan is silent, contradictory, or unknown to the people who must use it.",
+    "Produce a scored after-action report with owners and dates for every gap."
+  ],
+  "injects": [
+    {
+      "id": "I1",
+      "order": 1,
+      "phase": "detection",
+      "slot": "detection",
+      "time_marker": "T+0:10",
+      "minutes_offset": 10,
+      "time_budget_minutes": 10,
+      "slide_number": 6,
+      "title": "First signal on vpngw01",
+      "what_happens": "The security tool flags repeated authentication failures and a new administrative session on vpngw01, the internet-facing system that carries CVE-2025-0282. The analyst on shift is not sure whether it is a scan or a compromise.",
+      "recipients": [
+        "Security operations",
+        "IT on-call"
+      ],
+      "decision_forced": "Is this an incident, who gets told right now, and what severity does the analyst assign?",
+      "decision_owner_role": "security_operations",
+      "acceptable_owner_roles": [
+        "incident_commander"
+      ],
+      "plan_commitment_minutes": 15,
+      "procedure_tested": {
+        "type": "org_plan",
+        "ref": "P16",
+        "label": "IR Plan section 4.1 Security Operations to Incident Commander",
+        "quote": "Security Operations notifies the Incident Commander within 15 minutes of identifying a suspected SEV1 or SEV2 incident."
+      },
+      "what_good_looks_like": "The analyst confirms the alert with a second source, opens an incident record with a timeline, and escalates to the incident lead within the time the plan commits to, citing vpngw01 by name.",
+      "where_teams_fail": "The analyst waits for more evidence, the alert sits in a queue, and nobody records when it was first seen.",
+      "expected_actions": [
+        {
+          "id": "I1-P16",
+          "text": "Within 15 minutes of identifying a suspected SEV1 or SEV2",
+          "source": "org_plan:P16",
+          "timing_minutes": 15
+        },
+        {
+          "id": "I1-d1",
+          "text": "Confirm the alert with a second source (EDR, firewall, or help desk reports) before declaring",
+          "source": "pack_default:healthcare:d1"
+        },
+        {
+          "id": "I1-d2",
+          "text": "Open an incident record and start a timestamped timeline",
+          "source": "pack_default:healthcare:d2"
+        }
+      ],
+      "expected_notifications": [],
+      "hints": [
+        "Ask who is on call tonight and how they are reached.",
+        "Ask what second source would confirm or clear the alert."
+      ],
+      "probing_questions": [
+        "Who decides this is an incident, and does the analyst know that name?",
+        "What severity would you assign and what in the plan says so?"
+      ],
+      "host_lines": [
+        "It is a Tuesday evening. Your security tooling has raised an alert on vpngw01. The analyst has a screen full of failed logins and one that succeeded. What do you do in the next fifteen minutes?"
+      ],
+      "source": {
+        "type": "finding",
+        "ref": "F1042",
+        "note": "entry finding on vpngw01"
+      },
+      "flags": {
+        "conflicting_information": false,
+        "business_tradeoff": false,
+        "plan_silent": false,
+        "starts_clock": []
+      }
+    },
+    {
+      "id": "I2",
+      "order": 2,
+      "phase": "escalation",
+      "slot": "escalation",
+      "time_marker": "T+0:20",
+      "minutes_offset": 20,
+      "time_budget_minutes": 10,
+      "slide_number": 7,
+      "title": "Declaring the incident",
+      "what_happens": "Evidence now shows the attacker holds an administrative session on vpngw01 and has reached the identity server dc1 by exploitation of CVE-2020-1472. The incident lead must decide whether to declare, at what severity, and who is called in.",
+      "recipients": [
+        "Incident lead",
+        "Executive on call"
+      ],
+      "decision_forced": "Declare the incident and set the severity; name who is notified and in what order.",
+      "decision_owner_role": "incident_commander",
+      "acceptable_owner_roles": [],
+      "plan_commitment_minutes": 30,
+      "procedure_tested": {
+        "type": "org_plan",
+        "ref": "P35",
+        "label": "IR Plan section 8 Ransomware step 2: declare SEV1",
+        "quote": "Step 2. The Incident Commander declares a SEV1 incident and requests Hospital Command Center activation."
+      },
+      "what_good_looks_like": "The incident lead declares the incident, assigns the severity the plan defines, and notifies leadership, counsel, and the cyber insurer in the order the plan sets (IR Plan section 8 Ransomware step 2: declare SEV1).",
+      "where_teams_fail": "Declaration is delayed to avoid alarming executives, counsel is not engaged, and the insurer is called after outside help has already been retained.",
+      "expected_actions": [
+        {
+          "id": "I2-P35",
+          "text": "Incident Commander declares SEV1 and requests Hospital Command Center activation",
+          "source": "org_plan:P35",
+          "timing_minutes": null
+        },
+        {
+          "id": "I2-P17",
+          "text": "Within 30 minutes of declaring SEV1 or SEV2",
+          "source": "org_plan:P17",
+          "timing_minutes": 30
+        },
+        {
+          "id": "I2-P18",
+          "text": "Within 1 hour of a SEV1 declaration",
+          "source": "org_plan:P18",
+          "timing_minutes": 60
+        }
+      ],
+      "expected_notifications": [
+        "executive_leadership",
+        "legal_counsel",
+        "cyber_insurer"
+      ],
+      "hints": [
+        "Ask for the exact phrase the plan uses for the declaration.",
+        "Ask who calls the insurer."
+      ],
+      "probing_questions": [
+        "What severity, and which sentence in the plan says so?",
+        "Who is on the notification list for this severity and who calls them?"
+      ],
+      "host_lines": [
+        "The attacker is on dc1. Is this an incident under your plan? Say the severity out loud and tell me who you are calling, in order."
+      ],
+      "source": {
+        "type": "finding",
+        "ref": "F1042",
+        "note": "entry finding on vpngw01"
+      },
+      "flags": {
+        "conflicting_information": false,
+        "business_tradeoff": false,
+        "plan_silent": false,
+        "starts_clock": []
+      }
+    },
+    {
+      "id": "I3",
+      "order": 3,
+      "phase": "containment",
+      "slot": "containment",
+      "time_marker": "T+0:30",
+      "minutes_offset": 30,
+      "time_budget_minutes": 10,
+      "slide_number": 8,
+      "title": "Containment on dc1",
+      "what_happens": "Containment options are on the table: isolate vpngw01, reset every privileged credential, and take dc1 offline. Each option cuts a service the business is using right now. Then a second report contradicts the first: the vendor says vpngw01 was patched last month and the alert is a false positive, while the forensics lead says the patch was never applied.",
+      "recipients": [
+        "Incident lead",
+        "IT operations",
+        "Business owners"
+      ],
+      "decision_forced": "Which systems are isolated now, who authorizes it, and how is evidence preserved?",
+      "decision_owner_role": "cio",
+      "acceptable_owner_roles": [
+        "incident_commander"
+      ],
+      "plan_commitment_minutes": 30,
+      "procedure_tested": {
+        "type": "org_plan",
+        "ref": "P4",
+        "label": "IR Plan section 2.3 Shutdown or isolation of a production clinical system",
+        "quote": "The Chief Information Officer (CIO) authorizes the shutdown or isolation of any production clinical system, including the electronic health record, after consulting the Chief Medical Information Officer."
+      },
+      "what_good_looks_like": "The team isolates the entry system, preserves images before rebuilding, resets privileged credentials, and names the person who authorized each action (IR Plan section 2.3 Shutdown or isolation of a production clinical system).",
+      "where_teams_fail": "The team reimages the entry system before forensics has a copy, or waits for a perfect picture while the attacker keeps moving.",
+      "expected_actions": [
+        {
+          "id": "I3-P6",
+          "text": "Incident Commander may isolate immediately in SEV1 and must tell the CIO within 30 minutes",
+          "source": "org_plan:P6",
+          "timing_minutes": 30
+        },
+        {
+          "id": "I3-P28",
+          "text": "Isolate, disable compromised accounts, reset privileged and service credentials used in the last 30 days, block attacker infrastructure",
+          "source": "org_plan:P28",
+          "timing_minutes": null
+        },
+        {
+          "id": "I3-P29",
+          "text": "Director of Clinical Engineering isolates devices and confirms downtime procedures with nursing",
+          "source": "org_plan:P29",
+          "timing_minutes": null
+        }
+      ],
+      "expected_notifications": [
+        "executive_leadership"
+      ],
+      "hints": [
+        "Ask whether anyone has taken a forensic image yet.",
+        "Ask who can approve taking a production system offline."
+      ],
+      "probing_questions": [
+        "Who authorizes the shutdown, and is that person in the room?",
+        "What are you doing to preserve evidence before you contain?",
+        "Two credible sources disagree. What do you do with containment while you find out which is right?"
+      ],
+      "host_lines": [
+        "Your team can isolate vpngw01 and dc1 right now. Doing so cuts remote access and authentication for the building. Who decides, and what do you say to the business?"
+      ],
+      "source": {
+        "type": "finding",
+        "ref": "F2210",
+        "note": "pivot finding on dc1"
+      },
+      "flags": {
+        "conflicting_information": true,
+        "business_tradeoff": false,
+        "plan_silent": false,
+        "starts_clock": []
+      }
+    },
+    {
+      "id": "I4",
+      "order": 4,
+      "phase": "containment",
+      "slot": "tradeoff",
+      "time_marker": "T+0:40",
+      "minutes_offset": 40,
+      "time_budget_minutes": 10,
+      "slide_number": 9,
+      "title": "The business tradeoff",
+      "what_happens": "sql2016 is confirmed affected and the PHI and PII it holds may be exposed. Operations asks to keep the system running through the busiest hours of the day; security asks to take it down now. A ransom note has appeared on two systems.",
+      "recipients": [
+        "Executive leadership",
+        "Incident lead",
+        "Operations"
+      ],
+      "decision_forced": "Keep the system up and accept the exposure, or take it down and accept the outage? Who makes that call?",
+      "decision_owner_role": "ceo",
+      "acceptable_owner_roles": [],
+      "plan_commitment_minutes": null,
+      "procedure_tested": {
+        "type": "plan_silent",
+        "ref": "G1",
+        "label": "Plan is silent on: Ransom payment decision and attacker communication",
+        "quote": null
+      },
+      "what_good_looks_like": "The decision is made by the role the plan names, within minutes, with the reasons recorded, and the ransom question is routed to counsel and the insurer (Plan is silent on: Ransom payment decision and attacker communication).",
+      "where_teams_fail": "Nobody can name who holds the decision, so it drifts to whoever speaks loudest.",
+      "expected_actions": [
+        {
+          "id": "I4-P34",
+          "text": "Security Operations isolates affected systems and preserves the ransom note and attacker communication",
+          "source": "org_plan:P34",
+          "timing_minutes": null
+        },
+        {
+          "id": "I4-P38",
+          "text": "Security Operations resets all privileged credentials and rebuilds identity infrastructure from a known-good state",
+          "source": "org_plan:P38",
+          "timing_minutes": null
+        },
+        {
+          "id": "I4-P21",
+          "text": "Activated by the Chief Nursing Officer for affected units",
+          "source": "org_plan:P21",
+          "timing_minutes": null
+        }
+      ],
+      "expected_notifications": [
+        "executive_leadership"
+      ],
+      "hints": [
+        "Ask who signs the shutdown order.",
+        "Ask whether anyone has opened the ransom note's instructions."
+      ],
+      "probing_questions": [
+        "Who holds this decision in your plan?",
+        "What is the plan's position on ransom payment, and who is allowed to talk to the attacker?"
+      ],
+      "host_lines": [
+        "A ransom note is on screen. sql2016 is affected. Operations wants to keep it running. Who decides, and what do they decide?"
+      ],
+      "source": {
+        "type": "finding",
+        "ref": "F2301",
+        "note": "target finding on sql2016"
+      },
+      "flags": {
+        "conflicting_information": false,
+        "business_tradeoff": true,
+        "plan_silent": true,
+        "starts_clock": []
+      }
+    },
+    {
+      "id": "I5",
+      "order": 5,
+      "phase": "recovery",
+      "slot": "recovery",
+      "time_marker": "T+0:50",
+      "minutes_offset": 50,
+      "time_budget_minutes": 10,
+      "slide_number": 10,
+      "title": "Restore order for sql2016",
+      "what_happens": "Backups for sql2016 exist but the last successful restore test was months ago. The business wants sql2016 first; IT wants the identity systems first. Clinics and departments are working on paper until it is decided.",
+      "recipients": [
+        "IT operations",
+        "Business owners",
+        "Incident lead"
+      ],
+      "decision_forced": "What is restored first, who approves the order, and what is the recovery time objective you are now working to?",
+      "decision_owner_role": "cio",
+      "acceptable_owner_roles": [],
+      "plan_commitment_minutes": null,
+      "procedure_tested": {
+        "type": "org_plan",
+        "ref": "P32",
+        "label": "IR Plan section 7.2 Restore order",
+        "quote": "Systems are restored in this order: identity infrastructure (Active Directory), network services, the electronic health record and its interface engine, ancillary clinical systems, and then business systems."
+      },
+      "what_good_looks_like": "The team checks the backups are clean before restoring, agrees a restore order with the business owners, and states the recovery objective from the plan (IR Plan section 7.2 Restore order).",
+      "where_teams_fail": "The team restores from a backup that was never verified, or restores the crown jewel before the identity systems and loses it again.",
+      "expected_actions": [
+        {
+          "id": "I5-P32",
+          "text": "Active Directory, network services, EHR and interface engine, ancillary clinical systems, business systems; CIO may change it with CMIO agreement",
+          "source": "org_plan:P32",
+          "timing_minutes": null
+        },
+        {
+          "id": "I5-P30",
+          "text": "RTO 4 hours, RPO 15 minutes",
+          "source": "org_plan:P30",
+          "timing_minutes": null
+        },
+        {
+          "id": "I5-P31",
+          "text": "RTO 2 hours",
+          "source": "org_plan:P31",
+          "timing_minutes": null
+        }
+      ],
+      "expected_notifications": [
+        "executive_leadership"
+      ],
+      "hints": [
+        "Ask when the backup was last tested.",
+        "Ask what the plan's recovery time objective is for this system."
+      ],
+      "probing_questions": [
+        "What is your recovery time objective for this system and where is it written?",
+        "How do you know the backup is clean?"
+      ],
+      "host_lines": [
+        "Backups exist. They were last tested months ago. The business wants sql2016 back today. What is your restore order?"
+      ],
+      "source": {
+        "type": "finding",
+        "ref": "F2301",
+        "note": "target finding on sql2016"
+      },
+      "flags": {
+        "conflicting_information": false,
+        "business_tradeoff": true,
+        "plan_silent": false,
+        "starts_clock": []
+      }
+    },
+    {
+      "id": "I6",
+      "order": 6,
+      "phase": "notification",
+      "slot": "notification",
+      "time_marker": "T+1:00",
+      "minutes_offset": 60,
+      "time_budget_minutes": 10,
+      "slide_number": 11,
+      "title": "The notification clock starts",
+      "what_happens": "Counsel confirms that PHI and PII on sql2016 were accessed. The notification clocks start now. The tightest one belongs to California Department of Public Health: 15 business days.",
+      "recipients": [
+        "General counsel",
+        "Compliance",
+        "Executive leadership"
+      ],
+      "decision_forced": "Which clocks apply, who owns each notification, and what is the first draft of the notice?",
+      "decision_owner_role": "general_counsel",
+      "acceptable_owner_roles": [],
+      "plan_commitment_minutes": 64800,
+      "procedure_tested": {
+        "type": "org_plan",
+        "ref": "P26",
+        "label": "IR Plan section 5.2 Notification ownership",
+        "quote": "General Counsel owns the regulatory notifications and the Privacy Officer owns the individual notification letters."
+      },
+      "what_good_looks_like": "The team lists every applicable clock with its owner and due date, starts the regulator notice, and records the discovery date it will defend (IR Plan section 5.2 Notification ownership).",
+      "where_teams_fail": "The team debates whether data was really taken instead of starting the clock, or assumes one notice covers every regulator.",
+      "expected_actions": [
+        {
+          "id": "I6-P26",
+          "text": "General Counsel owns regulatory notices; Privacy Officer owns individual letters",
+          "source": "org_plan:P26",
+          "timing_minutes": null
+        },
+        {
+          "id": "I6-P25",
+          "text": "45 calendar days from discovery, stricter than the regulatory 60",
+          "source": "org_plan:P25",
+          "timing_minutes": 64800
+        },
+        {
+          "id": "I6-P23",
+          "text": "General Counsel decides; expected for ransomware and any exfiltration",
+          "source": "org_plan:P23",
+          "timing_minutes": null
+        }
+      ],
+      "expected_notifications": [
+        "hhs_ocr",
+        "state_health_department",
+        "fbi",
+        "cyber_insurer",
+        "patients"
+      ],
+      "hints": [
+        "Ask who owns the regulator relationship.",
+        "Ask what date the team will put on the notice."
+      ],
+      "probing_questions": [
+        "Which clock is tightest and who owns it?",
+        "What does your plan commit to internally, and is it stricter than the regulator?"
+      ],
+      "host_lines": [
+        "Counsel says the data was accessed. Your clocks start now. Which ones apply, and who in this room owns each one?"
+      ],
+      "source": {
+        "type": "finding",
+        "ref": "F2301",
+        "note": "target finding on sql2016"
+      },
+      "flags": {
+        "conflicting_information": false,
+        "business_tradeoff": false,
+        "plan_silent": false,
+        "starts_clock": [
+          "state_ca_ag_sample_notice",
+          "ca_health_facility_unauthorized_access_15bd",
+          "state_ca_individual_notice",
+          "hipaa_hhs_notice_500_or_more",
+          "hipaa_individual_notice",
+          "hipaa_media_notice"
+        ]
+      }
+    },
+    {
+      "id": "I7",
+      "order": 7,
+      "phase": "notification",
+      "slot": "public",
+      "time_marker": "T+1:10",
+      "minutes_offset": 70,
+      "time_budget_minutes": 10,
+      "slide_number": 12,
+      "title": "The public statement",
+      "what_happens": "A reporter has the ransom note and is calling the switchboard. Staff are posting on social media. Leadership wants a statement in the next hour; counsel wants to wait for facts.",
+      "recipients": [
+        "Communications",
+        "Executive leadership",
+        "General counsel"
+      ],
+      "decision_forced": "Say something now or wait, and who approves the words?",
+      "decision_owner_role": "ceo",
+      "acceptable_owner_roles": [
+        "communications"
+      ],
+      "plan_commitment_minutes": null,
+      "procedure_tested": {
+        "type": "org_plan",
+        "ref": "P42",
+        "label": "IR Plan section 9.2 Holding statement template and approval chain",
+        "quote": "All external statements, including holding statements to the media, are drafted by the Director of Communications, reviewed by General Counsel, and approved by the Chief Executive Officer before release."
+      },
+      "what_good_looks_like": "A short holding statement goes out within the hour, approved by the roles the plan names, that promises updates without guessing at facts (IR Plan section 9.2 Holding statement template and approval chain).",
+      "where_teams_fail": "Leadership speaks without counsel, or counsel blocks every statement until the reporter publishes without the organization's voice.",
+      "expected_actions": [
+        {
+          "id": "I7-P42",
+          "text": "Drafted by Communications, reviewed by General Counsel, approved by the CEO",
+          "source": "org_plan:P42",
+          "timing_minutes": null
+        },
+        {
+          "id": "I7-P41",
+          "text": "Director of Communications, every 4 hours in SEV1, reviewed by the Incident Commander",
+          "source": "org_plan:P41",
+          "timing_minutes": null
+        },
+        {
+          "id": "I7-P43",
+          "text": "Approved by the Chief Medical Officer and the Chief Executive Officer",
+          "source": "org_plan:P43",
+          "timing_minutes": null
+        }
+      ],
+      "expected_notifications": [
+        "executive_leadership",
+        "legal_counsel"
+      ],
+      "hints": [
+        "Ask who approves the statement.",
+        "Ask what the staff have already been told."
+      ],
+      "probing_questions": [
+        "Who approves external statements in your plan?",
+        "What have you told your own staff?"
+      ],
+      "host_lines": [
+        "The reporter is on the line. Leadership wants a statement in an hour. What do you say, and who signs it off?"
+      ],
+      "source": {
+        "type": "finding",
+        "ref": "F2301",
+        "note": "target finding on sql2016"
+      },
+      "flags": {
+        "conflicting_information": false,
+        "business_tradeoff": false,
+        "plan_silent": false,
+        "starts_clock": []
+      }
+    }
+  ],
+  "hot_wash": {
+    "questions": [
+      "What was the first moment you knew this was serious, and who did you tell?",
+      "Which decision took longest, and what information would have made it faster?",
+      "Where did the plan help, where did it get in the way, and where was it silent?",
+      "Which notification clock worried you most, and who owns it on a Saturday?",
+      "What one change would you make before the next real incident?"
+    ]
+  },
+  "next_steps": [
+    "Score the decision tracker with ttx score and circulate the after-action report within five business days.",
+    "Assign an owner and a date to every gap labeled plan, people, or technical.",
+    "Promote any researched-tier clock to verified after a human checks the source.",
+    "Schedule the rerun on the unfixed attack path next quarter."
+  ],
+  "assumptions": [],
+  "banner": {
+    "show": true,
+    "text": "Verify before exercise: the following notification clocks were researched from primary sources but have not been human-verified: pci_visa_compromise_notice_3_days, state_ca_ag_sample_notice, ca_health_facility_unauthorized_access_15bd, state_ca_individual_notice, hipaa_hhs_notice_500_or_more, hipaa_individual_notice, hipaa_media_notice. Open each source URL and promote the clock in clocks.yaml (tier: verified) before relying on it.",
+    "researched_clock_ids": [
+      "state_ca_ag_sample_notice",
+      "ca_health_facility_unauthorized_access_15bd",
+      "state_ca_individual_notice",
+      "hipaa_hhs_notice_500_or_more",
+      "hipaa_individual_notice",
+      "hipaa_media_notice"
+    ]
+  },
+  "approval": {
+    "approved": true,
+    "approved_by": "Sample approver (synthetic run; a human signs here in real use)",
+    "approved_at": "2026-11-04T05:16:07+00:00",
+    "outline_hash": "a0ab8bfb3ff9f6b26e248e63574646f58a351d29b3c51c4e51ee922d799e86be"
+  }
+}

@@ -1,0 +1,1517 @@
+{
+  "schema_version": "1",
+  "inputs": {
+    "exercise_pack_hash": "a0ab8bfb3ff9f6b26e248e63574646f58a351d29b3c51c4e51ee922d799e86be",
+    "approval_hash": "a0ab8bfb3ff9f6b26e248e63574646f58a351d29b3c51c4e51ee922d799e86be",
+    "tracker_file": "decision_tracker_completed.xlsx",
+    "tracker_sha256": "1d5dc8170047758b6006fe051f8fd4d773d6e929904ba56649673383ffecc37f",
+    "incident_file": null
+  },
+  "rubric": {
+    "right_owner": {
+      "3": "decided by the named owner (or an accepted delegate)",
+      "2": "decided by another defined role",
+      "1": "no owner recorded or an undefined role"
+    },
+    "timely": {
+      "3": "within the plan commitment, or every clock met with an owner",
+      "2": "within twice the commitment, or regulatory clocks met but an internal commitment or owner missed",
+      "1": "slower than twice the commitment, no time recorded, or a regulatory clock missed or unplanned"
+    },
+    "escalation_notification": {
+      "3": "every expected party notified",
+      "2": "at least half notified",
+      "1": "fewer than half notified"
+    },
+    "documented": {
+      "3": "documented, with the decision written down",
+      "2": "partly documented",
+      "1": "not documented"
+    },
+    "followed_plan": {
+      "3": "every expected action taken and the plan step followed",
+      "2": "at least half the actions, or the step followed in part",
+      "1": "fewer than half the actions, or the plan step not followed"
+    }
+  },
+  "dimension_labels": {
+    "right_owner": "Right owner",
+    "timely": "Timely",
+    "escalation_notification": "Escalation and notification",
+    "documented": "Documented",
+    "followed_plan": "Followed the plan"
+  },
+  "summary": {
+    "total_score": 82,
+    "max_score": 99,
+    "percent": 82.8,
+    "injects_scored": 7,
+    "injects_total": 7,
+    "dimension_averages": {
+      "right_owner": 2.86,
+      "timely": 2.14,
+      "escalation_notification": 2.67,
+      "documented": 2.57,
+      "followed_plan": 2.17
+    },
+    "clocks_met": 4,
+    "clocks_missed": 1,
+    "clocks_not_planned": 1,
+    "clocks_no_fixed_deadline": 0
+  },
+  "injects": [
+    {
+      "inject_id": "I1",
+      "title": "First signal on vpngw01",
+      "phase": "detection",
+      "slide_number": 6,
+      "procedure": {
+        "type": "org_plan",
+        "ref": "P16",
+        "label": "IR Plan section 4.1 Security Operations to Incident Commander",
+        "quote": "Security Operations notifies the Incident Commander within 15 minutes of identifying a suspected SEV1 or SEV2 incident."
+      },
+      "reached": true,
+      "scores": {
+        "right_owner": 3,
+        "timely": 2,
+        "escalation_notification": null,
+        "documented": 2,
+        "followed_plan": 2
+      },
+      "reasons": {
+        "right_owner": "decided by Director of Security Operations",
+        "timely": "25 minutes against a 15-minute commitment",
+        "escalation_notification": "no notifications expected at this inject",
+        "documented": "partly documented",
+        "followed_plan": "2 of 3 expected actions"
+      },
+      "decision": "Analyst confirmed the session against firewall logs and paged the Director of Security Operations, who called the CISO.",
+      "decided_by_role": "security_operations",
+      "actions_expected": [
+        "I1-P16",
+        "I1-d1",
+        "I1-d2"
+      ],
+      "actions_completed": [
+        "I1-P16",
+        "I1-d1"
+      ],
+      "actions_missed": [
+        "I1-d2"
+      ],
+      "notifications_expected": [],
+      "notifications_made": [],
+      "notifications_missed": [],
+      "plan_step_followed": "yes",
+      "total": 9,
+      "max": 12
+    },
+    {
+      "inject_id": "I2",
+      "title": "Declaring the incident",
+      "phase": "escalation",
+      "slide_number": 7,
+      "procedure": {
+        "type": "org_plan",
+        "ref": "P35",
+        "label": "IR Plan section 8 Ransomware step 2: declare SEV1",
+        "quote": "Step 2. The Incident Commander declares a SEV1 incident and requests Hospital Command Center activation."
+      },
+      "reached": true,
+      "scores": {
+        "right_owner": 3,
+        "timely": 3,
+        "escalation_notification": 2,
+        "documented": 3,
+        "followed_plan": 3
+      },
+      "reasons": {
+        "right_owner": "decided by Incident Commander",
+        "timely": "20 minutes against a 30-minute commitment",
+        "escalation_notification": "2 of 3 expected parties notified",
+        "documented": "decision recorded and documented",
+        "followed_plan": "3 of 3 expected actions"
+      },
+      "decision": "CISO declared SEV1 and requested Hospital Command Center activation; CIO and Privacy Officer called; CIO briefed the CEO and General Counsel.",
+      "decided_by_role": "incident_commander",
+      "actions_expected": [
+        "I2-P35",
+        "I2-P17",
+        "I2-P18"
+      ],
+      "actions_completed": [
+        "I2-P35",
+        "I2-P17",
+        "I2-P18"
+      ],
+      "actions_missed": [],
+      "notifications_expected": [
+        "executive_leadership",
+        "legal_counsel",
+        "cyber_insurer"
+      ],
+      "notifications_made": [
+        "executive_leadership",
+        "legal_counsel"
+      ],
+      "notifications_missed": [
+        "cyber_insurer"
+      ],
+      "plan_step_followed": "yes",
+      "total": 14,
+      "max": 15
+    },
+    {
+      "inject_id": "I3",
+      "title": "Containment on dc1",
+      "phase": "containment",
+      "slide_number": 8,
+      "procedure": {
+        "type": "org_plan",
+        "ref": "P4",
+        "label": "IR Plan section 2.3 Shutdown or isolation of a production clinical system",
+        "quote": "The Chief Information Officer (CIO) authorizes the shutdown or isolation of any production clinical system, including the electronic health record, after consulting the Chief Medical Information Officer."
+      },
+      "reached": true,
+      "scores": {
+        "right_owner": 3,
+        "timely": 2,
+        "escalation_notification": 3,
+        "documented": 3,
+        "followed_plan": 2
+      },
+      "reasons": {
+        "right_owner": "decided by Incident Commander",
+        "timely": "45 minutes against a 30-minute commitment",
+        "escalation_notification": "1 of 1 expected parties notified",
+        "documented": "decision recorded and documented",
+        "followed_plan": "2 of 3 expected actions; plan step followed in part"
+      },
+      "decision": "CISO isolated vpngw01 under SEV1 authority but kept dc1 online on the vendor's word that the gateway was patched; privileged credential resets started.",
+      "decided_by_role": "incident_commander",
+      "actions_expected": [
+        "I3-P6",
+        "I3-P28",
+        "I3-P29"
+      ],
+      "actions_completed": [
+        "I3-P6",
+        "I3-P28"
+      ],
+      "actions_missed": [
+        "I3-P29"
+      ],
+      "notifications_expected": [
+        "executive_leadership"
+      ],
+      "notifications_made": [
+        "executive_leadership"
+      ],
+      "notifications_missed": [],
+      "plan_step_followed": "partial",
+      "total": 13,
+      "max": 15
+    },
+    {
+      "inject_id": "I4",
+      "title": "The business tradeoff",
+      "phase": "containment",
+      "slide_number": 9,
+      "procedure": {
+        "type": "plan_silent",
+        "ref": "G1",
+        "label": "Plan is silent on: Ransom payment decision and attacker communication",
+        "quote": null
+      },
+      "reached": true,
+      "scores": {
+        "right_owner": 2,
+        "timely": 2,
+        "escalation_notification": 3,
+        "documented": 1,
+        "followed_plan": null
+      },
+      "reasons": {
+        "right_owner": "decided by Chief Financial Officer; expected Chief Executive Officer",
+        "timely": "14 minutes of a 10-minute budget (no plan commitment)",
+        "escalation_notification": "1 of 1 expected parties notified",
+        "documented": "not documented",
+        "followed_plan": "the plan is silent on this decision; scored as a plan gap instead"
+      },
+      "decision": "No decision on payment. The CFO opened contact with the insurer's negotiator before counsel joined; the room could not say who may talk to the attacker.",
+      "decided_by_role": "cfo",
+      "actions_expected": [
+        "I4-P34",
+        "I4-P38",
+        "I4-P21"
+      ],
+      "actions_completed": [
+        "I4-P34",
+        "I4-P21"
+      ],
+      "actions_missed": [
+        "I4-P38"
+      ],
+      "notifications_expected": [
+        "executive_leadership"
+      ],
+      "notifications_made": [
+        "executive_leadership"
+      ],
+      "notifications_missed": [],
+      "plan_step_followed": "n/a",
+      "total": 8,
+      "max": 12
+    },
+    {
+      "inject_id": "I5",
+      "title": "Restore order for sql2016",
+      "phase": "recovery",
+      "slide_number": 10,
+      "procedure": {
+        "type": "org_plan",
+        "ref": "P32",
+        "label": "IR Plan section 7.2 Restore order",
+        "quote": "Systems are restored in this order: identity infrastructure (Active Directory), network services, the electronic health record and its interface engine, ancillary clinical systems, and then business systems."
+      },
+      "reached": true,
+      "scores": {
+        "right_owner": 3,
+        "timely": 3,
+        "escalation_notification": 3,
+        "documented": 3,
+        "followed_plan": 2
+      },
+      "reasons": {
+        "right_owner": "decided by Chief Information Officer",
+        "timely": "9 minutes of a 10-minute budget (no plan commitment)",
+        "escalation_notification": "1 of 1 expected parties notified",
+        "documented": "decision recorded and documented",
+        "followed_plan": "2 of 3 expected actions"
+      },
+      "decision": "CIO approved restoring Active Directory first and the EHR database second, after the Director of Infrastructure confirmed the backup predates the compromise.",
+      "decided_by_role": "cio",
+      "actions_expected": [
+        "I5-P32",
+        "I5-P30",
+        "I5-P31"
+      ],
+      "actions_completed": [
+        "I5-P32",
+        "I5-P31"
+      ],
+      "actions_missed": [
+        "I5-P30"
+      ],
+      "notifications_expected": [
+        "executive_leadership"
+      ],
+      "notifications_made": [
+        "executive_leadership"
+      ],
+      "notifications_missed": [],
+      "plan_step_followed": "yes",
+      "total": 14,
+      "max": 15
+    },
+    {
+      "inject_id": "I6",
+      "title": "The notification clock starts",
+      "phase": "notification",
+      "slide_number": 11,
+      "procedure": {
+        "type": "org_plan",
+        "ref": "P26",
+        "label": "IR Plan section 5.2 Notification ownership",
+        "quote": "General Counsel owns the regulatory notifications and the Privacy Officer owns the individual notification letters."
+      },
+      "reached": true,
+      "scores": {
+        "right_owner": 3,
+        "timely": 1,
+        "escalation_notification": 2,
+        "documented": 3,
+        "followed_plan": 2
+      },
+      "reasons": {
+        "right_owner": "decided by General Counsel",
+        "timely": "regulatory clock missed or unplanned: ca_health_facility_unauthorized_access_15bd, hipaa_media_notice",
+        "escalation_notification": "4 of 5 expected parties notified",
+        "documented": "decision recorded and documented",
+        "followed_plan": "3 of 3 expected actions; plan step followed in part"
+      },
+      "decision": "General Counsel owns the regulatory notices and the Privacy Officer owns patient letters; FBI and insurer notified. Nobody took the state health department report.",
+      "decided_by_role": "general_counsel",
+      "actions_expected": [
+        "I6-P26",
+        "I6-P25",
+        "I6-P23"
+      ],
+      "actions_completed": [
+        "I6-P26",
+        "I6-P25",
+        "I6-P23"
+      ],
+      "actions_missed": [],
+      "notifications_expected": [
+        "hhs_ocr",
+        "state_health_department",
+        "fbi",
+        "cyber_insurer",
+        "patients"
+      ],
+      "notifications_made": [
+        "hhs_ocr",
+        "fbi",
+        "cyber_insurer",
+        "patients"
+      ],
+      "notifications_missed": [
+        "state_health_department"
+      ],
+      "plan_step_followed": "partial",
+      "total": 11,
+      "max": 15
+    },
+    {
+      "inject_id": "I7",
+      "title": "The public statement",
+      "phase": "notification",
+      "slide_number": 12,
+      "procedure": {
+        "type": "org_plan",
+        "ref": "P42",
+        "label": "IR Plan section 9.2 Holding statement template and approval chain",
+        "quote": "All external statements, including holding statements to the media, are drafted by the Director of Communications, reviewed by General Counsel, and approved by the Chief Executive Officer before release."
+      },
+      "reached": true,
+      "scores": {
+        "right_owner": 3,
+        "timely": 2,
+        "escalation_notification": 3,
+        "documented": 3,
+        "followed_plan": 2
+      },
+      "reasons": {
+        "right_owner": "decided by Chief Executive Officer",
+        "timely": "12 minutes of a 10-minute budget (no plan commitment)",
+        "escalation_notification": "2 of 2 expected parties notified",
+        "documented": "decision recorded and documented",
+        "followed_plan": "2 of 3 expected actions"
+      },
+      "decision": "Communications drafted a holding statement from the template, General Counsel reviewed it, and the CEO approved it.",
+      "decided_by_role": "ceo",
+      "actions_expected": [
+        "I7-P42",
+        "I7-P41",
+        "I7-P43"
+      ],
+      "actions_completed": [
+        "I7-P42",
+        "I7-P43"
+      ],
+      "actions_missed": [
+        "I7-P41"
+      ],
+      "notifications_expected": [
+        "executive_leadership",
+        "legal_counsel"
+      ],
+      "notifications_made": [
+        "executive_leadership",
+        "legal_counsel"
+      ],
+      "notifications_missed": [],
+      "plan_step_followed": "yes",
+      "total": 13,
+      "max": 15
+    }
+  ],
+  "clocks": [
+    {
+      "clock_id": "state_ca_ag_sample_notice",
+      "name": "California, sample copy of the breach notification to the Attorney General (more than 500 residents)",
+      "regulator": "California Attorney General",
+      "deadline_text": "shall electronically submit a single sample copy of that security breach notification, excluding any personally identifiable information, to the Attorney General within 15 calendar days of notifying affected consumers of the security breach",
+      "deadline_hours": 1060.0,
+      "deadline_is_business_day_approximation": false,
+      "tier": "researched",
+      "verified_date": "2026-11-03",
+      "source_url": "https://leginfo.legislature.ca.gov/faces/codes_displaySection.xhtml?lawCode=CIV&sectionNum=1798.82",
+      "citation": "Cal. Civ. Code 1798.82(f)",
+      "owner_role": "general_counsel",
+      "planned_notify_hours": 1000.0,
+      "basis": "tracker planned_notify_hours",
+      "after_clock": "state_ca_individual_notice",
+      "status": "met",
+      "met": true,
+      "margin_hours": 60.0
+    },
+    {
+      "clock_id": "ca_health_facility_unauthorized_access_15bd",
+      "name": "California licensed health facility report of unlawful or unauthorized access",
+      "regulator": "California Department of Public Health",
+      "deadline_text": "report to the department and the affected patient no later than 15 business days after the unlawful or unauthorized access, use, or disclosure has been detected",
+      "deadline_hours": 504.0,
+      "deadline_is_business_day_approximation": true,
+      "tier": "researched",
+      "verified_date": "2026-11-03",
+      "source_url": "https://leginfo.legislature.ca.gov/faces/codes_displaySection.xhtml?lawCode=HSC&sectionNum=1280.15",
+      "citation": "California Health and Safety Code 1280.15(b)",
+      "owner_role": null,
+      "planned_notify_hours": null,
+      "basis": "tracker planned_notify_hours",
+      "after_clock": null,
+      "status": "not_planned",
+      "met": false,
+      "margin_hours": null
+    },
+    {
+      "clock_id": "state_ca_individual_notice",
+      "name": "California, notice of a data breach to affected residents",
+      "regulator": "California Attorney General (enforcement)",
+      "deadline_text": "the disclosure required by this subdivision shall be made within 30 calendar days of discovery or notification of the data breach",
+      "deadline_hours": 720,
+      "deadline_is_business_day_approximation": false,
+      "tier": "researched",
+      "verified_date": "2026-11-03",
+      "source_url": "https://leginfo.legislature.ca.gov/faces/codes_displaySection.xhtml?lawCode=CIV&sectionNum=1798.82",
+      "citation": "Cal. Civ. Code 1798.82(a)(2)(A)",
+      "owner_role": "privacy_officer",
+      "planned_notify_hours": 700.0,
+      "basis": "tracker planned_notify_hours",
+      "after_clock": null,
+      "status": "met",
+      "met": true,
+      "margin_hours": 20.0
+    },
+    {
+      "clock_id": "hipaa_hhs_notice_500_or_more",
+      "name": "HIPAA Breach Notification Rule, notice to the Secretary (500 or more individuals)",
+      "regulator": "HHS Office for Civil Rights",
+      "deadline_text": "contemporaneously with the notice required by 164.404(a), without unreasonable delay and in no case later than 60 calendar days after discovery",
+      "deadline_hours": 1440,
+      "deadline_is_business_day_approximation": false,
+      "tier": "researched",
+      "verified_date": "2026-11-03",
+      "source_url": "https://www.ecfr.gov/current/title-45/subtitle-A/subchapter-C/part-164/subpart-D/section-164.408",
+      "citation": "45 CFR 164.408(b)",
+      "owner_role": "general_counsel",
+      "planned_notify_hours": 1200.0,
+      "basis": "tracker planned_notify_hours",
+      "after_clock": null,
+      "status": "met",
+      "met": true,
+      "margin_hours": 240.0
+    },
+    {
+      "clock_id": "hipaa_individual_notice",
+      "name": "HIPAA Breach Notification Rule, notice to individuals",
+      "regulator": "HHS Office for Civil Rights",
+      "deadline_text": "without unreasonable delay and in no case later than 60 calendar days after discovery of a breach",
+      "deadline_hours": 1440,
+      "deadline_is_business_day_approximation": false,
+      "tier": "researched",
+      "verified_date": "2026-11-03",
+      "source_url": "https://www.ecfr.gov/current/title-45/subtitle-A/subchapter-C/part-164/subpart-D/section-164.404",
+      "citation": "45 CFR 164.404(b)",
+      "owner_role": "privacy_officer",
+      "planned_notify_hours": 700.0,
+      "basis": "tracker planned_notify_hours",
+      "after_clock": null,
+      "status": "met",
+      "met": true,
+      "margin_hours": 740.0,
+      "internal_deadline_hours": 1080.0,
+      "internal_source": "P25",
+      "internal_quote": "VRHS's internal standard is to issue individual notifications within 45 calendar days of discovery, which is stricter than the regulatory outer limit.",
+      "internal_section": "5.2",
+      "internal_met": true,
+      "internal_margin_hours": 380.0
+    },
+    {
+      "clock_id": "hipaa_media_notice",
+      "name": "HIPAA Breach Notification Rule, notice to prominent media outlets",
+      "regulator": "HHS Office for Civil Rights",
+      "deadline_text": "without unreasonable delay and in no case later than 60 calendar days after discovery of a breach",
+      "deadline_hours": 1440,
+      "deadline_is_business_day_approximation": false,
+      "tier": "researched",
+      "verified_date": "2026-11-03",
+      "source_url": "https://www.ecfr.gov/current/title-45/subtitle-A/subchapter-C/part-164/subpart-D/section-164.406",
+      "citation": "45 CFR 164.406",
+      "owner_role": "communications",
+      "planned_notify_hours": 1500.0,
+      "basis": "tracker planned_notify_hours",
+      "after_clock": null,
+      "status": "missed",
+      "met": false,
+      "margin_hours": -60.0
+    }
+  ],
+  "gaps": [
+    {
+      "id": "GAP1",
+      "label": "people",
+      "inject_id": "I1",
+      "finding": "Expected action not taken: Open an incident record and start a timestamped timeline.",
+      "citation": "pack_default:healthcare:d2",
+      "fix": "Add this step to the incident checklist and the next exercise.",
+      "owner_role": "security_operations",
+      "owner": "Director of Security Operations",
+      "due": "2026-12-06",
+      "action_id": "I1-d2"
+    },
+    {
+      "id": "GAP2",
+      "label": "people",
+      "inject_id": "I1",
+      "finding": "Slower than the plan's commitment: 25 minutes against a 15-minute commitment.",
+      "citation": "IR Plan section 4.1: \"Security Operations notifies the Incident Commander within 15 minutes of identifying a suspected SEV1 or SEV2 incident.\"",
+      "fix": "Rehearse this escalation step against the clock; confirm the on-call path reaches the named role in time.",
+      "owner_role": "security_operations",
+      "owner": "Director of Security Operations",
+      "due": "2026-12-06"
+    },
+    {
+      "id": "GAP3",
+      "label": "people",
+      "inject_id": "I2",
+      "finding": "Not notified at this inject: Cyber insurance carrier.",
+      "citation": "expected notifications for this inject (exercise pack)",
+      "fix": "Add these parties, with a named caller and a backup, to the notification list for this severity.",
+      "owner_role": "incident_commander",
+      "owner": "Incident Commander",
+      "due": "2026-12-06"
+    },
+    {
+      "id": "GAP4",
+      "label": "people",
+      "inject_id": "I3",
+      "finding": "Not done at this inject: Medical device isolation (IR Plan section 6.3: Director of Clinical Engineering isolates devices and confirms downtime procedures with nursing).",
+      "citation": "IR Plan section 6.3: \"The Director of Clinical Engineering isolates affected medical devices and confirms with nursing leadership that patient care has moved to downtime procedures.\"",
+      "fix": "Train the roles named in IR Plan section 6.3 on this step and add it to the incident checklist.",
+      "owner_role": "cio",
+      "owner": "Chief Information Officer",
+      "due": "2026-12-06",
+      "action_id": "I3-P29"
+    },
+    {
+      "id": "GAP5",
+      "label": "people",
+      "inject_id": "I3",
+      "finding": "Slower than the plan's commitment: 45 minutes against a 30-minute commitment.",
+      "citation": "IR Plan section 2.3: \"In a SEV1 incident the Incident Commander may isolate a system immediately and must notify the CIO within 30 minutes of doing so.\"",
+      "fix": "Rehearse this escalation step against the clock; confirm the on-call path reaches the named role in time.",
+      "owner_role": "cio",
+      "owner": "Chief Information Officer",
+      "due": "2026-12-06"
+    },
+    {
+      "id": "GAP6",
+      "label": "plan",
+      "inject_id": "I4",
+      "finding": "The plan is silent on ransom payment decision and attacker communication. The team decided: No decision on payment. The CFO opened contact with the insurer's negotiator before counsel joined; the room could not say who may talk to the attacker. (Chief Financial Officer).",
+      "citation": "G1: The plan names no role authorized to decide whether to pay a ransom or to communicate with the attacker. Section 8 preserves the ransom note as evidence but is silent on negotiation and payment authority, sanctions screening, and insurer consent.",
+      "fix": "Add a section that names who decides ransom payment decision and attacker communication, who must be consulted, and how the decision is recorded.",
+      "owner_role": "incident_commander",
+      "owner": "Incident Commander",
+      "due": "2027-01-05"
+    },
+    {
+      "id": "GAP7",
+      "label": "people",
+      "inject_id": "I4",
+      "finding": "the expected owner is Chief Executive Officer; the decision was made by Chief Financial Officer.",
+      "citation": "Healthcare and health systems pack default role",
+      "fix": "Brief Chief Executive Officer and their delegate on this authority and rehearse the hand-off.",
+      "owner_role": "ceo",
+      "owner": "Chief Executive Officer",
+      "due": "2026-12-06"
+    },
+    {
+      "id": "GAP8",
+      "label": "people",
+      "inject_id": "I4",
+      "finding": "Not done at this inject: Ransomware step 5: reset credentials and rebuild identity (IR Plan section 8: Security Operations resets all privileged credentials and rebuilds identity infrastructure from a known-good state).",
+      "citation": "IR Plan section 8: \"Step 5. Security Operations resets all privileged credentials and rebuilds the identity infrastructure from a known-good state.\"",
+      "fix": "Train the roles named in IR Plan section 8 on this step and add it to the incident checklist.",
+      "owner_role": "ceo",
+      "owner": "Chief Executive Officer",
+      "due": "2026-12-06",
+      "action_id": "I4-P38"
+    },
+    {
+      "id": "GAP9",
+      "label": "people",
+      "inject_id": "I5",
+      "finding": "Not done at this inject: EHR recovery objectives (IR Plan section 7.1: RTO 4 hours, RPO 15 minutes).",
+      "citation": "IR Plan section 7.1: \"The electronic health record has a recovery time objective of 4 hours and a recovery point objective of 15 minutes.\"",
+      "fix": "Train the roles named in IR Plan section 7.1 on this step and add it to the incident checklist.",
+      "owner_role": "cio",
+      "owner": "Chief Information Officer",
+      "due": "2026-12-06",
+      "action_id": "I5-P30"
+    },
+    {
+      "id": "GAP10",
+      "label": "people",
+      "inject_id": "I6",
+      "finding": "Not notified at this inject: State health department.",
+      "citation": "expected notifications for this inject (exercise pack)",
+      "fix": "Add these parties, with a named caller and a backup, to the notification list for this severity.",
+      "owner_role": "general_counsel",
+      "owner": "General Counsel",
+      "due": "2026-12-06"
+    },
+    {
+      "id": "GAP11",
+      "label": "people",
+      "inject_id": "I7",
+      "finding": "Not done at this inject: Workforce notice template (IR Plan section 9.1: Director of Communications, every 4 hours in SEV1, reviewed by the Incident Commander).",
+      "citation": "IR Plan section 9.1: \"The Director of Communications issues workforce updates at least every 4 hours during a SEV1 incident using the pre-approved workforce notice template, after review by the Incident Commander.\"",
+      "fix": "Train the roles named in IR Plan section 9.1 on this step and add it to the incident checklist.",
+      "owner_role": "ceo",
+      "owner": "Chief Executive Officer",
+      "due": "2026-12-06",
+      "action_id": "I7-P41"
+    },
+    {
+      "id": "GAP12",
+      "label": "plan",
+      "inject_id": "I6",
+      "finding": "California licensed health facility report of unlawful or unauthorized access applies but the team did not plan a notification time or name an owner.",
+      "citation": "California Health and Safety Code 1280.15(b) (researched, https://leginfo.legislature.ca.gov/faces/codes_displaySection.xhtml?lawCode=HSC&sectionNum=1280.15)",
+      "fix": "Add this obligation, its owner, and its deadline to the notification section of the plan.",
+      "owner_role": "incident_commander",
+      "owner": "Incident Commander",
+      "due": "2027-01-05",
+      "clock_id": "ca_health_facility_unauthorized_access_15bd"
+    },
+    {
+      "id": "GAP13",
+      "label": "people",
+      "inject_id": "I6",
+      "finding": "HIPAA Breach Notification Rule, notice to prominent media outlets: planned at 1500 hours against a 1440-hour limit, missed by 60 hours.",
+      "citation": "45 CFR 164.406 (researched, https://www.ecfr.gov/current/title-45/subtitle-A/subchapter-C/part-164/subpart-D/section-164.406)",
+      "fix": "Name the owner for this clock in the plan, pre-draft the notice, and put the deadline in the incident checklist.",
+      "owner_role": "communications",
+      "owner": "Director of Communications",
+      "due": "2026-12-06",
+      "clock_id": "hipaa_media_notice"
+    },
+    {
+      "id": "GAP14",
+      "label": "technical",
+      "inject_id": null,
+      "finding": "Finding F1042 on vpngw01 (Ivanti Connect Secure stack-based buffer overflow (CVE-2025-0282), CVE-2025-0282, CISA KEV, VPR 9.6) is open and was the entry step of the exercised path.",
+      "citation": "seed entry: F1042 (rule kev_internet_facing, source sample_estate:synthetic_estate.json)",
+      "fix": "Remediate or mitigate F1042 on vpngw01, verify closure in the next scan, and rerun this path next quarter if it is still open.",
+      "owner_role": "cio",
+      "owner": "Chief Information Officer",
+      "due": "2026-11-20",
+      "finding_id": "F1042"
+    },
+    {
+      "id": "GAP15",
+      "label": "technical",
+      "inject_id": null,
+      "finding": "Finding F2210 on dc1 (Netlogon elevation of privilege (Zerologon, CVE-2020-1472), CVE-2020-1472, CISA KEV, VPR 9.0) is open and was the pivot step of the exercised path.",
+      "citation": "seed pivot: F2210 (rule identity_tier_hostname, source sample_estate:synthetic_estate.json)",
+      "fix": "Remediate or mitigate F2210 on dc1, verify closure in the next scan, and rerun this path next quarter if it is still open.",
+      "owner_role": "cio",
+      "owner": "Chief Information Officer",
+      "due": "2026-11-20",
+      "finding_id": "F2210"
+    },
+    {
+      "id": "GAP16",
+      "label": "technical",
+      "inject_id": null,
+      "finding": "Finding F2301 on sql2016 (Microsoft SQL Server 2016 SP3 missing cumulative update, CVE-2023-36728, VPR 6.7) is open and was the target step of the exercised path.",
+      "citation": "seed target: F2301 (rule tag_match, source sample_estate:synthetic_estate.json)",
+      "fix": "Remediate or mitigate F2301 on sql2016, verify closure in the next scan, and rerun this path next quarter if it is still open.",
+      "owner_role": "cio",
+      "owner": "Chief Information Officer",
+      "due": "2026-12-21",
+      "finding_id": "F2301"
+    }
+  ],
+  "coverage": {
+    "present": true,
+    "rows": [
+      {
+        "item_id": "P1",
+        "section": "2.1",
+        "label": "Incident Commander",
+        "category": "role",
+        "status": "not_covered",
+        "injects": [],
+        "evidence": []
+      },
+      {
+        "item_id": "P2",
+        "section": "2.1",
+        "label": "Incident declaration and severity",
+        "category": "decision_authority",
+        "status": "not_covered",
+        "injects": [],
+        "evidence": []
+      },
+      {
+        "item_id": "P3",
+        "section": "2.1",
+        "label": "Director of Security Operations",
+        "category": "role",
+        "status": "not_covered",
+        "injects": [],
+        "evidence": []
+      },
+      {
+        "item_id": "P10",
+        "section": "2.3",
+        "label": "Public statements, patient notifications, media response",
+        "category": "decision_authority",
+        "status": "not_covered",
+        "injects": [],
+        "evidence": []
+      },
+      {
+        "item_id": "P11",
+        "section": "2.3",
+        "label": "Chief Executive Officer",
+        "category": "role",
+        "status": "not_covered",
+        "injects": [],
+        "evidence": []
+      },
+      {
+        "item_id": "P4",
+        "section": "2.3",
+        "label": "Shutdown or isolation of a production clinical system",
+        "category": "decision_authority",
+        "status": "deviated",
+        "injects": [
+          "I3"
+        ],
+        "evidence": [
+          {
+            "inject": "I3",
+            "status": "deviated"
+          }
+        ]
+      },
+      {
+        "item_id": "P5",
+        "section": "2.3",
+        "label": "Chief Information Officer",
+        "category": "role",
+        "status": "not_covered",
+        "injects": [],
+        "evidence": []
+      },
+      {
+        "item_id": "P6",
+        "section": "2.3",
+        "label": "SEV1 emergency isolation notice to the CIO",
+        "category": "escalation_step",
+        "status": "followed",
+        "injects": [
+          "I3"
+        ],
+        "evidence": [
+          {
+            "inject": "I3",
+            "status": "followed"
+          }
+        ]
+      },
+      {
+        "item_id": "P7",
+        "section": "2.3",
+        "label": "Privacy Officer",
+        "category": "role",
+        "status": "not_covered",
+        "injects": [],
+        "evidence": []
+      },
+      {
+        "item_id": "P8",
+        "section": "2.3",
+        "label": "Reportable breach determination",
+        "category": "decision_authority",
+        "status": "not_covered",
+        "injects": [],
+        "evidence": []
+      },
+      {
+        "item_id": "P9",
+        "section": "2.3",
+        "label": "General Counsel",
+        "category": "role",
+        "status": "not_covered",
+        "injects": [],
+        "evidence": []
+      },
+      {
+        "item_id": "P13",
+        "section": "3",
+        "label": "SEV1 (Critical)",
+        "category": "severity_level",
+        "status": "not_covered",
+        "injects": [],
+        "evidence": []
+      },
+      {
+        "item_id": "P14",
+        "section": "3",
+        "label": "SEV2 (High)",
+        "category": "severity_level",
+        "status": "not_covered",
+        "injects": [],
+        "evidence": []
+      },
+      {
+        "item_id": "P15",
+        "section": "3",
+        "label": "Severity assignment and re-rating",
+        "category": "severity_level",
+        "status": "not_covered",
+        "injects": [],
+        "evidence": []
+      },
+      {
+        "item_id": "P16",
+        "section": "4.1",
+        "label": "Security Operations to Incident Commander",
+        "category": "escalation_step",
+        "status": "followed",
+        "injects": [
+          "I1"
+        ],
+        "evidence": [
+          {
+            "inject": "I1",
+            "status": "followed"
+          },
+          {
+            "inject": "I1",
+            "status": "followed"
+          }
+        ]
+      },
+      {
+        "item_id": "P17",
+        "section": "4.1",
+        "label": "Incident Commander to CIO and Privacy Officer",
+        "category": "escalation_step",
+        "status": "followed",
+        "injects": [
+          "I2"
+        ],
+        "evidence": [
+          {
+            "inject": "I2",
+            "status": "followed"
+          }
+        ]
+      },
+      {
+        "item_id": "P18",
+        "section": "4.1",
+        "label": "CIO to CEO and General Counsel",
+        "category": "escalation_step",
+        "status": "followed",
+        "injects": [
+          "I2"
+        ],
+        "evidence": [
+          {
+            "inject": "I2",
+            "status": "followed"
+          }
+        ]
+      },
+      {
+        "item_id": "P19",
+        "section": "4.1",
+        "label": "CEO to Board Chair",
+        "category": "escalation_step",
+        "status": "not_covered",
+        "injects": [],
+        "evidence": []
+      },
+      {
+        "item_id": "P20",
+        "section": "4.2",
+        "label": "Hospital Command Center activation",
+        "category": "escalation_step",
+        "status": "not_covered",
+        "injects": [],
+        "evidence": []
+      },
+      {
+        "item_id": "P21",
+        "section": "4.2",
+        "label": "Clinical downtime procedures",
+        "category": "escalation_step",
+        "status": "followed",
+        "injects": [
+          "I4"
+        ],
+        "evidence": [
+          {
+            "inject": "I4",
+            "status": "followed"
+          }
+        ]
+      },
+      {
+        "item_id": "P22",
+        "section": "4.3",
+        "label": "Cyber insurance carrier notice",
+        "category": "notification_procedure",
+        "status": "not_covered",
+        "injects": [],
+        "evidence": []
+      },
+      {
+        "item_id": "P23",
+        "section": "4.4",
+        "label": "FBI notification",
+        "category": "notification_procedure",
+        "status": "followed",
+        "injects": [
+          "I6"
+        ],
+        "evidence": [
+          {
+            "inject": "I6",
+            "status": "followed"
+          }
+        ]
+      },
+      {
+        "item_id": "P24",
+        "section": "5.1",
+        "label": "Four-factor breach risk assessment",
+        "category": "notification_procedure",
+        "status": "not_covered",
+        "injects": [],
+        "evidence": []
+      },
+      {
+        "item_id": "P25",
+        "section": "5.2",
+        "label": "Individual notification internal standard",
+        "category": "notification_procedure",
+        "status": "followed",
+        "injects": [
+          "I6"
+        ],
+        "evidence": [
+          {
+            "inject": "I6",
+            "status": "followed"
+          }
+        ]
+      },
+      {
+        "item_id": "P26",
+        "section": "5.2",
+        "label": "Notification ownership",
+        "category": "notification_procedure",
+        "status": "deviated",
+        "injects": [
+          "I6"
+        ],
+        "evidence": [
+          {
+            "inject": "I6",
+            "status": "deviated"
+          },
+          {
+            "inject": "I6",
+            "status": "followed"
+          }
+        ]
+      },
+      {
+        "item_id": "P45",
+        "section": "5.3",
+        "label": "Discovery date for business associate incidents",
+        "category": "other",
+        "status": "not_covered",
+        "injects": [],
+        "evidence": []
+      },
+      {
+        "item_id": "P27",
+        "section": "6.1",
+        "label": "Evidence before rebuild",
+        "category": "containment_procedure",
+        "status": "not_covered",
+        "injects": [],
+        "evidence": []
+      },
+      {
+        "item_id": "P28",
+        "section": "6.2",
+        "label": "Standard containment actions",
+        "category": "containment_procedure",
+        "status": "followed",
+        "injects": [
+          "I3"
+        ],
+        "evidence": [
+          {
+            "inject": "I3",
+            "status": "followed"
+          }
+        ]
+      },
+      {
+        "item_id": "P29",
+        "section": "6.3",
+        "label": "Medical device isolation",
+        "category": "containment_procedure",
+        "status": "deviated",
+        "injects": [
+          "I3"
+        ],
+        "evidence": [
+          {
+            "inject": "I3",
+            "status": "deviated"
+          }
+        ]
+      },
+      {
+        "item_id": "P30",
+        "section": "7.1",
+        "label": "EHR recovery objectives",
+        "category": "recovery_objective",
+        "status": "deviated",
+        "injects": [
+          "I5"
+        ],
+        "evidence": [
+          {
+            "inject": "I5",
+            "status": "deviated"
+          }
+        ]
+      },
+      {
+        "item_id": "P31",
+        "section": "7.1",
+        "label": "Active Directory recovery objective",
+        "category": "recovery_objective",
+        "status": "followed",
+        "injects": [
+          "I5"
+        ],
+        "evidence": [
+          {
+            "inject": "I5",
+            "status": "followed"
+          }
+        ]
+      },
+      {
+        "item_id": "P32",
+        "section": "7.2",
+        "label": "Restore order",
+        "category": "recovery_objective",
+        "status": "followed",
+        "injects": [
+          "I5"
+        ],
+        "evidence": [
+          {
+            "inject": "I5",
+            "status": "followed"
+          },
+          {
+            "inject": "I5",
+            "status": "followed"
+          }
+        ]
+      },
+      {
+        "item_id": "P33",
+        "section": "7.3",
+        "label": "Backup validation before restore",
+        "category": "recovery_objective",
+        "status": "not_covered",
+        "injects": [],
+        "evidence": []
+      },
+      {
+        "item_id": "P34",
+        "section": "8",
+        "label": "Ransomware step 1: isolate and preserve",
+        "category": "playbook_step",
+        "status": "followed",
+        "injects": [
+          "I4"
+        ],
+        "evidence": [
+          {
+            "inject": "I4",
+            "status": "followed"
+          }
+        ]
+      },
+      {
+        "item_id": "P35",
+        "section": "8",
+        "label": "Ransomware step 2: declare SEV1",
+        "category": "playbook_step",
+        "status": "followed",
+        "injects": [
+          "I2"
+        ],
+        "evidence": [
+          {
+            "inject": "I2",
+            "status": "followed"
+          },
+          {
+            "inject": "I2",
+            "status": "followed"
+          }
+        ]
+      },
+      {
+        "item_id": "P36",
+        "section": "8",
+        "label": "Ransomware step 3: verify backups",
+        "category": "playbook_step",
+        "status": "not_covered",
+        "injects": [],
+        "evidence": []
+      },
+      {
+        "item_id": "P37",
+        "section": "8",
+        "label": "Ransomware step 4: insurer and FBI",
+        "category": "playbook_step",
+        "status": "not_covered",
+        "injects": [],
+        "evidence": []
+      },
+      {
+        "item_id": "P38",
+        "section": "8",
+        "label": "Ransomware step 5: reset credentials and rebuild identity",
+        "category": "playbook_step",
+        "status": "deviated",
+        "injects": [
+          "I4"
+        ],
+        "evidence": [
+          {
+            "inject": "I4",
+            "status": "deviated"
+          }
+        ]
+      },
+      {
+        "item_id": "P39",
+        "section": "8",
+        "label": "Ransomware step 6: CIO approves restore order",
+        "category": "playbook_step",
+        "status": "not_covered",
+        "injects": [],
+        "evidence": []
+      },
+      {
+        "item_id": "P40",
+        "section": "8",
+        "label": "Ransomware step 7: breach risk assessment",
+        "category": "playbook_step",
+        "status": "not_covered",
+        "injects": [],
+        "evidence": []
+      },
+      {
+        "item_id": "P41",
+        "section": "9.1",
+        "label": "Workforce notice template",
+        "category": "comms_template",
+        "status": "deviated",
+        "injects": [
+          "I7"
+        ],
+        "evidence": [
+          {
+            "inject": "I7",
+            "status": "deviated"
+          }
+        ]
+      },
+      {
+        "item_id": "P12",
+        "section": "9.2",
+        "label": "Director of Communications",
+        "category": "role",
+        "status": "not_covered",
+        "injects": [],
+        "evidence": []
+      },
+      {
+        "item_id": "P42",
+        "section": "9.2",
+        "label": "Holding statement template and approval chain",
+        "category": "comms_template",
+        "status": "followed",
+        "injects": [
+          "I7"
+        ],
+        "evidence": [
+          {
+            "inject": "I7",
+            "status": "followed"
+          },
+          {
+            "inject": "I7",
+            "status": "followed"
+          }
+        ]
+      },
+      {
+        "item_id": "P43",
+        "section": "9.3",
+        "label": "Patient-facing notices about delayed or diverted care",
+        "category": "comms_template",
+        "status": "followed",
+        "injects": [
+          "I7"
+        ],
+        "evidence": [
+          {
+            "inject": "I7",
+            "status": "followed"
+          }
+        ]
+      },
+      {
+        "item_id": "P44",
+        "section": "10",
+        "label": "Incident log",
+        "category": "other",
+        "status": "not_covered",
+        "injects": [],
+        "evidence": []
+      }
+    ],
+    "silent": [
+      {
+        "gap_id": "G1",
+        "topic": "Ransom payment decision and attacker communication",
+        "note": "The plan names no role authorized to decide whether to pay a ransom or to communicate with the attacker. Section 8 preserves the ransom note as evidence but is silent on negotiation and payment authority, sanctions screening, and insurer consent.",
+        "status": "silent_exercised"
+      },
+      {
+        "gap_id": "G2",
+        "topic": "EMS diversion decision",
+        "note": "The plan does not say who decides to place the emergency department on EMS diversion during a cyber incident or how that decision reaches EMS partners and neighboring hospitals.",
+        "status": "silent_not_exercised"
+      },
+      {
+        "gap_id": "G3",
+        "topic": "State health department reporting",
+        "note": "The plan sets an internal 45-day standard for individual notices but is silent on the California Department of Public Health report, which the healthcare pack lists at 15 business days from detection.",
+        "status": "silent_not_exercised"
+      },
+      {
+        "gap_id": "G4",
+        "topic": "Staff social media posting",
+        "note": "The plan covers workforce updates and media statements but says nothing about staff posting about the incident on social media.",
+        "status": "silent_not_exercised"
+      }
+    ],
+    "counts": {
+      "followed": 14,
+      "deviated": 6,
+      "not_reached": 0,
+      "not_covered": 25,
+      "silent_exercised": 1,
+      "silent_not_exercised": 3
+    },
+    "sections": [
+      {
+        "section": "2.1",
+        "items": 3,
+        "followed": 0,
+        "deviated": 0,
+        "not_reached": 0,
+        "not_covered": 3
+      },
+      {
+        "section": "2.3",
+        "items": 8,
+        "followed": 1,
+        "deviated": 1,
+        "not_reached": 0,
+        "not_covered": 6
+      },
+      {
+        "section": "3",
+        "items": 3,
+        "followed": 0,
+        "deviated": 0,
+        "not_reached": 0,
+        "not_covered": 3
+      },
+      {
+        "section": "4.1",
+        "items": 4,
+        "followed": 3,
+        "deviated": 0,
+        "not_reached": 0,
+        "not_covered": 1
+      },
+      {
+        "section": "4.2",
+        "items": 2,
+        "followed": 1,
+        "deviated": 0,
+        "not_reached": 0,
+        "not_covered": 1
+      },
+      {
+        "section": "4.3",
+        "items": 1,
+        "followed": 0,
+        "deviated": 0,
+        "not_reached": 0,
+        "not_covered": 1
+      },
+      {
+        "section": "4.4",
+        "items": 1,
+        "followed": 1,
+        "deviated": 0,
+        "not_reached": 0,
+        "not_covered": 0
+      },
+      {
+        "section": "5.1",
+        "items": 1,
+        "followed": 0,
+        "deviated": 0,
+        "not_reached": 0,
+        "not_covered": 1
+      },
+      {
+        "section": "5.2",
+        "items": 2,
+        "followed": 1,
+        "deviated": 1,
+        "not_reached": 0,
+        "not_covered": 0
+      },
+      {
+        "section": "5.3",
+        "items": 1,
+        "followed": 0,
+        "deviated": 0,
+        "not_reached": 0,
+        "not_covered": 1
+      },
+      {
+        "section": "6.1",
+        "items": 1,
+        "followed": 0,
+        "deviated": 0,
+        "not_reached": 0,
+        "not_covered": 1
+      },
+      {
+        "section": "6.2",
+        "items": 1,
+        "followed": 1,
+        "deviated": 0,
+        "not_reached": 0,
+        "not_covered": 0
+      },
+      {
+        "section": "6.3",
+        "items": 1,
+        "followed": 0,
+        "deviated": 1,
+        "not_reached": 0,
+        "not_covered": 0
+      },
+      {
+        "section": "7.1",
+        "items": 2,
+        "followed": 1,
+        "deviated": 1,
+        "not_reached": 0,
+        "not_covered": 0
+      },
+      {
+        "section": "7.2",
+        "items": 1,
+        "followed": 1,
+        "deviated": 0,
+        "not_reached": 0,
+        "not_covered": 0
+      },
+      {
+        "section": "7.3",
+        "items": 1,
+        "followed": 0,
+        "deviated": 0,
+        "not_reached": 0,
+        "not_covered": 1
+      },
+      {
+        "section": "8",
+        "items": 7,
+        "followed": 2,
+        "deviated": 1,
+        "not_reached": 0,
+        "not_covered": 4
+      },
+      {
+        "section": "9.1",
+        "items": 1,
+        "followed": 0,
+        "deviated": 1,
+        "not_reached": 0,
+        "not_covered": 0
+      },
+      {
+        "section": "9.2",
+        "items": 2,
+        "followed": 1,
+        "deviated": 0,
+        "not_reached": 0,
+        "not_covered": 1
+      },
+      {
+        "section": "9.3",
+        "items": 1,
+        "followed": 1,
+        "deviated": 0,
+        "not_reached": 0,
+        "not_covered": 0
+      },
+      {
+        "section": "10",
+        "items": 1,
+        "followed": 0,
+        "deviated": 0,
+        "not_reached": 0,
+        "not_covered": 1
+      }
+    ]
+  },
+  "plan_source": "org_plan",
+  "headline": "VRHS scored 82.8% across 7 decisions; strongest on right owner, weakest on timely; HIPAA Breach Notification Rule, notice to prominent media outlets missed by 60 hours. 2 plan, 11 people, and 3 technical gaps."
+}

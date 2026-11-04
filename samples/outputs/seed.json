@@ -1,0 +1,219 @@
+{
+  "schema_version": "1",
+  "generated_at": "2026-11-04T05:16:07+00:00",
+  "source": "sample_estate:synthetic_estate.json",
+  "mode": "sample",
+  "entry": {
+    "finding_id": "F1042",
+    "asset": "vpngw01",
+    "plugin_id": "214055",
+    "plugin_name": "Ivanti Connect Secure stack-based buffer overflow (CVE-2025-0282)",
+    "cve": "CVE-2025-0282",
+    "cves": [
+      "CVE-2025-0282"
+    ],
+    "vpr": 9.6,
+    "epss": 0.92,
+    "cvss3": 9.0,
+    "kev": true,
+    "exploit_available": true,
+    "severity": "critical",
+    "first_found": "2026-09-14T03:12:00Z",
+    "port": 443,
+    "protocol": "TCP",
+    "asset_id": "a-0001",
+    "internet_facing": true,
+    "internet_facing_rule": "intake_tag",
+    "rule": "kev_internet_facing"
+  },
+  "pivot": {
+    "finding_id": "F2210",
+    "cve": "CVE-2020-1472",
+    "vpr": 9.0,
+    "kev": true,
+    "plugin_name": "Netlogon elevation of privilege (Zerologon, CVE-2020-1472)",
+    "asset_id": "a-0010",
+    "asset": "dc1",
+    "technique": "exploitation of CVE-2020-1472",
+    "rule": "identity_tier_hostname",
+    "acr": 9.0
+  },
+  "target": {
+    "finding_id": "F2301",
+    "plugin_name": "Microsoft SQL Server 2016 SP3 missing cumulative update",
+    "vpr": 6.7,
+    "kev": false,
+    "asset_id": "a-0020",
+    "asset": "sql2016",
+    "criticality": 9.0,
+    "exposure_score": 590.0,
+    "data": [
+      "PHI",
+      "PII"
+    ],
+    "rule": "tag_match",
+    "cve": "CVE-2023-36728",
+    "operating_systems": [
+      "Microsoft Windows Server 2016 Standard"
+    ]
+  },
+  "path_source": "inferred",
+  "findings_cited": [
+    "F1042",
+    "F2210",
+    "F2301"
+  ],
+  "assumptions": [],
+  "data_types_requested": [
+    "PHI",
+    "PII",
+    "PCI"
+  ],
+  "stats": {
+    "assets": 45,
+    "findings": 44,
+    "internet_facing_assets": 3,
+    "kev_findings": 13,
+    "entry_candidates": 3,
+    "pivot_candidates": 10,
+    "target_candidates": 15
+  },
+  "candidates": {
+    "entry": [
+      {
+        "finding_id": "F1042",
+        "asset": "vpngw01",
+        "plugin_id": "214055",
+        "plugin_name": "Ivanti Connect Secure stack-based buffer overflow (CVE-2025-0282)",
+        "cve": "CVE-2025-0282",
+        "cves": [
+          "CVE-2025-0282"
+        ],
+        "vpr": 9.6,
+        "epss": 0.92,
+        "cvss3": 9.0,
+        "kev": true,
+        "exploit_available": true,
+        "severity": "critical",
+        "first_found": "2026-09-14T03:12:00Z",
+        "port": 443,
+        "protocol": "TCP",
+        "internet_facing_rule": "intake_tag"
+      },
+      {
+        "finding_id": "F1101",
+        "asset": "win2019",
+        "plugin_id": "152854",
+        "plugin_name": "Microsoft Exchange Server remote code execution (ProxyShell, CVE-2021-34473)",
+        "cve": "CVE-2021-34473",
+        "cves": [
+          "CVE-2021-34473"
+        ],
+        "vpr": 9.2,
+        "epss": 0.97,
+        "cvss3": 9.8,
+        "kev": true,
+        "exploit_available": true,
+        "severity": "critical",
+        "first_found": "2026-09-14T03:12:00Z",
+        "port": 443,
+        "protocol": "TCP",
+        "internet_facing_rule": "intake_tag"
+      },
+      {
+        "finding_id": "F1102",
+        "asset": "win2019",
+        "plugin_id": "156003",
+        "plugin_name": "Microsoft IIS missing security update",
+        "cve": "CVE-2022-21907",
+        "cves": [
+          "CVE-2022-21907"
+        ],
+        "vpr": 7.4,
+        "epss": 0.3,
+        "cvss3": 9.8,
+        "kev": false,
+        "exploit_available": true,
+        "severity": "critical",
+        "first_found": "2026-09-14T03:12:00Z",
+        "port": 80,
+        "protocol": "TCP",
+        "internet_facing_rule": "intake_tag"
+      }
+    ],
+    "pivot": [
+      {
+        "asset": "dc1",
+        "acr": 9.0,
+        "rule": "identity_tier_hostname"
+      },
+      {
+        "asset": "dc2",
+        "acr": 9.0,
+        "rule": "identity_tier_hostname"
+      },
+      {
+        "asset": "sql2016",
+        "acr": 9.0,
+        "rule": "high_acr_server"
+      },
+      {
+        "asset": "target2",
+        "acr": 9.0,
+        "rule": "high_acr_server"
+      },
+      {
+        "asset": "ehr-app01",
+        "acr": 8.0,
+        "rule": "high_acr_server"
+      }
+    ],
+    "target": [
+      {
+        "asset": "sql2016",
+        "acr": 9.0,
+        "data": [
+          "PHI",
+          "PII"
+        ],
+        "rule": "tag_match"
+      },
+      {
+        "asset": "target2",
+        "acr": 9.0,
+        "data": [
+          "PHI"
+        ],
+        "rule": "tag_match"
+      },
+      {
+        "asset": "pacs01",
+        "acr": 8.0,
+        "data": [
+          "PHI"
+        ],
+        "rule": "tag_match"
+      },
+      {
+        "asset": "ehr-app01",
+        "acr": 8.0,
+        "data": [
+          "PHI",
+          "PII"
+        ],
+        "rule": "tag_match"
+      },
+      {
+        "asset": "revcycle01",
+        "acr": 7.0,
+        "data": [
+          "PCI"
+        ],
+        "rule": "tag_match"
+      }
+    ]
+  },
+  "notes": [
+    "synthetic estate 'Valley Regional Health System synthetic estate'"
+  ]
+}

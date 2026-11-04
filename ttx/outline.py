@@ -14,6 +14,7 @@ from __future__ import annotations
 
 from typing import Any
 
+from .clock_engine import _sort_hours
 from .common import as_list, now_iso, slugify
 from .packs import load_pack
 from .validators import approval_hash
@@ -226,22 +227,27 @@ def build_outline(intake: dict, seed: dict, clocks: dict, org_plan: dict | None 
             seen_roles.add(role["id"])
 
     entry, pivot, target = seed["entry"], seed["pivot"], seed["target"]
-    applicable = list(clocks.get("clocks") or [])
+    applicable, out_of_scenario = scenario_clocks(clocks.get("clocks") or [], target.get("data") or as_list(intake.get("data_types")))
     clock_ids = [c["id"] for c in applicable]
-    tight = sorted([c for c in applicable if c.get("deadline_hours") is not None], key=lambda c: c["deadline_hours"])
-    tight_clock = tight[0] if tight else (applicable[0] if applicable else None)
+    tight = sorted([c for c in applicable if (c.get("deadline_hours") is not None or c.get("deadline_business_days") is not None)
+                    and not c.get("after_clock")], key=lambda c: (_sort_hours(c), c["id"]))
+    tight_clock = tight[0] if tight else None
+    data_list = list(target.get("data") or as_list(intake.get("data_types")))
     ctx = {
         "org": org_name,
         "entry_asset": entry.get("asset"),
         "entry_cve": entry.get("cve") or "a publicly known vulnerability",
         "entry_finding": entry.get("finding_id") or entry.get("assumption"),
         "pivot_asset": pivot.get("asset"),
+        "pivot_desc": (f"the identity server {pivot.get('asset')}" if str(pivot.get("rule", "")).startswith("identity_tier")
+                       else f"the high-criticality server {pivot.get('asset')}" if pivot.get("rule") == "high_acr_server"
+                       else str(pivot.get("asset"))),
         "pivot_technique": pivot.get("technique"),
         "target_asset": target.get("asset"),
-        "data_types": ", ".join(target.get("data") or as_list(intake.get("data_types"))),
+        "data_types": _and_join(data_list),
         "family": family,
-        "tight_clock": tight_clock["name"] if tight_clock else "the applicable notification clock",
-        "tight_deadline": tight_clock["deadline_text"] if tight_clock else "",
+        "tight_clock": (tight_clock.get("regulator") or tight_clock["name"]) if tight_clock else "the regulator",
+        "tight_deadline": _deadline_words(tight_clock) if tight_clock else "the deadline in the plan",
     }
 
     slots = SLOT_PLANS[duration]
@@ -370,11 +376,12 @@ def build_outline(intake: dict, seed: dict, clocks: dict, org_plan: dict | None 
         "audience": intake.get("audience") or "mixed",
         "scenario": {
             "family": family,
-            "summary": _fmt("A {family} incident at {org} that begins with {entry_cve} on the internet-facing {entry_asset}, moves through {pivot_asset} by {pivot_technique}, and reaches {target_asset}, which holds {data_types}.", ctx),
+            "summary": _fmt("A {family} incident at {org} that begins with {entry_cve} on the internet-facing {entry_asset}, moves through {pivot_desc} by {pivot_technique}, and reaches {target_asset}, which holds {data_types}.", ctx),
             "path_source": seed.get("path_source"),
         },
         "seed": seed,
         "clocks": applicable,
+        "clocks_outside_scenario": out_of_scenario,
         "clock_start_inject": next((j["id"] for j in injects if j["flags"]["starts_clock"]), None),
         "exercise_requirements": pack.exercise_requirements,
         "org_plan": org_plan or {"present": False, "source_documents": [], "items": [], "gaps": []},
@@ -399,6 +406,49 @@ def build_outline(intake: dict, seed: dict, clocks: dict, org_plan: dict | None 
         "approval": {"approved": False, "approved_by": None, "approved_at": None, "outline_hash": None},
     }
     return pack_doc
+
+
+def _and_join(items: list) -> str:
+    items = [str(i) for i in items if i]
+    if len(items) <= 1:
+        return "".join(items)
+    return ", ".join(items[:-1]) + " and " + items[-1]
+
+
+def _deadline_words(clock: dict) -> str:
+    h = clock.get("deadline_hours")
+    if h is not None:
+        return f"{int(h // 24)} days" if h >= 72 and h % 24 == 0 else f"{h:g} hours"
+    if clock.get("deadline_business_days") is not None:
+        return f"{clock['deadline_business_days']} business days"
+    return "no fixed number of days"
+
+
+def scenario_clocks(clocks: list[dict], scenario_data: list[str]) -> tuple[list[dict], list[dict]]:
+    """Keep the clocks the scenario's data can trigger.
+
+    A clock whose applies_when names data types applies to this scenario only if the
+    crown jewel holds one of them; clocks with no data condition always stay. Chained
+    clocks stay only if their parent stays. Dropped clocks are listed with the reason.
+    """
+    data = {str(d) for d in scenario_data}
+    keep: list[dict] = []
+    dropped: list[dict] = []
+    for c in clocks:
+        cond = c.get("applies_when") or {}
+        wanted = {str(d) for d in as_list(cond.get("data_types"))}
+        if wanted and not (wanted & data):
+            dropped.append({"id": c["id"], "reason": f"scenario data {sorted(data)} does not include {sorted(wanted)}"})
+        else:
+            keep.append(c)
+    kept_ids = {c["id"] for c in keep}
+    final = []
+    for c in keep:
+        if c.get("after_clock") and c["after_clock"] not in kept_ids:
+            dropped.append({"id": c["id"], "reason": f"runs after {c['after_clock']}, which is not in this scenario"})
+        else:
+            final.append(c)
+    return final, dropped
 
 
 def _plan_gap_for(org_plan: dict | None, slot: str) -> dict:
@@ -429,7 +479,7 @@ def _slot_text(slot: str, ctx: dict, procedure: dict, severity: int) -> dict:
     T = {
         "detection": {
             "title": _fmt("First signal on {entry_asset}", ctx),
-            "what_happens": _fmt("The security tool flags repeated authentication failures and a new administrative session on {entry_asset}, the internet-facing system carrying {entry_cve} (finding {entry_finding}). The analyst on shift is not sure whether it is a scan or a compromise.", ctx),
+            "what_happens": _fmt("The security tool flags repeated authentication failures and a new administrative session on {entry_asset}, the internet-facing system that carries {entry_cve}. The analyst on shift is not sure whether it is a scan or a compromise.", ctx),
             "recipients": ["Security operations", "IT on-call"],
             "decision_forced": "Is this an incident, who gets told right now, and what severity does the analyst assign?",
             "good": _fmt("The analyst confirms the alert with a second source, opens an incident record with a timeline, and escalates to the incident lead within the time the plan commits to, citing {entry_asset} by name.", {"entry_asset": ctx["entry_asset"]}),
@@ -451,7 +501,7 @@ def _slot_text(slot: str, ctx: dict, procedure: dict, severity: int) -> dict:
         },
         "escalation": {
             "title": "Declaring the incident",
-            "what_happens": _fmt("Evidence now shows the attacker holds an administrative session on {entry_asset} and has reached {pivot_asset} by {pivot_technique}. The incident lead must decide whether to declare, at what severity, and who is called in.", ctx),
+            "what_happens": _fmt("Evidence now shows the attacker holds an administrative session on {entry_asset} and has reached {pivot_desc} by {pivot_technique}. The incident lead must decide whether to declare, at what severity, and who is called in.", ctx),
             "recipients": ["Incident lead", "Executive on call"],
             "decision_forced": "Declare the incident and set the severity; name who is notified and in what order.",
             "good": _fmt("The incident lead declares the incident, assigns the severity the plan defines, and notifies leadership, counsel, and the cyber insurer in the order the plan sets ({plan_ref}).", {"plan_ref": plan_ref}),
@@ -495,7 +545,7 @@ def _slot_text(slot: str, ctx: dict, procedure: dict, severity: int) -> dict:
         },
         "tradeoff": {
             "title": "The business tradeoff",
-            "what_happens": _fmt("{target_asset} is confirmed affected and {data_types} may be exposed. Operations asks to keep the system running through the busiest hours of the day; security asks to take it down now. A ransom note has appeared on two systems.", ctx),
+            "what_happens": _fmt("{target_asset} is confirmed affected and the {data_types} it holds may be exposed. Operations asks to keep the system running through the busiest hours of the day; security asks to take it down now. A ransom note has appeared on two systems.", ctx),
             "recipients": ["Executive leadership", "Incident lead", "Operations"],
             "decision_forced": "Keep the system up and accept the exposure, or take it down and accept the outage? Who makes that call?",
             "good": _fmt("The decision is made by the role the plan names, within minutes, with the reasons recorded, and the ransom question is routed to counsel and the insurer ({plan_ref}).", {"plan_ref": plan_ref}),
@@ -506,7 +556,7 @@ def _slot_text(slot: str, ctx: dict, procedure: dict, severity: int) -> dict:
         },
         "recovery": {
             "title": _fmt("Restore order for {target_asset}", ctx),
-            "what_happens": _fmt("Backups for {target_asset} exist but the last successful restore test was months ago. The business wants {target_asset} first; IT wants the identity systems first. Three days of work are at stake either way.", ctx),
+            "what_happens": _fmt("Backups for {target_asset} exist but the last successful restore test was months ago. The business wants {target_asset} first; IT wants the identity systems first. Clinics and departments are working on paper until it is decided.", ctx),
             "recipients": ["IT operations", "Business owners", "Incident lead"],
             "decision_forced": "What is restored first, who approves the order, and what is the recovery time objective you are now working to?",
             "good": _fmt("The team checks the backups are clean before restoring, agrees a restore order with the business owners, and states the recovery objective from the plan ({plan_ref}).", {"plan_ref": plan_ref}),
@@ -517,7 +567,7 @@ def _slot_text(slot: str, ctx: dict, procedure: dict, severity: int) -> dict:
         },
         "notification": {
             "title": "The notification clock starts",
-            "what_happens": _fmt("Counsel confirms that {data_types} on {target_asset} were accessed. The notification clocks start now. The tightest one is {tight_clock}: {tight_deadline}.", ctx),
+            "what_happens": _fmt("Counsel confirms that {data_types} on {target_asset} were accessed. The notification clocks start now. The tightest one belongs to {tight_clock}: {tight_deadline}.", ctx),
             "recipients": ["General counsel", "Compliance", "Executive leadership"],
             "decision_forced": "Which clocks apply, who owns each notification, and what is the first draft of the notice?",
             "good": _fmt("The team lists every applicable clock with its owner and due date, starts the regulator notice, and records the discovery date it will defend ({plan_ref}).", {"plan_ref": plan_ref}),

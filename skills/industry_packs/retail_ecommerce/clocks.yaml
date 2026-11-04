@@ -28,6 +28,8 @@ includes_common: true
 
 clocks:
   - id: retail_visa_incident_report
+    after_clock: pci_visa_compromise_notice_3_days
+    after_clock: pci_visa_compromise_notice_3_days
     name: Visa, initial Incident Report after notification
     regulator: Visa Global Risk Investigations and the acquiring bank
     jurisdiction: Visa network rules (global)

@@ -168,6 +168,8 @@ clocks:
     notes: "Opened in the desktop browser pane on 2026-11-03 (WebFetch returned 403). The page text read on 2026-11-03 contains a 30 calendar day limit at 1798.82(a)(2)(A); older summaries describe only the open-ended 'most expedient time possible and without unreasonable delay' standard, so this is a recent amendment and a human should confirm its effective date. Disclosure may be delayed for the legitimate needs of law enforcement (subdivision (c)) or as necessary to determine the scope of the breach and restore integrity (subdivision (a)(2)(B))."
 
   - id: state_ca_ag_sample_notice
+    after_clock: state_ca_individual_notice
+    after_clock: state_ca_individual_notice
     name: California, sample copy of the breach notification to the Attorney General (more than 500 residents)
     regulator: California Attorney General
     jurisdiction: US-CA
@@ -1073,6 +1075,8 @@ clocks:
     notes: "Enrolled bill PDF on the legislature's site opened and text extracted on 2026-11-03; the codified text on oscn.net was not opened. No day count for individual notice."
 
   - id: state_ok_ag_notice
+    after_clock: state_ok_individual_notice
+    after_clock: state_ok_individual_notice
     name: Oklahoma, notice to the Attorney General (500 or more residents)
     regulator: Oklahoma Attorney General
     jurisdiction: US-OK

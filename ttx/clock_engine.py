@@ -175,9 +175,16 @@ def evaluate(intake: dict, incident: dict | None = None, packs_base=None) -> dic
             "verified_date": str(clock.get("verified_date")) if clock.get("verified_date") is not None else None,
             "verifier": clock.get("verifier"),
             "notes": clock.get("notes"),
+            "after_clock": clock.get("after_clock"),
+            "applies_when": clock.get("applies_when") or {},
             "applies_because": reasons + ([clock["loaded_because"]] if clock.get("loaded_because") else []),
         }
-        due = deadline_at(clock, trigger_at)
+        start = trigger_at
+        if clock.get("after_clock"):
+            # chained clock: runs from the parent clock's notification, not from the trigger
+            start = parse_iso(notifications.get(clock["after_clock"]))
+            entry["starts_from"] = f"notification under {clock['after_clock']}"
+        due = deadline_at(clock, start)
         if trigger_at is not None:
             entry["trigger_at"] = trigger_at.isoformat()
             entry["deadline_at"] = due.isoformat() if due else None
