@@ -20,7 +20,7 @@ from .validators import approval_hash
 
 SLOT_PLANS: dict[int, list[str]] = {
     60: ["detection", "escalation", "containment", "recovery", "notification"],
-    90: ["detection", "escalation", "containment", "conflict", "recovery", "notification", "public"],
+    90: ["detection", "escalation", "containment", "tradeoff", "recovery", "notification", "public"],
     180: ["detection", "second_signal", "escalation", "severity", "containment", "conflict", "tradeoff", "recovery", "notification", "public"],
 }
 PHASE_OF_SLOT = {
@@ -29,19 +29,50 @@ PHASE_OF_SLOT = {
     "notification": "notification", "public": "notification",
 }
 SLOT_CATEGORIES = {
-    "detection": ["severity_level", "role"],
-    "second_signal": ["escalation_step", "role"],
-    "escalation": ["escalation_step", "decision_authority"],
+    "detection": ["escalation_step", "severity_level"],
+    "second_signal": ["severity_level", "escalation_step"],
+    "escalation": ["playbook_step", "decision_authority", "escalation_step"],
     "severity": ["severity_level", "decision_authority"],
-    "containment": ["containment_procedure", "playbook_step", "decision_authority"],
-    "conflict": ["playbook_step", "containment_procedure"],
+    "containment": ["decision_authority", "containment_procedure", "playbook_step"],
+    "conflict": ["containment_procedure", "playbook_step"],
     "tradeoff": ["decision_authority", "containment_procedure"],
     "recovery": ["recovery_objective", "playbook_step"],
     "notification": ["notification_procedure", "decision_authority"],
-    "public": ["comms_template", "notification_procedure"],
+    "public": ["comms_template", "decision_authority"],
+}
+# keywords that pick the best plan item within a category for each slot
+SLOT_KEYWORDS = {
+    "detection": ["security operations notifies", "15 minutes", "identifying"],
+    "second_signal": ["sev2", "privileged"],
+    "escalation": ["declares a sev1", "declar"],
+    "severity": ["raise or lower", "assigns the severity"],
+    "containment": ["shutdown or isolation", "isolation", "isolate"],
+    "conflict": ["forensic image", "evidence", "preserve"],
+    "tradeoff": ["ransom", "shutdown", "diversion"],
+    "recovery": ["restored in this order", "restore order", "recovery time"],
+    "notification": ["owns the regulatory", "notification ownership", "regulatory", "individual notification"],
+    "public": ["holding statement", "external statement", "media"],
+}
+# phases whose plan items make good expected actions for each slot
+SLOT_ACTION_PHASES = {
+    "detection": ["detection"],
+    "second_signal": ["detection", "escalation"],
+    "escalation": ["escalation"],
+    "severity": ["escalation"],
+    "containment": ["containment"],
+    "conflict": ["containment"],
+    "tradeoff": ["containment", "escalation"],
+    "recovery": ["recovery"],
+    "notification": ["notification"],
+    "public": ["notification"],
+}
+SLOT_ACCEPTABLE_OWNERS = {
+    "containment": ["incident_commander"],
+    "detection": ["incident_commander"],
+    "public": ["communications"],
 }
 SLOT_OWNER_KEYS = {
-    "detection": ["ciso", "incident_commander", "security_operations"],
+    "detection": ["security_operations", "ciso", "incident_commander"],
     "second_signal": ["ciso", "incident_commander"],
     "escalation": ["incident_commander", "ciso"],
     "severity": ["ciso", "incident_commander"],
@@ -50,7 +81,7 @@ SLOT_OWNER_KEYS = {
     "tradeoff": ["ceo", "incident_commander", "coo"],
     "recovery": ["cio", "incident_commander"],
     "notification": ["general_counsel", "privacy_officer", "compliance_officer", "legal"],
-    "public": ["communications", "ceo", "comms"],
+    "public": ["ceo", "communications", "comms"],
 }
 SLOT_NOTIFY = {
     "detection": [],
@@ -67,7 +98,6 @@ SLOT_NOTIFY = {
 SLOT_FLAGS = {
     "conflict": {"conflicting_information": True},
     "tradeoff": {"business_tradeoff": True},
-    "public": {"business_tradeoff": True},
     "recovery": {"business_tradeoff": True},
 }
 GROUND_RULES = [
@@ -110,25 +140,47 @@ def _pick_role(roles: list[dict], keys: list[str]) -> str:
     return ids[0] if ids else "incident_commander"
 
 
-def _find_plan_item(items: list[dict], categories: list[str], used: set[str]) -> dict | None:
+def _item_text(item: dict) -> str:
+    return " ".join(str(item.get(k) or "") for k in ("label", "value", "quote")).lower()
+
+
+def _find_plan_item(items: list[dict], categories: list[str], used: set[str], keywords: list[str]) -> dict | None:
+    """Best unused item: keyword match within the preferred categories, then any unused item in them."""
+    for kw in keywords:
+        for cat in categories:
+            for item in items:
+                if item.get("category") == cat and item.get("id") not in used and kw in _item_text(item):
+                    return item
     for cat in categories:
         for item in items:
             if item.get("category") == cat and item.get("id") not in used:
                 return item
-    for cat in categories:
-        for item in items:
-            if item.get("category") == cat:
-                return item
     return None
 
 
-def _plan_actions(items: list[dict], phase: str, limit: int = 3) -> list[dict]:
+ACTIONABLE = {"playbook_step", "escalation_step", "notification_procedure", "containment_procedure", "recovery_objective"}
+
+
+def _action_from_item(item: dict) -> dict:
+    return {"id": item["id"], "text": item.get("value") or item.get("label"), "source": f"org_plan:{item['id']}",
+            "timing_minutes": item.get("timing_minutes")}
+
+
+SLOT_ACTION_CATEGORIES = {"public": ["comms_template"]}
+
+
+def _plan_actions(items: list[dict], phases: list[str], used: set[str], keywords: list[str], limit: int = 3,
+                  prefer: list[str] | None = None) -> list[dict]:
+    prefer = prefer or []
+    pool = [i for i in items if i["id"] not in used and (
+        (i.get("phase") in phases and i.get("category") in ACTIONABLE) or i.get("category") in prefer)]
+    pool.sort(key=lambda i: (0 if i.get("category") in prefer else 1,
+                             0 if any(k in _item_text(i) for k in keywords) else 1,
+                             phases.index(i["phase"]) if i.get("phase") in phases else len(phases)))
     out = []
-    for item in items:
-        if item.get("phase") == phase and item.get("category") in {"playbook_step", "escalation_step", "notification_procedure", "containment_procedure", "recovery_objective"}:
-            out.append({"id": item["id"], "text": item.get("value") or item.get("label"), "source": f"org_plan:{item['id']}"})
-        if len(out) >= limit:
-            break
+    for item in pool[:max(limit, 0)]:
+        out.append(_action_from_item(item))
+        used.add(item["id"])
     return out
 
 
@@ -203,6 +255,8 @@ def build_outline(intake: dict, seed: dict, clocks: dict, org_plan: dict | None 
         "tradeoff": ("target", target), "recovery": ("target", target), "notification": ("target", target), "public": ("target", target),
     }
     plan_silent_done = False
+    used_actions: set[str] = set()
+    used_pack_actions: set[str] = set()
     for i, slot in enumerate(slots, start=1):
         phase = PHASE_OF_SLOT[slot]
         start_min = 10 + (i - 1) * per_inject
@@ -211,8 +265,8 @@ def build_outline(intake: dict, seed: dict, clocks: dict, org_plan: dict | None 
             source = {"type": "finding", "ref": part["finding_id"], "note": f"{part_name} finding on {part.get('asset')}"}
         else:
             source = {"type": "assumption", "ref": part.get("assumption") or seed["assumptions"][0]["id"], "note": f"{part_name} is a labeled assumption"}
-        item = _find_plan_item(plan_items, SLOT_CATEGORIES[slot], used_items) if plan_present else None
-        if item is not None and not (slot in ("tradeoff", "public") and not plan_silent_done and plan_present and _plan_gap_for(org_plan, slot)):
+        item = _find_plan_item(plan_items, SLOT_CATEGORIES[slot], used_items, SLOT_KEYWORDS[slot]) if plan_present else None
+        if item is not None and not (slot == "tradeoff" and not plan_silent_done and _plan_gap_for(org_plan, slot)):
             used_items.add(item["id"])
             procedure = {
                 "type": "org_plan", "ref": item["id"],
@@ -228,10 +282,25 @@ def build_outline(intake: dict, seed: dict, clocks: dict, org_plan: dict | None 
             acts = _pack_actions(pack, phase, 1)
             procedure = {"type": "pack_default", "ref": acts[0]["source"] if acts else f"pack_default:{pack.slug}",
                          "label": f"{pack.display_name} default: {acts[0]['text'] if acts else phase}", "quote": None}
-        actions = _plan_actions(plan_items, phase) if plan_present else []
+        actions = []
+        if procedure["type"] == "org_plan" and item is not None and item.get("category") in ACTIONABLE and item["id"] not in used_actions:
+            actions.append(_action_from_item(item))
+            used_actions.add(item["id"])
+        if plan_present:
+            actions += _plan_actions(plan_items, SLOT_ACTION_PHASES[slot], used_actions, SLOT_KEYWORDS[slot], 3 - len(actions),
+                                     SLOT_ACTION_CATEGORIES.get(slot))
         if len(actions) < 2:
-            actions += _pack_actions(pack, phase, 3 - len(actions))
+            have = {a["text"] for a in actions}
+            for a in _pack_actions(pack, phase, 4):
+                if len(actions) >= 3:
+                    break
+                if a["source"] not in used_pack_actions and a["text"] not in have:
+                    actions.append(a)
+                    used_pack_actions.add(a["source"])
         actions = [a | {"id": f"I{i}-{a['id']}"} for a in actions]
+        timings = [a.get("timing_minutes") for a in actions if a.get("timing_minutes")]
+        if procedure["type"] == "org_plan" and item is not None and item.get("timing_minutes"):
+            timings.insert(0, item["timing_minutes"])
         notify = [n for n in SLOT_NOTIFY[slot] if n in {p["id"] for p in pack.notify_parties}]
         flags: dict[str, Any] = {"conflicting_information": False, "business_tradeoff": False, "plan_silent": procedure["type"] == "plan_silent", "starts_clock": []}
         flags.update(SLOT_FLAGS.get(slot, {}))
@@ -252,7 +321,8 @@ def build_outline(intake: dict, seed: dict, clocks: dict, org_plan: dict | None 
             "recipients": text["recipients"],
             "decision_forced": text["decision_forced"],
             "decision_owner_role": _pick_role(roles, SLOT_OWNER_KEYS[slot]),
-            "acceptable_owner_roles": [],
+            "acceptable_owner_roles": [r for r in SLOT_ACCEPTABLE_OWNERS.get(slot, []) if r in {x["id"] for x in roles} and r != _pick_role(roles, SLOT_OWNER_KEYS[slot])],
+            "plan_commitment_minutes": min(timings) if timings else None,
             "procedure_tested": procedure,
             "what_good_looks_like": text["good"],
             "where_teams_fail": text["fail"],
@@ -269,7 +339,8 @@ def build_outline(intake: dict, seed: dict, clocks: dict, org_plan: dict | None 
     # a 60-minute exercise has no dedicated conflict or tradeoff slot; mark them on existing injects
     if not any(j["flags"]["conflicting_information"] for j in injects):
         injects[2]["flags"]["conflicting_information"] = True
-        injects[2]["what_happens"] += " A second report contradicts the first: the help desk says the gateway was patched last month."
+        injects[2]["what_happens"] += _fmt(" Then a second report contradicts the first: the vendor says {entry_asset} was patched last month and the alert is a false positive, while the forensics lead says the patch was never applied.", ctx)
+        injects[2]["probing_questions"].append("Two credible sources disagree. What do you do with containment while you find out which is right?")
     if not any(j["flags"]["business_tradeoff"] for j in injects):
         injects[-2]["flags"]["business_tradeoff"] = True
     if plan_present and not any(j["flags"]["plan_silent"] for j in injects):
