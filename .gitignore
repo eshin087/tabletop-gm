@@ -10,5 +10,5 @@ __pycache__/
 .pytest_cache/
 .venv/
 venv/
-build/
-dist/
+/build/
+/dist/
