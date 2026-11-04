@@ -90,6 +90,17 @@ def cmd_seed(args) -> int:
     intake = _load_intake(args.intake)
     estate = load_estate(intake, mode=args.mode, estate_file=args.estate, assets_file=args.assets)
     seed = select_seed(estate, intake)
+    if args.kev_check or args.kev_file:
+        from .seed_engine import cross_check_kev, load_kev_catalog
+
+        try:
+            catalog, label = load_kev_catalog(args.kev_file)
+            cross_check_kev(seed, catalog, label)
+            mm = seed["kev_check"]["mismatches"]
+            print(f"KEV cross-check against {label}: {len(seed['kev_check']['checked'])} findings checked, {len(mm)} mismatch(es)")
+        except OSError as exc:
+            seed["kev_check"] = {"source": "cisa_kev_feed", "error": f"feed unreachable: {exc}"}
+            print(f"KEV cross-check skipped: feed unreachable ({exc}); scanner KEV flags used as is")
     if args.save:
         Path("uploads").mkdir(exist_ok=True)
         target = Path("uploads") / f"estate_{estate.mode}_{seed['generated_at'][:10]}.json"
@@ -234,7 +245,8 @@ def cmd_aar(args) -> int:
 
     pack = read_json(args.pack)
     score = read_json(args.score)
-    path = build_aar(pack, score, args.out)
+    narrative = read_json(args.narrative) if args.narrative else None
+    path = build_aar(pack, score, args.out, narrative=narrative)
     print(f"after_action_report  {path}")
     return 0
 
@@ -262,6 +274,8 @@ def build_parser() -> argparse.ArgumentParser:
     s.add_argument("--estate", help="sample estate JSON or findings export (csv, json, nessus)")
     s.add_argument("--assets", help="optional asset export for export mode")
     s.add_argument("--save", action="store_true", help="write the loaded estate to uploads/ for replay")
+    s.add_argument("--kev-check", action="store_true", help="cross-check KEV flags against the public CISA KEV feed (one GET)")
+    s.add_argument("--kev-file", help="cross-check against a local copy of the CISA KEV JSON instead (no network)")
     s.add_argument("--out", required=True)
     s.set_defaults(func=cmd_seed)
 
@@ -311,6 +325,7 @@ def build_parser() -> argparse.ArgumentParser:
     s = sub.add_parser("aar", help="after-action report from a score file")
     s.add_argument("--pack", required=True)
     s.add_argument("--score", required=True)
+    s.add_argument("--narrative", help="optional narrative.json from the scoring_aar skill (headline, summary paragraphs)")
     s.add_argument("--out", required=True)
     s.set_defaults(func=cmd_aar)
     return p

@@ -1,0 +1,46 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Tabletop GM scenario seed (ttx seed output)",
+  "description": "Documents the shape; ttx/validators.py validate_seed enforces it. Each step records the rule that fired; a step without data is a labeled assumption.",
+  "type": "object",
+  "required": ["entry", "pivot", "target", "path_source", "source", "mode", "findings_cited", "assumptions", "stats"],
+  "properties": {
+    "source": {"type": "string", "description": "tenable_api_<date> | export:<file> | sample_estate:<file> | none"},
+    "mode": {"enum": ["tenable", "export", "sample", "none"]},
+    "path_source": {"enum": ["tenable_apa", "inferred"]},
+    "findings_cited": {"type": "array", "maxItems": 3, "items": {"type": "string"}},
+    "assumptions": {"type": "array", "items": {"type": "object", "required": ["id", "text"]}},
+    "entry": {
+      "type": "object",
+      "required": ["asset", "rule", "internet_facing"],
+      "properties": {
+        "finding_id": {"type": ["string", "null"]},
+        "asset": {"type": "string"},
+        "cve": {"type": ["string", "null"]},
+        "vpr": {"type": ["number", "null"]},
+        "kev": {"type": ["boolean", "null"]},
+        "internet_facing": {"const": true},
+        "internet_facing_rule": {"enum": ["tenable_exposure_field", "intake_tag", "public_ipv4", null]},
+        "rule": {"enum": ["kev_internet_facing", "exploit_internet_facing", "vpr_internet_facing", "assumption"]},
+        "assumption": {"type": "string"}
+      }
+    },
+    "pivot": {
+      "type": "object",
+      "required": ["asset", "technique", "rule"],
+      "properties": {
+        "rule": {"enum": ["identity_tier_hostname", "identity_tier_software", "identity_tier_tag", "identity_tier_system_type", "high_acr_server", "tenable_attack_path", "assumption"]}
+      }
+    },
+    "target": {
+      "type": "object",
+      "required": ["asset", "data", "rule"],
+      "properties": {
+        "criticality": {"type": ["number", "null"]},
+        "data": {"type": "array", "items": {"type": "string"}},
+        "rule": {"enum": ["tag_match", "hostname_heuristic", "software_heuristic", "assumption"]}
+      }
+    },
+    "kev_check": {"type": "object", "description": "present only when ttx seed --kev-check or --kev-file ran"}
+  }
+}

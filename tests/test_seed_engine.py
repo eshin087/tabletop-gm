@@ -159,3 +159,18 @@ def test_validator_rejects_more_than_three_findings(estate, intake):
     seed = select_seed(estate, intake)
     seed["findings_cited"] = ["F1", "F2", "F3", "F4"]
     assert not validate_seed(seed).ok
+
+
+def test_kev_cross_check_records_mismatches(estate, intake, tmp_path):
+    from ttx.seed_engine import cross_check_kev, load_kev_catalog
+
+    feed = tmp_path / "kev.json"
+    # the feed lists the entry CVE but not the pivot CVE, so the pivot's scanner flag disagrees
+    feed.write_text(json.dumps({"catalogVersion": "test", "vulnerabilities": [{"cveID": "CVE-2025-0282"}]}), encoding="utf-8")
+    seed = select_seed(estate, intake)
+    catalog, label = load_kev_catalog(feed)
+    cross_check_kev(seed, catalog, label)
+    assert seed["entry"]["kev_feed"] is True
+    assert seed["pivot"]["kev_feed"] is False
+    assert [m["part"] for m in seed["kev_check"]["mismatches"]] == ["pivot"]
+    assert validate_seed(seed).ok

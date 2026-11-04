@@ -1,0 +1,38 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Tabletop GM exercise pack (the approved outline)",
+  "description": "The single source of truth for every output. Documents the shape; ttx/validators.py validate_exercise_pack enforces it, including citations, escalation rules, inject counts, and the approval hash.",
+  "type": "object",
+  "required": ["title", "organization", "intake", "pack", "severity_level", "duration_minutes", "scenario", "seed", "clocks", "org_plan", "roles", "notify_parties", "ground_rules", "objectives", "injects", "hot_wash", "next_steps", "assumptions", "banner", "approval"],
+  "properties": {
+    "severity_level": {"enum": [1, 2, 3, 4]},
+    "duration_minutes": {"enum": [60, 90, 180]},
+    "seed": {"$ref": "seed.schema.json"},
+    "org_plan": {"$ref": "org_plan.schema.json"},
+    "clocks": {
+      "type": "array",
+      "items": {"type": "object", "required": ["id", "name", "deadline_text", "source_url", "citation", "tier", "verified_date"],
+                "properties": {"tier": {"enum": ["verified", "researched"]}, "after_clock": {"type": ["string", "null"]}}}
+    },
+    "clocks_outside_scenario": {"type": "array", "items": {"type": "object", "required": ["id", "reason"]}},
+    "roles": {"type": "array", "items": {"type": "object", "required": ["id", "name"]}},
+    "injects": {
+      "type": "array",
+      "minItems": 5,
+      "maxItems": 10,
+      "items": {
+        "type": "object",
+        "required": ["id", "order", "phase", "time_marker", "title", "what_happens", "recipients", "decision_forced", "decision_owner_role", "procedure_tested", "what_good_looks_like", "where_teams_fail", "expected_actions", "hints", "host_lines", "source", "slide_number", "flags"],
+        "properties": {
+          "phase": {"enum": ["detection", "escalation", "containment", "recovery", "notification"]},
+          "source": {"type": "object", "required": ["type", "ref"], "properties": {"type": {"enum": ["finding", "assumption"]}}},
+          "procedure_tested": {"type": "object", "required": ["type"], "properties": {"type": {"enum": ["org_plan", "pack_default", "plan_silent"]}, "ref": {}, "quote": {}}},
+          "expected_actions": {"type": "array", "minItems": 1, "items": {"type": "object", "required": ["id", "text", "source"]}},
+          "flags": {"type": "object", "properties": {"conflicting_information": {"type": "boolean"}, "business_tradeoff": {"type": "boolean"}, "plan_silent": {"type": "boolean"}, "starts_clock": {"type": "array"}}}
+        }
+      }
+    },
+    "banner": {"type": "object", "required": ["show"], "properties": {"researched_clock_ids": {"type": "array"}}},
+    "approval": {"type": "object", "required": ["approved", "approved_by", "approved_at", "outline_hash"]}
+  }
+}

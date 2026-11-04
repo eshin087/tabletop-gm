@@ -297,12 +297,19 @@ def build_outline(intake: dict, seed: dict, clocks: dict, org_plan: dict | None 
                                      SLOT_ACTION_CATEGORIES.get(slot))
         if len(actions) < 2:
             have = {a["text"] for a in actions}
-            for a in _pack_actions(pack, phase, 4):
+            pool = []
+            for ph in [phase] + [p for p in SLOT_ACTION_PHASES[slot] if p != phase]:
+                pool += _pack_actions(pack, ph, 10)
+            for a in pool:
                 if len(actions) >= 3:
                     break
                 if a["source"] not in used_pack_actions and a["text"] not in have:
                     actions.append(a)
                     used_pack_actions.add(a["source"])
+                    have.add(a["text"])
+            if not actions:
+                # every default for this phase is already tested earlier; test the first two again
+                actions = _pack_actions(pack, phase, 2)
         actions = [a | {"id": f"I{i}-{a['id']}"} for a in actions]
         timings = [a.get("timing_minutes") for a in actions if a.get("timing_minutes")]
         if procedure["type"] == "org_plan" and item is not None and item.get("timing_minutes"):

@@ -903,6 +903,46 @@ def build_seed(intake: dict, **kwargs) -> dict:
     return select_seed(estate, intake)
 
 
+KEV_FEED_URL = "https://www.cisa.gov/sites/default/files/feeds/known_exploited_vulnerabilities.json"
+
+
+def load_kev_catalog(path: str | os.PathLike | None = None, timeout: int = 20) -> tuple[set[str], str]:
+    """CISA Known Exploited Vulnerabilities catalog as a set of CVE IDs.
+
+    From a local copy when path is given, otherwise one GET to the public CISA feed
+    (opt-in: only `ttx seed --kev-check` calls this). Returns (cve_ids, source label).
+    """
+    if path:
+        data = read_json(path)
+        label = f"kev_file:{Path(path).name}"
+    else:
+        import urllib.request
+
+        req = urllib.request.Request(KEV_FEED_URL, headers={"User-Agent": f"Tabletop-GM/{__version__}"})
+        with urllib.request.urlopen(req, timeout=timeout) as resp:  # nosec: fixed public feed
+            data = json.loads(resp.read().decode("utf-8"))
+        label = f"cisa_kev_feed {data.get('catalogVersion', '')}".strip()
+    cves = {str(v.get("cveID", "")).upper() for v in data.get("vulnerabilities", []) if v.get("cveID")}
+    return cves, label
+
+
+def cross_check_kev(seed: dict, catalog: set[str], label: str) -> dict:
+    """Compare the Tenable KEV flag on each cited finding with the CISA catalog; record mismatches."""
+    checked, mismatches = [], []
+    for part in ("entry", "pivot", "target"):
+        node = seed.get(part) or {}
+        cves = [c.upper() for c in (node.get("cves") or ([node["cve"]] if node.get("cve") else []))]
+        if not node.get("finding_id") or not cves:
+            continue
+        in_feed = any(c in catalog for c in cves)
+        node["kev_feed"] = in_feed
+        checked.append({"part": part, "finding_id": node["finding_id"], "cves": cves, "scanner_kev": node.get("kev"), "feed_kev": in_feed})
+        if node.get("kev") is not None and bool(node.get("kev")) != in_feed:
+            mismatches.append({"part": part, "finding_id": node["finding_id"], "scanner_kev": node.get("kev"), "feed_kev": in_feed})
+    seed["kev_check"] = {"source": label, "catalog_size": len(catalog), "checked": checked, "mismatches": mismatches}
+    return seed
+
+
 def save_estate(estate: Estate, path: str | os.PathLike) -> None:
     """Write a pulled estate to disk (for replay in export mode). Keep it under uploads/."""
     write_json(path, {

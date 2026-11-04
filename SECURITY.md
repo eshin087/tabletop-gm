@@ -1,0 +1,35 @@
+# Security
+
+## Outbound calls
+
+The `ttx` engine makes no network calls unless you ask for one of the two below. Building, validating, scoring, and reporting are fully offline. There is no telemetry.
+
+| Call | When | Destination | What is sent | What changes |
+|---|---|---|---|---|
+| Tenable Vulnerability Management / Tenable One API | Only `ttx seed --mode tenable` | `https://cloud.tenable.com` (`/vulns/export`, `/assets/export` and their status and chunk endpoints), or the same endpoints through pytenable when it is installed | Your API keys in the `X-ApiKeys` header; export filters (severity critical and high, state open and reopened) | Nothing in your data. The export endpoints create temporary export jobs that Tenable expires. No scan, asset, finding, tag, or setting is created, changed, or deleted. Read-only keys are enough. |
+| CISA Known Exploited Vulnerabilities feed | Only `ttx seed --kev-check` | `https://www.cisa.gov/sites/default/files/feeds/known_exploited_vulnerabilities.json` | One unauthenticated GET with a `Tabletop-GM/<version>` user agent | Nothing. Use `--kev-file` with a local copy to stay offline. |
+
+The guided workflow runs inside Claude Code, which has its own outbound traffic:
+
+| Call | When | What is sent |
+|---|---|---|
+| Anthropic, through Claude Code | Whenever you use `/tabletop` | Your chat messages and the files Claude reads. That includes the intake, the seed, clock output, and the text of any plan documents during policy ingest. It is governed by your Claude Code account terms. The `ttx` CLI itself never calls Anthropic. |
+| Web research, through Claude Code's web tools | Only when you run the `pack_research` or `incident_research` skill | Search queries about the sector's regulations or public incidents. No organization data is needed or sent. |
+
+`ANTHROPIC_API_KEY` in `.env.example` is reserved for the Phase 2 `ttx host` co-host, which is not shipped. Nothing in this release reads it.
+
+## Data handling
+
+- `.env`, `uploads/`, and `out/` are gitignored from the first commit. Keys, exports, pulled data, uploaded plans, and generated exercises for real organizations stay there.
+- `ttx seed --save` writes only to `uploads/`.
+- Only synthetic samples ship in the repository: the Valley Regional intake, estate, IR plan, org plan, and sample run.
+- Uploaded documents are parsed locally (python-docx, pypdf) and are never written anywhere except the output path you name.
+- No generator embeds secrets, keys, or environment variables in any document.
+
+## Secret scanning
+
+The repository is scanned with gitleaks across the working tree and the full git history before each submission.
+
+## Reporting a vulnerability
+
+Open a private security advisory on the GitHub repository (Security tab, "Report a vulnerability"). Do not open a public issue for a security problem.

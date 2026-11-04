@@ -1,0 +1,38 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Tabletop GM organization plan (filled by the policy_ingest skill)",
+  "description": "Documents the shape; ttx/validators.py validate_org_plan enforces it and confirms every quote exists in the source document.",
+  "type": "object",
+  "required": ["source_documents", "items", "gaps"],
+  "properties": {
+    "present": {"type": "boolean"},
+    "source_documents": {"type": "array", "minItems": 1, "items": {"type": "object", "required": ["id", "filename"]}},
+    "items": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "category", "label", "quote", "document"],
+        "properties": {
+          "id": {"type": "string", "pattern": "^P[0-9]+$"},
+          "category": {"enum": ["role", "decision_authority", "severity_level", "escalation_step", "notification_procedure", "containment_procedure", "recovery_objective", "playbook_step", "comms_template", "other"]},
+          "label": {"type": "string"},
+          "value": {"type": "string"},
+          "quote": {"type": "string", "minLength": 8, "description": "verbatim from the source document"},
+          "document": {"type": "string"},
+          "document_title": {"type": "string"},
+          "section": {"type": ["string", "null"]},
+          "page": {"type": ["integer", "null"]},
+          "phase": {"enum": ["detection", "escalation", "containment", "recovery", "notification"]},
+          "timing_minutes": {"type": "number"},
+          "role_id": {"type": "string"},
+          "internal_deadline_hours": {"type": "number"},
+          "applies_to_clock": {"type": "string"},
+          "rto_hours": {"type": "number"},
+          "rpo_minutes": {"type": "number"},
+          "system": {"type": "string"}
+        }
+      }
+    },
+    "gaps": {"type": "array", "items": {"type": "object", "required": ["id", "topic"], "properties": {"note": {"type": "string"}}}}
+  }
+}

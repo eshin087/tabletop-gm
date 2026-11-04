@@ -1,0 +1,32 @@
+# Decision tracker columns. ttx build writes them; ttx score reads them from the
+# .xlsx (Decisions and Clocks sheets) or from a .csv decision log plus an optional
+# <name>_clocks.csv. Must match ttx/score_engine.py DECISION_COLUMNS and CLOCK_COLUMNS
+# (a test enforces it).
+
+decisions:
+  - inject_id            # prefilled
+  - slide                # prefilled, matches the deck
+  - time_marker          # prefilled
+  - phase                # prefilled
+  - title                # prefilled
+  - expected_owner       # prefilled role id
+  - decision             # what the room decided, one sentence
+  - decided_by_role      # role id that made the call
+  - discussion_minutes   # real minutes spent on the inject
+  - scenario_minutes     # in-scenario minutes the team says the action takes (compared with plan commitments)
+  - notified             # party ids, comma separated
+  - actions_completed    # expected action ids, comma separated
+  - plan_step_followed   # yes | partial | no | plan_unclear | n/a
+  - documented           # yes | partial | no
+  - notes
+
+clocks:
+  - clock_id             # prefilled
+  - name                 # prefilled
+  - deadline_hours       # prefilled from the pack
+  - deadline_business_days
+  - tier                 # prefilled: verified or researched
+  - owner_role           # role id the team named
+  - planned_notify_hours # hours after the clock starts that the team plans to notify
+  - internal_deadline_hours  # prefilled from the org plan when it sets a stricter standard
+  - notes

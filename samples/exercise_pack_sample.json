@@ -1,6 +1,6 @@
 {
   "schema_version": "1",
-  "generated_at": "2026-11-04T05:16:07+00:00",
+  "generated_at": "2026-11-04T05:23:51+00:00",
   "generator": "ttx outline (deterministic skeleton; narrative to be refined by scenario_design)",
   "title": "Valley Regional Health System: Ransomware tabletop exercise (severity 3, 90 minutes)",
   "slug": "valley_regional_health_system_ransomware_ttx",
@@ -76,7 +76,7 @@
   },
   "seed": {
     "schema_version": "1",
-    "generated_at": "2026-11-04T05:16:07+00:00",
+    "generated_at": "2026-11-04T05:23:51+00:00",
     "source": "sample_estate:synthetic_estate.json",
     "mode": "sample",
     "entry": {
@@ -1833,7 +1833,7 @@
   "approval": {
     "approved": true,
     "approved_by": "Sample approver (synthetic run; a human signs here in real use)",
-    "approved_at": "2026-11-04T05:16:07+00:00",
-    "outline_hash": "a0ab8bfb3ff9f6b26e248e63574646f58a351d29b3c51c4e51ee922d799e86be"
+    "approved_at": "2026-11-04T05:23:51+00:00",
+    "outline_hash": "1e062e39cbcd0581333f3001a44b6be43077b1a11bf322ed9a341e27e9b51311"
   }
 }

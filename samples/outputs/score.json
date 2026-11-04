@@ -1,10 +1,10 @@
 {
   "schema_version": "1",
   "inputs": {
-    "exercise_pack_hash": "a0ab8bfb3ff9f6b26e248e63574646f58a351d29b3c51c4e51ee922d799e86be",
-    "approval_hash": "a0ab8bfb3ff9f6b26e248e63574646f58a351d29b3c51c4e51ee922d799e86be",
+    "exercise_pack_hash": "1e062e39cbcd0581333f3001a44b6be43077b1a11bf322ed9a341e27e9b51311",
+    "approval_hash": "1e062e39cbcd0581333f3001a44b6be43077b1a11bf322ed9a341e27e9b51311",
     "tracker_file": "decision_tracker_completed.xlsx",
-    "tracker_sha256": "1d5dc8170047758b6006fe051f8fd4d773d6e929904ba56649673383ffecc37f",
+    "tracker_sha256": "2e2678b72cba4dc7325aa5f48ff9cb89803e647b87ffd1e15567a9f72030189c",
     "incident_file": null
   },
   "rubric": {
