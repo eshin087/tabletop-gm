@@ -238,7 +238,7 @@ def validate_pack(slug: str, base=None) -> Result:
         for heading in REQUIRED_PACK_HEADINGS:
             if heading not in pack.markdown:
                 r.error(f"pack.md missing heading '{heading}'")
-        if "—" in pack.markdown:
+        if "\u2014" in pack.markdown:
             r.warn("pack.md contains an em dash")
     r.info = {"clocks": len(pack.clocks), "researched": sum(1 for c in pack.clocks if c.get("tier") != "verified")}
     return r
