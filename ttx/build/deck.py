@@ -9,6 +9,7 @@ speaker notes.
 
 from __future__ import annotations
 
+import re
 from pathlib import Path
 
 from pptx import Presentation
@@ -174,7 +175,7 @@ def build_deck(pack: dict, path: str | Path, draft: bool = False) -> Path:
         _text(s, Inches(1.05), Inches(4.55), Inches(11.3), Inches(0.4), "DECISION", size=12, bold=True, color=color)
         _text(s, Inches(1.05), Inches(4.9), Inches(11.3), Inches(1.0), inj.get("decision_forced") or "", size=19, bold=True, color=NAVY)
         recips = ", ".join(inj.get("recipients") or [])
-        _text(s, Inches(0.8), Inches(6.1), Inches(11.8), Inches(0.5), f"Reaches: {recips}", size=13, color=GREY)
+        _text(s, Inches(0.8), Inches(5.95), Inches(11.8), Inches(0.45), f"Reaches: {recips}", size=13, color=GREY)
         if as_clock_slide(inj):
             _clock_strip(s, pack)
         notes = ["HOST LINES (read aloud):"] + [f"  {line}" for line in inj.get("host_lines") or []]
@@ -205,17 +206,26 @@ def as_clock_slide(inj: dict) -> bool:
 
 def _clock_strip(slide, pack: dict) -> None:
     """On the inject that starts the clocks, show the tightest deadlines (from the pack, never invented)."""
-    clocks = [c for c in pack.get("clocks", []) if c.get("deadline_hours") is not None or c.get("deadline_business_days") is not None]
-    clocks.sort(key=lambda c: c.get("deadline_hours") if c.get("deadline_hours") is not None else c["deadline_business_days"] * 33.6)
+    # chained clocks run from another notice, not from this moment, so they are not "running" yet
+    clocks = [c for c in pack.get("clocks", []) if (c.get("deadline_hours") is not None or c.get("deadline_business_days") is not None)
+              and not c.get("after_clock")]
+    clocks.sort(key=lambda c: (c.get("deadline_hours") if c.get("deadline_hours") is not None else c["deadline_business_days"] * 33.6, c["id"]))
     items = []
-    for c in clocks[:3]:
+    seen = set()
+    for c in clocks:
         if c.get("deadline_hours") is not None:
             h = c["deadline_hours"]
             when = f"{int(h // 24)} days" if h >= 72 and h % 24 == 0 else f"{h:g} hours"
         else:
             when = f"{c['deadline_business_days']} business days"
+        who = re.sub(r"\s*\([^)]*\)", "", c.get("regulator") or c["name"]).strip()
+        if (who, when) in seen:
+            continue
+        seen.add((who, when))
         tier = " (verify)" if c.get("tier") != "verified" else ""
-        items.append(f"{c.get('regulator') or c['name']}: {when}{tier}")
+        items.append(f"{who}: {when}{tier}")
+        if len(items) == 3:
+            break
     if items:
-        _rect(slide, Inches(0.8), Inches(6.45), Inches(11.8), Inches(0.45), AMBER)
-        _text(slide, Inches(0.95), Inches(6.47), Inches(11.6), Inches(0.42), "Clocks now running:  " + "   |   ".join(items), size=12, color=AMBER_TEXT)
+        _rect(slide, Inches(0.8), Inches(6.4), Inches(11.8), Inches(0.58), AMBER)
+        _text(slide, Inches(0.95), Inches(6.42), Inches(11.6), Inches(0.55), "Clocks now running:  " + "   |   ".join(items), size=11, color=AMBER_TEXT)

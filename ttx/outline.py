@@ -14,7 +14,7 @@ from __future__ import annotations
 
 from typing import Any
 
-from .clock_engine import _sort_hours
+from .clock_engine import BANNER_TEXT, _sort_hours
 from .common import as_list, now_iso, slugify
 from .packs import load_pack
 from .validators import approval_hash
@@ -407,7 +407,7 @@ def build_outline(intake: dict, seed: dict, clocks: dict, org_plan: dict | None 
         "assumptions": list(seed.get("assumptions") or []),
         "banner": {
             "show": bool(researched),
-            "text": clocks.get("banner", {}).get("text", ""),
+            "text": BANNER_TEXT.format(ids=", ".join(researched)) if researched else "",
             "researched_clock_ids": researched,
         },
         "approval": {"approved": False, "approved_by": None, "approved_at": None, "outline_hash": None},
@@ -596,6 +596,46 @@ def _slot_text(slot: str, ctx: dict, procedure: dict, severity: int) -> dict:
         },
     }
     return T[slot]
+
+
+EDITABLE_INJECT_FIELDS = {
+    "title", "what_happens", "recipients", "decision_forced", "what_good_looks_like", "where_teams_fail",
+    "hints", "probing_questions", "host_lines",
+}
+EDITABLE_TOP_FIELDS = {"scenario_summary", "objectives", "ground_rules", "hot_wash_questions", "next_steps"}
+
+
+def apply_narrative(pack: dict, overlay: dict) -> dict:
+    """Apply a narrative overlay written by the scenario_design skill.
+
+    The overlay may change only narrative fields; ids, sources, procedures, expected
+    actions, clocks, flags, and the seed are refused. Applying an overlay clears any
+    approval, so the outline must be approved again.
+    """
+    unknown_top = set(overlay) - EDITABLE_TOP_FIELDS - {"injects", "_comment"}
+    if unknown_top:
+        raise ValueError(f"overlay may not set {sorted(unknown_top)}; editable: {sorted(EDITABLE_TOP_FIELDS)} and injects")
+    by_id = {j["id"]: j for j in pack.get("injects", [])}
+    for iid, fields in (overlay.get("injects") or {}).items():
+        if iid not in by_id:
+            raise ValueError(f"overlay names inject '{iid}', which is not in the outline")
+        bad = set(fields) - EDITABLE_INJECT_FIELDS
+        if bad:
+            raise ValueError(f"overlay may not change {sorted(bad)} on {iid}; editable: {sorted(EDITABLE_INJECT_FIELDS)}")
+        for key, value in fields.items():
+            if key in {"recipients", "hints", "probing_questions", "host_lines"} and not isinstance(value, list):
+                raise ValueError(f"{iid}.{key} must be a list")
+            by_id[iid][key] = value
+    if "scenario_summary" in overlay:
+        pack.setdefault("scenario", {})["summary"] = overlay["scenario_summary"]
+    if "hot_wash_questions" in overlay:
+        pack.setdefault("hot_wash", {})["questions"] = overlay["hot_wash_questions"]
+    for key in ("objectives", "ground_rules", "next_steps"):
+        if key in overlay:
+            pack[key] = overlay[key]
+    pack["generator"] = "ttx outline skeleton + scenario_design narrative overlay"
+    pack["approval"] = {"approved": False, "approved_by": None, "approved_at": None, "outline_hash": None}
+    return pack
 
 
 def stamp_approval(pack: dict, approved_by: str) -> dict:

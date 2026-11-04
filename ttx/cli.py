@@ -5,6 +5,7 @@
   ttx seed --intake ... --out     pick the attack path from the exposure data
   ttx clocks --intake ... --out   compute the applicable notification clocks
   ttx outline ... --out           deterministic outline skeleton (exercise_pack draft)
+  ttx narrate PACK OVERLAY        apply a narrative overlay (narrative fields only)
   ttx validate KIND FILE          seed | pack | packs | org-plan | outline | exercise-pack
   ttx approve PACK --by NAME      human approval gate: lock the outline
   ttx build PACK --out DIR        every deliverable from the approved pack
@@ -158,6 +159,24 @@ def cmd_outline(args) -> int:
     return _print_result(validate_exercise_pack(pack), False)
 
 
+def cmd_narrate(args) -> int:
+    from .outline import apply_narrative
+    from .validators import validate_exercise_pack
+
+    pack = read_json(args.file)
+    overlay = read_json(args.overlay)
+    apply_narrative(pack, overlay)
+    result = validate_exercise_pack(pack)
+    if not result.ok:
+        print(result.summary())
+        print("narrative not applied: the result fails validation")
+        return 1
+    out = args.out or args.file
+    write_json(out, pack)
+    print(f"applied narrative to {len((overlay.get('injects') or {}))} inject(s); wrote {out} (approval cleared; review, then ttx approve)")
+    return _print_result(result, False)
+
+
 def cmd_validate(args) -> int:
     from . import validators as v
 
@@ -293,6 +312,12 @@ def build_parser() -> argparse.ArgumentParser:
     s.add_argument("--org-plan")
     s.add_argument("--out", required=True)
     s.set_defaults(func=cmd_outline)
+
+    s = sub.add_parser("narrate", help="apply a scenario_design narrative overlay (narrative fields only)")
+    s.add_argument("file", help="exercise pack (outline) to update")
+    s.add_argument("overlay", help="JSON overlay: injects {I1: {title, what_happens, ...}}, scenario_summary, ...")
+    s.add_argument("--out", help="write to a different file (default: in place)")
+    s.set_defaults(func=cmd_narrate)
 
     s = sub.add_parser("validate", help="validate an artifact")
     s.add_argument("kind", choices=["seed", "pack", "packs", "clocks", "org-plan", "outline", "exercise-pack"])

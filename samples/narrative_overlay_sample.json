@@ -1,0 +1,83 @@
+{
+  "_comment": "Written by the scenario_design skill for the synthetic Valley Regional sample. Facts come only from the seed (vpngw01, dc1, sql2016 and their findings), the sample IR plan's roles and timings, and the clock deadlines. Applied with: ttx narrate <pack> samples/narrative_overlay_sample.json",
+  "scenario_summary": "Late on a Tuesday, an attacker uses CVE-2025-0282 on vpngw01, Valley Regional's remote access gateway, takes over the identity server dc1 through the unpatched Netlogon flaw CVE-2020-1472, copies patient records from sql2016, the EHR database, and then encrypts it.",
+  "injects": {
+    "I1": {
+      "title": "A login that should not have worked",
+      "what_happens": "Late on a Tuesday, the SOC console flags vpngw01, the remote access gateway that carries CVE-2025-0282: a burst of malformed requests, then a new administrator session from an address nobody recognizes. The on-call analyst has seen false alarms from this gateway before.",
+      "recipients": ["Security Operations on-call analyst"],
+      "decision_forced": "Is this a suspected SEV1 or SEV2 under the plan, and who does the analyst reach in the next 15 minutes?",
+      "what_good_looks_like": "The analyst checks a second source (gateway and firewall logs), treats the session as a suspected SEV1 or SEV2, opens the incident record, and reaches the Incident Commander within the 15 minutes IR Plan section 4.1 sets.",
+      "where_teams_fail": "The alert is parked as another false alarm from a noisy gateway, and later nobody can say when it was first seen.",
+      "hints": ["Ask what second source would confirm or clear the alert.", "Ask who is on call for Security Operations tonight and how they are reached."],
+      "probing_questions": ["What in the plan makes this a suspected SEV1 or SEV2 rather than a SEV4?", "If the Incident Commander does not answer, who does the analyst call next?"],
+      "host_lines": ["It is late on a Tuesday. Your analyst is looking at a new administrator session on vpngw01, your remote access gateway, from an address nobody recognizes. Your plan gives Security Operations 15 minutes to reach the Incident Commander. Director of Security Operations, what happens in those 15 minutes?"]
+    },
+    "I2": {
+      "title": "The attacker is on the domain controller",
+      "what_happens": "The same session has now reached dc1. The Netlogon finding on dc1, CVE-2020-1472, was in the last scan and never patched. A new account sits in the domain administrators group. The CISO holds the Incident Commander's authority to declare and set severity.",
+      "recipients": ["Incident Commander (CISO)", "Director of Security Operations"],
+      "decision_forced": "Declare now? At what severity, and who is called, in what order?",
+      "what_good_looks_like": "The Incident Commander declares SEV1 (the identity infrastructure is compromised), requests Hospital Command Center activation, notifies the CIO and the Privacy Officer within 30 minutes, and the CIO briefs the CEO and General Counsel within 1 hour. General Counsel calls the cyber insurer.",
+      "where_teams_fail": "Declaration waits for proof that patient data was touched, so the 30-minute and 1-hour notifications never start, and the insurer hears about it after outside responders are already engaged.",
+      "hints": ["Read the plan's SEV1 definition aloud and ask whether dc1 meets it.", "Ask who calls the cyber insurer and when."],
+      "probing_questions": ["Which sentence in your plan makes this SEV1?", "Who is on the notification list for SEV1, and who calls each of them?"],
+      "host_lines": ["The attacker has a privileged account on dc1, your identity infrastructure. CISO, your plan lets you declare and set the severity. Say the severity out loud, then tell me who you call and in what order."]
+    },
+    "I3": {
+      "title": "Pull the plug, or keep the hospital connected",
+      "what_happens": "Isolating vpngw01 ends remote access for every clinician working from home tonight; taking dc1 offline stops logins across both campuses. Then two reports land at once: the gateway vendor says vpngw01 was patched last month and the alert is a false positive, while the forensics lead says the patch was never applied.",
+      "recipients": ["Incident Commander", "Chief Information Officer", "Director of Infrastructure"],
+      "decision_forced": "What is isolated now, who authorizes it, and what happens to containment while the two reports disagree?",
+      "what_good_looks_like": "Under SEV1 the Incident Commander isolates the gateway immediately and tells the CIO within 30 minutes; the CIO authorizes the clinical-system decisions after consulting the CMIO. Containment stays in place until someone produces evidence for the vendor's claim, privileged credentials are reset, and Clinical Engineering isolates devices on the affected segments.",
+      "where_teams_fail": "The team lifts containment on the vendor's word, or reimages vpngw01 before anyone takes a forensic image.",
+      "hints": ["Ask what evidence would settle which report is right.", "Ask whether anyone has a forensic image of vpngw01 yet."],
+      "probing_questions": ["Who can authorize taking a production clinical system offline, and is that person in the room?", "Two credible sources disagree. What do you do with containment while you find out which is right?", "Which medical devices sit on the affected segments, and who isolates them?"],
+      "host_lines": ["You can cut vpngw01 and dc1 off right now. That ends remote access and logins for both campuses. Your vendor says you are already patched; your forensics lead says you are not. CIO and Incident Commander, what do you isolate, and who signs off?"]
+    },
+    "I4": {
+      "title": "A ransom note on the EHR database",
+      "what_happens": "A ransom note appears on sql2016, the EHR database, and on two nursing-unit workstations. It gives a deadline and a contact address and claims patient records were copied. The insurer's breach line is offering a negotiator. Operations wants the EHR kept up through the morning; security wants sql2016 down now.",
+      "recipients": ["Chief Executive Officer", "Incident Commander", "General Counsel", "Chief Financial Officer"],
+      "decision_forced": "Who decides whether anyone talks to the attacker, and does sql2016 stay up or come down?",
+      "what_good_looks_like": "The CEO takes the decision with General Counsel and the insurer in the room, nobody contacts the attacker until counsel and the insurer agree, the ransom note is preserved as evidence (ransomware playbook step 1), and the room records why sql2016 stays up or comes down.",
+      "where_teams_fail": "The CFO opens contact through the insurer's negotiator before counsel is engaged, and the shutdown decision drifts to whoever speaks loudest.",
+      "hints": ["Ask who in the plan is allowed to talk to the attacker.", "Ask whether the ransom note has been preserved."],
+      "probing_questions": ["Your plan is silent on ransom payment. Who decides today, and how would you record it?", "What would you need to know before anyone contacts the attacker?"],
+      "host_lines": ["The note is on screen and it has a deadline. The insurer is offering a negotiator. Your plan does not say who may talk to the attacker or decide on payment. CEO, who decides, and what happens to sql2016 right now?"]
+    },
+    "I5": {
+      "title": "What comes back first",
+      "what_happens": "Backups for sql2016 and dc1 exist, but the Director of Infrastructure cannot say when either was last test-restored. Nursing wants the EHR back first; Infrastructure says nothing restored will stay clean until Active Directory is rebuilt. Clinics are on paper downtime forms until this is decided.",
+      "recipients": ["Chief Information Officer", "Director of Infrastructure", "Chief Medical Information Officer"],
+      "decision_forced": "What is the restore order, who approves it, and which recovery time objective are you working to?",
+      "what_good_looks_like": "The CIO approves the plan's order (Active Directory, network services, then the EHR and its interface engine), the Director of Infrastructure confirms each backup predates the earliest compromise and test-restores it first, and the room states the recovery time objectives the plan sets for Active Directory and the EHR.",
+      "where_teams_fail": "The EHR is restored first onto an identity system the attacker still controls, or from a backup nobody has tested.",
+      "hints": ["Ask what the plan's restore order is.", "Ask how anyone knows the backup is clean."],
+      "probing_questions": ["What is the EHR's recovery time objective, and where is it written?", "When was the last successful test restore of sql2016?"],
+      "host_lines": ["CIO, the EHR is down and the clinics are on paper. Your plan sets a restore order and recovery time objectives. Which system comes back first, how do you know its backup is clean, and when is the EHR back?"]
+    },
+    "I6": {
+      "title": "The clocks start",
+      "what_happens": "Forensics confirms that records were copied from sql2016 before the encryption, and counsel agrees patients' PHI and PII were accessed. The notification clocks start now. The tightest belongs to the California Department of Public Health: 15 business days.",
+      "recipients": ["General Counsel", "Privacy Officer", "Chief Executive Officer"],
+      "decision_forced": "Which notices apply, who owns each one, and what date goes on them?",
+      "what_good_looks_like": "General Counsel lists every applicable notice with an owner and a due date, the Privacy Officer starts the breach risk assessment and holds patient letters to the plan's own 45-day standard, and someone owns the state health department report.",
+      "where_teams_fail": "The room argues about whether data was really taken, assumes one HIPAA notice covers every regulator, and nobody owns the state health department report.",
+      "hints": ["Ask who owns the state health department report.", "Ask what date the team will defend as the discovery date."],
+      "probing_questions": ["Which clock is tightest, and who in this room owns it?", "Your plan sets its own standard for patient letters. Is it stricter than the regulator's?"],
+      "host_lines": ["General Counsel, patient records were copied. The California Department of Public Health report is due in 15 business days, and the HIPAA notices in no more than 60 days. Your plan says you own the regulatory notices and the Privacy Officer owns the letters. Walk me through every notice, its owner, and its date."]
+    },
+    "I7": {
+      "title": "A reporter has the ransom note",
+      "what_happens": "A local reporter calls the switchboard with a photo of the ransom note and asks whether patients are being turned away. Nurses are posting about paper charts on social media. The CEO wants a statement out within the hour; General Counsel wants to wait for forensics.",
+      "recipients": ["Director of Communications", "Chief Executive Officer", "General Counsel"],
+      "decision_forced": "Say something now or wait, what does it say, and who approves it?",
+      "what_good_looks_like": "Communications drafts a holding statement from the pre-approved template, General Counsel reviews it, the CEO approves it within the hour, and the workforce gets its own update so staff are not learning about the incident from the news.",
+      "where_teams_fail": "Leadership speaks without counsel, or counsel blocks every statement until the story runs without the hospital's voice.",
+      "hints": ["Ask who approves external statements.", "Ask what staff have been told so far."],
+      "probing_questions": ["Who approves public statements in your plan?", "Your plan is silent on staff social media. What do you tell the nurses who are posting?"],
+      "host_lines": ["The reporter is holding on line two and staff are already posting. CEO, your plan says you approve every public statement on the recommendation of Communications and General Counsel. What goes out, and when?"]
+    }
+  }
+}

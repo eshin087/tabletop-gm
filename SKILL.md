@@ -67,10 +67,10 @@ Read the list back to the person: each clock, its deadline, and its tier. If any
 ttx outline --intake out/intake.yaml --seed out/seed.json --clocks out/clocks.json --org-plan out/org_plan.json --out out/exercise_pack.json
 ```
 
-(Omit `--org-plan` when no documents were uploaded.) This writes a complete, valid skeleton. Refine its narrative following `skills/scenario_design/SKILL.md` and `skills/inject_style/SKILL.md`. Optionally use `skills/incident_research/SKILL.md` for realism anchors. Then:
+(Omit `--org-plan` when no documents were uploaded.) This writes a complete, valid skeleton. Write the narrative following `skills/scenario_design/SKILL.md` and `skills/inject_style/SKILL.md` into `out/narrative_overlay.json`. Optionally use `skills/incident_research/SKILL.md` for realism anchors. Then apply it; `ttx narrate` refuses any change to facts and revalidates:
 
 ```
-ttx validate outline out/exercise_pack.json
+ttx narrate out/exercise_pack.json out/narrative_overlay.json
 ```
 
 ### 6. Review and approval gate

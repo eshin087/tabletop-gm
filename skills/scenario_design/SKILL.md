@@ -7,11 +7,21 @@ description: Turn the deterministic outline skeleton from ttx outline into a tim
 
 `ttx outline` already produced a complete, valid `exercise_pack.json`: the inject slots, their phases and timing, the decision owner, the plan procedure each one tests, the expected actions with their sources, the clocks, and plain template prose. Your job is to make the prose read like this organization's incident. You change words, not facts.
 
+## How to apply your writing
+
+Do not hand-edit `exercise_pack.json`. Write an overlay file, `out/narrative_overlay.json`, in the shape of `samples/narrative_overlay_sample.json`, and apply it:
+
+```
+ttx narrate out/exercise_pack.json out/narrative_overlay.json
+```
+
+`ttx narrate` refuses any field outside the editable set below, refuses the result if it fails validation, and clears any earlier approval.
+
 ## What you may edit
 
-Per inject: `title`, `what_happens`, `recipients`, `decision_forced`, `what_good_looks_like`, `where_teams_fail`, `hints`, `probing_questions`, `host_lines`. At the top level: `scenario.summary`, `objectives`, `ground_rules`, `hot_wash.questions`, `next_steps`.
+Per inject: `title`, `what_happens`, `recipients`, `decision_forced`, `what_good_looks_like`, `where_teams_fail`, `hints`, `probing_questions`, `host_lines`. At the top level: `scenario_summary`, `objectives`, `ground_rules`, `hot_wash_questions`, `next_steps`.
 
-You may change `decision_owner_role` or `acceptable_owner_roles` only to a role id that exists in `roles`, and only when the org plan names a different owner for that decision. Quote the plan item that justifies it in your message to the person.
+If the decision owner looks wrong for the org plan, do not change it in the overlay (`ttx narrate` will refuse). Tell the person which plan item names a different owner; correcting the plan item's `role_id` and rerunning `ttx outline` fixes it at the source.
 
 ## What you must not edit
 

@@ -86,6 +86,9 @@ def table(doc, headers: list[str], rows: list[list], widths: list[float] | None 
             run = cells[i].paragraphs[0].add_run("" if val is None else str(val))
             run.font.size = Pt(font_size)
     if widths:
+        t.autofit = False
+        for i, w in enumerate(widths):
+            t.columns[i].width = Inches(w)
         for row in t.rows:
             for i, w in enumerate(widths):
                 row.cells[i].width = Inches(w)

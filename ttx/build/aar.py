@@ -110,7 +110,7 @@ def build_aar(pack: dict, score: dict, path: str | Path, narrative: dict | None 
             continue
         table(doc, ["Id", "Inject", "Finding", "Citation", "Fix", "Owner", "Due"],
               [[g["id"], g.get("inject_id") or "", g["finding"], g["citation"], g["fix"], g["owner"], g["due"]] for g in items],
-              widths=[0.45, 0.45, 2.0, 1.5, 1.6, 0.8, 0.75], font_size=8)
+              widths=[0.55, 0.4, 1.75, 1.4, 1.4, 0.75, 0.65], font_size=8)
 
     doc.add_heading("Plan coverage map", level=1)
     cov = score.get("coverage") or {}

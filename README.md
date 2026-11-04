@@ -104,7 +104,10 @@ ttx validate org-plan samples/org_plan_sample.json --plan-text out/plan_text.jso
 ttx seed --intake samples/intake_valley_regional.yaml --out out/seed.json
 ttx clocks --intake samples/intake_valley_regional.yaml --out out/clocks.json
 ttx outline --intake samples/intake_valley_regional.yaml --seed out/seed.json --clocks out/clocks.json --org-plan samples/org_plan_sample.json --out out/exercise_pack.json
+ttx narrate out/exercise_pack.json samples/narrative_overlay_sample.json
 ```
+
+`ttx narrate` applies the narrative the scenario_design skill writes. It changes narrative fields only and refuses any change to sources, procedures, expected actions, or clocks.
 
 `ttx build` refuses an unapproved outline (exit code 2, "not approved"). Review the outline, approve it, then build:
 

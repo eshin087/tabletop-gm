@@ -522,12 +522,12 @@ def _gaps(pack: dict, inject_results: list[dict], clock_results: list[dict]) -> 
     for c in clock_results:
         if c["status"] == "missed":
             add("people", starter, f"{c['name']}: planned at {c['planned_notify_hours']:g} hours against a {c['deadline_hours']:g}-hour limit, missed by {abs(c['margin_hours']):g} hours.",
-                f"{c['citation']} ({c['tier']}, {c['source_url']})",
+                f"{c['citation']} ({c['tier']} tier; source on the evidence page)",
                 "Name the owner for this clock in the plan, pre-draft the notice, and put the deadline in the incident checklist.",
                 c.get("owner_role") or _plan_owner_role(pack), FIX_DAYS["people"], clock_id=c["clock_id"])
         elif c["status"] == "not_planned":
             add("plan", starter, f"{c['name']} applies but the team did not plan a notification time{'' if c.get('owner_role') else ' or name an owner'}.",
-                f"{c['citation']} ({c['tier']}, {c['source_url']})",
+                f"{c['citation']} ({c['tier']} tier; source on the evidence page)",
                 "Add this obligation, its owner, and its deadline to the notification section of the plan.",
                 _plan_owner_role(pack), FIX_DAYS["plan"], clock_id=c["clock_id"])
         if c.get("internal_met") is False and c["status"] == "met":

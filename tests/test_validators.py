@@ -133,3 +133,19 @@ def test_banner_required_when_researched_clocks_present(sample_pack):
         pytest.skip("sample has no researched clocks")
     pack["banner"]["show"] = False
     assert not v.validate_exercise_pack(pack).ok
+
+
+def test_narrative_overlay_cannot_touch_facts(sample_pack):
+    from ttx.outline import apply_narrative
+
+    pack = copy.deepcopy(sample_pack)
+    for bad in ({"injects": {"I1": {"source": {"type": "finding", "ref": "F9999"}}}},
+                {"injects": {"I1": {"expected_actions": []}}},
+                {"clocks": []},
+                {"injects": {"I99": {"title": "x"}}}):
+        with pytest.raises(ValueError):
+            apply_narrative(copy.deepcopy(pack), bad)
+    apply_narrative(pack, {"injects": {"I1": {"title": "A new title"}}})
+    assert pack["injects"][0]["title"] == "A new title"
+    assert pack["approval"]["approved"] is False
+    assert v.validate_exercise_pack(pack).ok

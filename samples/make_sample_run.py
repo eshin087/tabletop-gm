@@ -2,6 +2,7 @@
 
   intake + synthetic estate + synthetic IR plan
     -> seed, clocks, outline (deterministic skeleton)
+    -> narrative overlay (samples/narrative_overlay_sample.json, written by the scenario_design skill)
     -> approval (by a labeled synthetic approver)
     -> deck, facilitator guide, handout, tracker, attendance, sign-off
     -> a synthetic completed tracker (what a host would record)
@@ -26,7 +27,7 @@ from ttx.build import build_all  # noqa: E402
 from ttx.build.aar import build_aar  # noqa: E402
 from ttx.clock_engine import evaluate  # noqa: E402
 from ttx.common import read_json, read_yaml, write_json  # noqa: E402
-from ttx.outline import build_outline, stamp_approval  # noqa: E402
+from ttx.outline import apply_narrative, build_outline, stamp_approval  # noqa: E402
 from ttx.plan_ingest import documents_index, ingest  # noqa: E402
 from ttx.score_engine import score_tracker  # noqa: E402
 from ttx.seed_engine import build_seed  # noqa: E402
@@ -101,8 +102,12 @@ def main() -> None:
     write_json(OUT / "clocks.json", clocks)
 
     pack = build_outline(intake, seed, clocks, org_plan)
+    # the scenario_design skill's narrative, applied the same way `ttx narrate` does
+    apply_narrative(pack, read_json(SAMPLES / "narrative_overlay_sample.json"))
     check = validate_exercise_pack(pack)
     assert check.ok, check.summary()
+    narrative_warnings = [w for w in check.warnings if "narrative mentions" in w]
+    assert not narrative_warnings, narrative_warnings
     stamp_approval(pack, "Sample approver (synthetic run; a human signs here in real use)")
     write_json(SAMPLES / "exercise_pack_sample.json", pack)
     shutil.copyfile(SAMPLES / "exercise_pack_sample.json", OUT / "exercise_pack.json")

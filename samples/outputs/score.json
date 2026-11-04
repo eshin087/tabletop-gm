@@ -1,10 +1,10 @@
 {
   "schema_version": "1",
   "inputs": {
-    "exercise_pack_hash": "1e062e39cbcd0581333f3001a44b6be43077b1a11bf322ed9a341e27e9b51311",
-    "approval_hash": "1e062e39cbcd0581333f3001a44b6be43077b1a11bf322ed9a341e27e9b51311",
+    "exercise_pack_hash": "b444028205cceb8aad4d45f5451163d024b245b2cafe3a1196cb252aa6feb5e2",
+    "approval_hash": "b444028205cceb8aad4d45f5451163d024b245b2cafe3a1196cb252aa6feb5e2",
     "tracker_file": "decision_tracker_completed.xlsx",
-    "tracker_sha256": "2e2678b72cba4dc7325aa5f48ff9cb89803e647b87ffd1e15567a9f72030189c",
+    "tracker_sha256": "80d86582080dd81308660be024ae405c9838884a8c95aaaeb03af7c8b30eb366",
     "incident_file": null
   },
   "rubric": {
@@ -62,7 +62,7 @@
   "injects": [
     {
       "inject_id": "I1",
-      "title": "First signal on vpngw01",
+      "title": "A login that should not have worked",
       "phase": "detection",
       "slide_number": 6,
       "procedure": {
@@ -109,7 +109,7 @@
     },
     {
       "inject_id": "I2",
-      "title": "Declaring the incident",
+      "title": "The attacker is on the domain controller",
       "phase": "escalation",
       "slide_number": 7,
       "procedure": {
@@ -164,7 +164,7 @@
     },
     {
       "inject_id": "I3",
-      "title": "Containment on dc1",
+      "title": "Pull the plug, or keep the hospital connected",
       "phase": "containment",
       "slide_number": 8,
       "procedure": {
@@ -215,7 +215,7 @@
     },
     {
       "inject_id": "I4",
-      "title": "The business tradeoff",
+      "title": "A ransom note on the EHR database",
       "phase": "containment",
       "slide_number": 9,
       "procedure": {
@@ -266,7 +266,7 @@
     },
     {
       "inject_id": "I5",
-      "title": "Restore order for sql2016",
+      "title": "What comes back first",
       "phase": "recovery",
       "slide_number": 10,
       "procedure": {
@@ -317,7 +317,7 @@
     },
     {
       "inject_id": "I6",
-      "title": "The notification clock starts",
+      "title": "The clocks start",
       "phase": "notification",
       "slide_number": 11,
       "procedure": {
@@ -376,7 +376,7 @@
     },
     {
       "inject_id": "I7",
-      "title": "The public statement",
+      "title": "A reporter has the ransom note",
       "phase": "notification",
       "slide_number": 12,
       "procedure": {
@@ -682,7 +682,7 @@
       "label": "plan",
       "inject_id": "I6",
       "finding": "California licensed health facility report of unlawful or unauthorized access applies but the team did not plan a notification time or name an owner.",
-      "citation": "California Health and Safety Code 1280.15(b) (researched, https://leginfo.legislature.ca.gov/faces/codes_displaySection.xhtml?lawCode=HSC&sectionNum=1280.15)",
+      "citation": "California Health and Safety Code 1280.15(b) (researched tier; source on the evidence page)",
       "fix": "Add this obligation, its owner, and its deadline to the notification section of the plan.",
       "owner_role": "incident_commander",
       "owner": "Incident Commander",
@@ -694,7 +694,7 @@
       "label": "people",
       "inject_id": "I6",
       "finding": "HIPAA Breach Notification Rule, notice to prominent media outlets: planned at 1500 hours against a 1440-hour limit, missed by 60 hours.",
-      "citation": "45 CFR 164.406 (researched, https://www.ecfr.gov/current/title-45/subtitle-A/subchapter-C/part-164/subpart-D/section-164.406)",
+      "citation": "45 CFR 164.406 (researched tier; source on the evidence page)",
       "fix": "Name the owner for this clock in the plan, pre-draft the notice, and put the deadline in the incident checklist.",
       "owner_role": "communications",
       "owner": "Director of Communications",
