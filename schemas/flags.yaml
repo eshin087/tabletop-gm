@@ -1,0 +1,101 @@
+# Plain-language yes/no questions for every regulated-status flag a clock can require.
+# `ttx flags --industry <pack>` shows the ones that matter for an industry, and the
+# /tabletop intake asks them one at a time. A test fails if a clock uses a flag that
+# has no entry here.
+
+article_28_hospital:
+  question: Is it a general hospital licensed in New York under Article 28?
+  why: New York hospitals must report cyber incidents to the state health department.
+bank_federally_insured:
+  question: Is it an FDIC-insured bank or savings institution?
+  why: Turns on customer-notice and suspicious activity report obligations.
+bank_service_provider:
+  question: Does it provide services to banks (for example a core processor or payment provider)?
+  why: Bank service providers must warn their bank customers about disruptive incidents.
+business_associate:
+  question: Does it handle patient data on behalf of a healthcare provider or health plan (a HIPAA business associate)?
+  why: Business associates must notify the covered entity of breaches.
+ca_licensed_health_facility:
+  question: Is it a licensed clinic, hospital, or health facility in California?
+  why: California health facilities have a short state reporting deadline.
+credit_union:
+  question: Is it a federally insured credit union?
+  why: Credit unions report cyber incidents to the NCUA within 72 hours.
+critical_infrastructure:
+  question: Is it part of US critical infrastructure (for example energy, water, healthcare, finance, transportation, or communications)?
+  why: Covers the federal CIRCIA reporting rule once it takes effect.
+defense_contractor:
+  question: Does it hold US Department of Defense contracts or handle controlled unclassified information for DoD?
+  why: Defense contractors report cyber incidents to DoD within 72 hours.
+doe_electric_utility:
+  question: Is it an electric utility or grid operator that files Department of Energy OE-417 reports?
+  why: Turns on the one-hour and six-hour federal energy reporting deadlines.
+dora_in_scope:
+  question: Is it an EU financial entity, or an ICT provider to one, covered by the EU Digital Operational Resilience Act (DORA)?
+  why: DORA sets four-hour and 24-hour reporting deadlines.
+eu_data_subjects:
+  question: Does it hold personal data about people in the European Union?
+  why: GDPR requires notice to a regulator within 72 hours.
+fdic_supervised:
+  question: Is its primary federal bank regulator the FDIC (a state non-member bank)?
+  why: Sets the 36-hour federal incident notice to the FDIC.
+fedramp_csp:
+  question: Does it run a FedRAMP-authorized cloud service for US federal agencies?
+  why: FedRAMP cloud providers report incidents within one hour.
+frb_supervised:
+  question: Is its primary federal bank regulator the Federal Reserve (a state member bank or holding company)?
+  why: Sets the 36-hour federal incident notice to the Federal Reserve.
+insurer_licensed:
+  question: Is it a licensed insurance company or producer?
+  why: Many states require notice to the insurance commissioner within 72 hours.
+k12_district:
+  question: Is it a K-12 school district?
+  why: Some states require school districts to report data incidents quickly.
+local_government:
+  question: Is it a city, county, or other local government?
+  why: Some states require local governments to report incidents within hours.
+nerc_registered_entity:
+  question: Is it registered with NERC (a bulk electric system owner or operator)?
+  why: NERC CIP-008 sets a one-hour reporting deadline.
+nis2_essential_or_important_entity:
+  question: Is it an essential or important entity under the EU NIS2 Directive?
+  why: NIS2 requires an early warning within 24 hours.
+non_hipaa_health_records_vendor:
+  question: Does it offer a health app or personal health record that is not covered by HIPAA?
+  why: Turns on the FTC Health Breach Notification Rule.
+nonbank_financial_institution:
+  question: Is it a non-bank financial business, such as a lender, finance company, or store credit provider?
+  why: The FTC Safeguards Rule requires notice within 30 days for 500 or more people.
+nydfs_licensed:
+  question: Is it licensed or regulated by the New York Department of Financial Services?
+  why: NYDFS requires incident notice within 72 hours and ransom payment notice within 24 hours.
+occ_supervised:
+  question: Is it a national bank or federal savings association supervised by the OCC?
+  why: Sets the 36-hour federal incident notice to the OCC.
+operates_federal_system:
+  question: Does it operate an information system for a US federal agency?
+  why: Federal incident reporting to CISA within one hour applies.
+pci_merchant:
+  question: Does it accept or process payment cards?
+  why: Card brand rules require notice of a suspected compromise within three days.
+state_agency:
+  question: Is it a state government agency?
+  why: Several states require agencies to report incidents within 24 to 48 hours.
+title_iv_institution:
+  question: Is it a college or university that takes part in federal student aid (Title IV)?
+  why: Turns on the FTC Safeguards Rule and Department of Education breach reporting.
+tsa_pipeline_owner:
+  question: Does it own or operate a pipeline covered by TSA security directives?
+  why: Pipeline operators report incidents to CISA within 72 hours.
+tsa_rail_owner:
+  question: Does it own or operate a freight or passenger railroad covered by TSA security directives?
+  why: Rail operators report incidents to CISA within 72 hours.
+uk_data_subjects:
+  question: Does it hold personal data about people in the United Kingdom?
+  why: UK GDPR requires notice to the ICO within 72 hours.
+uk_nis_rdsp:
+  question: Is it a relevant digital service provider under the UK NIS Regulations (online marketplace, search engine, or cloud service)?
+  why: The UK NIS Regulations require incident notice within 72 hours.
+water_utility:
+  question: Is it a drinking water or wastewater utility?
+  why: Water sector guidance applies; there is no fixed federal deadline.

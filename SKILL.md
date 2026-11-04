@@ -32,18 +32,49 @@ If Python is missing or too old, tell the person in one sentence and point them 
 
 Then greet the person in two sentences: what Tabletop GM will build, and that nothing is built until they approve the outline. Offer to show the finished sample first (`ttx demo`) if they have never seen one.
 
-### 1. Intake (one message)
+### 1. Intake: one question at a time
 
-Ask once, only for what is missing. Write the answers to `out/intake.yaml` using `samples/intake_valley_regional.yaml` as the template.
+Interview the person like a consultant, not a form. Ask **one question per message**, then stop and wait for the answer before asking the next. Never list the remaining questions, never ask two things in one message, and keep each question to one or two short sentences.
 
-- Organization name, size, short description
-- Industry (must match a pack: run `ttx packs`; if none fits, offer `pack_research`)
-- Countries and states of operation; data types held (PHI, PII, PCI, PFI, FERPA, CUI, OT)
-- Public or private; regulated status flags (for example `nydfs_licensed`, `occ_supervised`, `defense_contractor`, `pci_merchant`); estimated people affected if the crown jewel leaks
-- Severity level 1 to 4 (read `skills/severity_levels/SKILL.md`), audience (technical, executive, mixed), duration (60, 90, or 180 minutes)
-- Optional scenario family preference
-- Optional documents: IR plan, BCP/DR plan, playbooks, procedures, comms templates (Word, PDF, Markdown). Ask the person to put them in `uploads/`.
-- Environment data mode: `tenable` (keys in `.env`), `export` (a findings CSV, JSON, or .nessus file in `uploads/`), `sample`, or `none`
+- **Use clickable choices** when the answer is a choice: call the AskUserQuestion tool with one question, two to four options, and a short description for each. The person can always type their own answer instead. Use `multiSelect` for "pick all that apply" questions. If that tool is not available, offer numbered options in plain text.
+- **Show progress** lightly at the start of each question, for example "(3 of 11)".
+- **Skip what you already know.** If the person's first message or an earlier answer already covers a question, do not ask it; mention what you understood in the next question instead.
+- **Accept "not sure" or "skip."** Use the default shown below, and say in a few words that you did.
+- **Accept everything at once.** If the person pastes all their answers in one message, take them and skip ahead.
+- **Keep it plain.** Never show flag names, pack slugs, or file names in a question; translate them into ordinary words.
+
+Ask in this order:
+
+1. **Organization.** "What's the organization's name, and what does it do in a sentence?"
+2. **Industry.** Run `ttx packs` first. Offer the three closest packs as choices, with display names, never slugs; the person can type another. If none fits, offer to draft one with `skills/pack_research/SKILL.md`.
+3. **Size.** "Roughly how many employees?" Default: unknown.
+4. **Where it operates.** "Which countries does it operate in, and for the US, which states?" Default: US only.
+5. **Data it holds.** A multi-select with plain names, mapped as follows:
+   - patient health records: PHI
+   - personal information such as names, SSNs, and addresses: PII
+   - payment card data: PCI
+   - customer financial records: PFI
+   - student records: FERPA
+   - controlled unclassified information: CUI
+   - industrial control systems: OT
+
+   Offer the four most likely for the industry and let them type others.
+6. **Public company.** "Is it publicly traded?" Yes or no. Default: no.
+7. **Regulated status.** Run `ttx flags --industry <pack> --states <states>`. Ask its questions as multi-select checklists of up to four statuses each, using the plain question text; "None of these" is always fine. Most industries need one or two checklists. Map ticked answers back to the flag names yourself.
+8. **People affected.** "If the most sensitive system leaked, roughly how many people's records would be exposed?" Offer ranges (under 500, 500 to 10,000, 10,000 to 100,000, over 100,000) and store the middle of the range. Default: 1,000.
+9. **Severity.** Four choices with their one-line meanings from `skills/severity_levels/SKILL.md`. Default and recommended for a first exercise: 2.
+10. **Audience and length.** Ask audience first (executives, technical team, or mixed; default mixed). Then, as a separate question, length (60, 90, or 180 minutes; default 90).
+11. **Their documents and data.** Ask first: "Do you have an incident response plan or playbooks you'd like the exercise to test?" If yes, ask them to drop the files into the `uploads` folder and say "done". Then ask separately where the exposure data comes from:
+    - their Tenable account: keys go in `.env`, and never paste keys in chat
+    - a scan export file in `uploads`
+    - the synthetic sample
+    - none, which gives a generic scenario with every assumption labeled
+
+    Default: none.
+
+Optional, only if the person wants it in the documents: exercise date, location, facilitator, and sponsor. Ask these as one short final question they can skip.
+
+When the questions are done, show a short summary of the answers in plain words and ask "Anything to change?" Then write `out/intake.yaml` in the shape of `samples/intake_valley_regional.yaml`, with flag names and data codes filled in from their answers. Tell them what happens next in one sentence.
 
 ### 2. Policy ingest (if documents were uploaded)
 

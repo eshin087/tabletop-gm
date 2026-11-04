@@ -80,3 +80,30 @@ def test_tenable_mode_without_keys_fails_cleanly(tmp_path):
 def test_validate_packs_from_cli():
     r = run("validate", "packs")
     assert r.returncode == 0, r.stdout + r.stderr
+
+
+def test_every_clock_flag_has_a_plain_question():
+    from ttx.cli import flags_for_industry
+
+    rows = flags_for_industry(None)
+    assert rows, "no flags found"
+    missing = [r["flag"] for r in rows if not r["question"]]
+    assert not missing, f"add these to schemas/flags.yaml: {missing}"
+
+
+def test_flags_are_filtered_by_industry_and_state():
+    from ttx.cli import flags_for_industry
+
+    health_ca = {r["flag"] for r in flags_for_industry("healthcare", states=["CA"])}
+    assert "ca_licensed_health_facility" in health_ca
+    assert "article_28_hospital" not in health_ca  # New York only
+    assert "occ_supervised" not in health_ca       # a banking status
+    assert "pci_merchant" in health_ca             # shared by every industry
+    bank = {r["flag"] for r in flags_for_industry("banking", states=["NY"])}
+    assert {"occ_supervised", "credit_union", "nydfs_licensed"} <= bank
+
+
+def test_flags_command_from_cli():
+    r = run("flags", "--industry", "banking", "--states", "TX")
+    assert r.returncode == 0, r.stderr
+    assert "credit union" in r.stdout

@@ -12,7 +12,7 @@ It ships as a Claude Code skill (`/tabletop`) on top of a deterministic Python e
 
 ## What it does
 
-1. **Intake.** One chat message covers organization, industry, jurisdictions, data types, regulated status, severity 1 to 4, audience, and duration (60, 90, or 180 minutes).
+1. **Intake.** Claude interviews you one short question at a time, with clickable choices where it can. It covers organization, industry, where you operate, the data you hold, regulated status, severity 1 to 4, audience, and duration (60, 90, or 180 minutes).
 2. **Policy ingest (optional).** `ttx ingest-plan` extracts your plans with section anchors. Claude fills `org_plan.json`, where every item carries a verbatim quote, and the validator rejects any quote it cannot find in the source.
 3. **Data pull.** `ttx seed` picks the entry, pivot, and crown jewel from your exposure data and records the rule that fired for each.
    - The entry is an exploitable internet-facing finding, KEV first, then highest VPR.
@@ -70,7 +70,7 @@ The first run takes a minute or two. The launcher creates a private `.venv` fold
 
 ### What happens in option 2
 
-Claude asks one round of questions:
+Claude asks short questions one at a time and waits for each answer. Most have clickable choices, and "not sure" picks a sensible default. It covers:
 
 - Your organization, industry, and where it operates
 - The data you hold and the regulators you answer to

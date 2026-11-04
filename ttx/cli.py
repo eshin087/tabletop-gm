@@ -2,6 +2,7 @@
 
   ttx demo                        build the whole sample exercise in one step and open it
   ttx packs                       list industry packs and their verification status
+  ttx flags --industry SLUG       plain-language regulated-status questions for the intake
   ttx ingest-plan DOC... --out    extract uploaded plans to text with section anchors
   ttx seed --intake ... --out     pick the attack path from the exposure data
   ttx clocks --intake ... --out   compute the applicable notification clocks
@@ -73,6 +74,80 @@ def cmd_demo(args) -> int:
     print(f"Start with {guide}")
     if not args.no_open and open_folder(out):
         print("Opened the folder.")
+    return 0
+
+
+def flags_for_industry(industry: str | None, packs_base=None, states: list[str] | None = None) -> list[dict]:
+    """Regulated-status questions that change deadlines, most relevant first.
+
+    Order: flags the industry's own clocks use, then flags from the shared clocks
+    (card payments, EU or UK data, critical infrastructure), then flags other packs
+    use that the industry commonly shares (only with industry=None: all of them).
+    """
+    from .common import schemas_dir
+    from .packs import list_packs, load_common_clocks, load_pack
+
+    questions = read_yaml(schemas_dir() / "flags.yaml") or {}
+    used: dict[str, dict] = {}
+
+    wanted_states = {s.upper() for s in (states or [])}
+
+    def note(flag: str, clock: dict, group: int) -> None:
+        clock_states = {str(s).upper() for s in (clock.get("applies_when") or {}).get("states") or []}
+        if wanted_states and clock_states and not (clock_states & wanted_states):
+            return  # this status only matters in states the organization does not operate in
+        entry = used.setdefault(flag, {"flag": flag, "group": group, "clocks": []})
+        entry["group"] = min(entry["group"], group)
+        entry["clocks"].append(clock.get("name") or clock["id"])
+
+    packs = list_packs(packs_base)
+    for slug in packs:
+        group = 0 if slug == industry else 2
+        for c in load_pack(slug, packs_base).clocks:
+            for f in (c.get("applies_when") or {}).get("flags") or []:
+                note(f, c, group)
+    for c in load_common_clocks(packs_base):
+        for f in (c.get("applies_when") or {}).get("flags") or []:
+            note(f, c, 1)
+    out = []
+    for flag, entry in used.items():
+        if industry and entry["group"] == 2 and flag not in CROSS_INDUSTRY.get(industry, set()):
+            continue
+        q = questions.get(flag) or {}
+        out.append({"flag": flag, "question": q.get("question"), "why": q.get("why"),
+                    "group": entry["group"], "clocks": sorted(set(entry["clocks"]))})
+    out.sort(key=lambda e: (e["group"], e["flag"]))
+    return out
+
+
+# statuses from other packs that commonly apply to an industry
+CROSS_INDUSTRY = {
+    "banking": {"nydfs_licensed"},
+    "insurance": {"nonbank_financial_institution"},
+    "healthcare": {"nydfs_licensed"},
+    "saas_technology": {"fedramp_csp", "operates_federal_system", "bank_service_provider", "business_associate"},
+    "retail_ecommerce": {"nydfs_licensed"},
+    "manufacturing_ot": {"defense_contractor"},
+    "energy_utilities": set(),
+    "federal_contractors": {"critical_infrastructure"},
+    "public_sector": {"operates_federal_system"},
+    "higher_education": {"business_associate"},
+}
+
+
+def cmd_flags(args) -> int:
+    states = [s.strip() for s in args.states.split(",")] if args.states else None
+    rows = flags_for_industry(args.industry, args.packs_dir, states)
+    if args.json:
+        print(json.dumps(rows, indent=2))
+        return 0
+    labels = {0: f"For {args.industry}" if args.industry else "Industry statuses", 1: "For any organization", 2: "Also common"}
+    current = None
+    for r in rows:
+        if r["group"] != current:
+            current = r["group"]
+            print(f"\n{labels[current]}:")
+        print(f"  {r['flag']:<36} {r['question']}")
     return 0
 
 
@@ -303,6 +378,12 @@ def build_parser() -> argparse.ArgumentParser:
     s = sub.add_parser("packs", help="list industry packs")
     s.add_argument("--json", action="store_true")
     s.set_defaults(func=cmd_packs)
+
+    s = sub.add_parser("flags", help="plain-language regulated-status questions for an industry")
+    s.add_argument("--industry", help="pack slug; omit to list every status")
+    s.add_argument("--states", help="comma list of US states; drops statuses that only matter elsewhere")
+    s.add_argument("--json", action="store_true")
+    s.set_defaults(func=cmd_flags)
 
     s = sub.add_parser("ingest-plan", help="extract uploaded plans to text with anchors")
     s.add_argument("documents", nargs="+")

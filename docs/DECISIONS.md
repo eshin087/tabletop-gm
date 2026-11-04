@@ -2,6 +2,11 @@
 
 Blockers hit during the build and the option chosen, newest first. Each entry says what the spec or prompt asked for, what was found, and what was done instead.
 
+## 2026-11-04
+
+- **Intake is one question at a time.** The spec asked for a single intake message. In testing, Eric found that a single message of questions overwhelms people, so the `/tabletop` intake now asks one short question per message and waits for the answer. It uses Claude Code's clickable choices where it can, skips what it already knows, and accepts "not sure" with a stated default. Regulated statuses come from `ttx flags`, which turns every clock flag into a plain yes/no question (`schemas/flags.yaml`) and drops statuses for states the organization does not operate in. A test fails if a clock uses a flag with no question.
+- **One-click launchers.** First-time users download the ZIP and double-click `start-windows.bat`, `start-mac.command`, or `start-linux.sh`. The launcher sets up a private `.venv` and shows a two-option menu. `/tabletop` also installs the engine itself when needed.
+
 ## 2026-11-03
 
 - **Scenario clocks.** `ttx clocks` returns every clock that applies to the organization. The outline keeps only the clocks the scenario's crown-jewel data can trigger. For example, a PHI database breach does not start the Visa card clock. Dropped clocks are listed in `clocks_outside_scenario` with the reason. This keeps the notification inject and the AAR honest about what the scenario exercised.
