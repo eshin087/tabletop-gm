@@ -80,8 +80,10 @@ here was built by Tabletop GM from synthetic data, with no API key and no model 
 Open these first
   deck.pptx                         What the room sees on the projector. Speaker notes hold the host lines.
   facilitator_guide.docx            The script: what to read aloud, what the plan says, what good looks like.
-  after_action_report.docx          The scored result: headline, clocks met or missed, gaps, plan coverage map.
-  executive_summary.pptx            Six slides for senior management: rating, regulatory exposure, risks, fixes, asks.
+  after_action_report.docx          The scored result in about two pages: rating, lessons learned, each decision,
+                                    deadlines met or missed, and the action plan. Auditor detail is in the appendix.
+  executive_summary.pptx            Seven slides for senior management: rating, regulatory exposure, risks,
+                                    lessons learned, fixes, asks.
   executive_summary.docx            The same summary as a one-page memo to send ahead of the meeting.
 
 Also built

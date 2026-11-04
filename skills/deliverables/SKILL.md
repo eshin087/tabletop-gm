@@ -55,17 +55,28 @@ Sign-in sheet (name, title, role played, department, times, signature) and a rol
 
 ## executive_summary.pptx and executive_summary.docx (senior management)
 
-Built by `ttx report` alongside the after-action report. Six slides:
+Built by `ttx report` alongside the after-action report. Seven slides:
 
 1. Title
 2. The bottom line: a plain sentence, the overall readiness rating, and five areas marked Good, Mixed, or Weak
 3. Regulatory exposure
 4. What worries us most: three risks
-5. What we are fixing: five actions with owners and due dates
-6. Decisions we need from leadership
+5. Lessons learned: what worked and what to improve
+6. What we are fixing: five actions with owners and due dates
+7. Decisions we need from leadership
 
-The memo is the same content on one page. No finding IDs or rubric detail.
+The memo is the same content on one page, with lessons learned in place of the risks. No finding IDs or rubric detail.
 
 ## after_action_report.docx (security team, auditors, regulators)
 
-Built by `ttx report` (or `ttx aar`) from `score.json`: the headline line, scores at a glance and by decision, regulatory exposure (each clock: limit, planned, met or missed by how many hours, owner, tier) with the plan's internal standards, gaps grouped as plan, people, and technical with citation, fix, owner, and due date, the plan coverage map (by section and by item, plus silent topics), the decision log with every score's reason, and an evidence page (approval record and hash, input hashes, documents, requirements, clocks with verification status, the exposure data behind the scenario, and the scoring rubric).
+Built by `ttx report` (or `ttx aar`) from `score.json`. Short by design: about two pages a reader can act on, then an appendix for auditors.
+
+Body:
+
+1. The headline and a one-row result: readiness rating, score, decisions scored, deadlines met, gaps to fix
+2. Lessons learned: what worked and what to improve
+3. Decision by decision: what the team decided, who decided, the score, and the main issue, one row per inject
+4. Notification deadlines: each notice, its limit, what the team planned, met or missed, and the owner
+5. Action plan: every gap, grouped so each row is one fix, with type, owner, due date, and the gap ids it closes
+
+Appendix: scores by dimension, the plan coverage map (by section, plus deviations and silent topics), the gap register with every citation, the evidence page (approval record and hash, input hashes, documents, requirements, clocks with verification status, the exposure data behind the scenario), and the scoring rubric. Demo runs (`ttx report --demo`) carry a "DEMO: synthetic responses" box at the top.

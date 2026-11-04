@@ -2,6 +2,7 @@
 
   ttx demo                        build the whole sample exercise in one step and open it
   ttx report                      after the exercise: score the tracker, write the AAR and executive summary
+  ttx report --demo               the same reports from synthetic demo responses (for a pitch)
   ttx packs                       list industry packs and their verification status
   ttx flags --industry SLUG       plain-language regulated-status questions for the intake
   ttx ingest-plan DOC... --out    extract uploaded plans to text with section anchors
@@ -68,15 +69,21 @@ def cmd_report(args) -> int:
     from .demo import open_folder
     from .report import run_report
 
-    result = run_report(args.pack, args.tracker, args.out, args.narrative, log_path=args.log)
+    result = run_report(args.pack, args.tracker, args.out, args.narrative, log_path=args.log,
+                        demo=args.demo, responses_path=args.responses)
     for note in result["notes"]:
         print(note)
+    if result["demo"]:
+        print("DEMO: scoring synthetic responses (samples/demo_responses), not a real exercise.")
     print(f"Exercise: {result['pack']}")
     print(f"Tracker:  {result['tracker']}")
     print(f"\n{result['headline']}")
     print(f"Overall readiness: {result['rating']} ({result['percent']}%)")
-    print("\nTop risks:")
-    for r in result["risks"]:
+    print("\nWhat worked:")
+    for r in result["worked"]:
+        print(f"  - {r}")
+    print("\nLessons learned (what to improve):")
+    for r in result["improve"]:
         print(f"  - {r}")
     print("\nWritten:")
     for name, path in result["files"].items():
@@ -530,7 +537,9 @@ def build_parser() -> argparse.ArgumentParser:
     s.add_argument("--tracker", help="filled tracker .xlsx or decision log .csv (default: newest filled tracker for this exercise)")
     s.add_argument("--narrative", help="optional narrative.json (headline, summary) from the scoring_aar skill")
     s.add_argument("--log", help="a live session's decision_log.json: exports it, scores it, and adds the timeline appendix")
-    s.add_argument("--out", help="output folder (default: out/report, or the log's folder with --log)")
+    s.add_argument("--out", help="output folder (default: out/report; out/report_demo with --demo; the log's folder with --log)")
+    s.add_argument("--demo", action="store_true", help="score synthetic demo responses instead of a filled tracker (for a pitch or practice run)")
+    s.add_argument("--responses", help="demo responses YAML (default: samples/demo_responses/responses.yaml)")
     s.add_argument("--open", action="store_true", help="open the folder afterwards")
     s.set_defaults(func=cmd_report)
 
