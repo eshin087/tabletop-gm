@@ -12,7 +12,7 @@ description: The four tabletop severity levels, what each tests, and what each s
 | 3 Major | Ransomware across systems, operations down | Containment, recovery, executive decisions | `outage`, `ransom_note`, `restore_order`: an outage, a ransom note, a restore-order decision |
 | 4 Crisis | Ransomware plus extortion, a key vendor down, media and regulator calling | Everything at once, communication under pressure | `three_pressures`, `public_statement`: three simultaneous pressures and a public statement |
 
-Phases follow NIST SP 800-61r3: detection, escalation, containment, recovery, notification. Inject count is fixed by duration: 5 for 60 minutes, 7 for 90, 10 for 180.
+Phases follow NIST SP 800-61r3: detection, escalation, containment, recovery, notification. Inject count is fixed by duration: 3 for 30 minutes, 5 for 60, 7 for 90. A 30-minute exercise suits an executive briefing; 60 minutes is the usual first exercise.
 
 ## Choosing a level
 

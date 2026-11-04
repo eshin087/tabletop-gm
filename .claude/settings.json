@@ -1,0 +1,15 @@
+{
+  "permissions": {
+    "allow": [
+      "PowerShell(.venv\\Scripts\\ttx.exe *)",
+      "PowerShell(.venv/Scripts/ttx.exe *)",
+      "Bash(.venv/Scripts/ttx.exe *)",
+      "Bash(.venv/bin/ttx *)",
+      "PowerShell(python scripts/bootstrap.py *)",
+      "PowerShell(py -3 scripts/bootstrap.py *)",
+      "Bash(python scripts/bootstrap.py *)",
+      "Bash(python3 scripts/bootstrap.py *)",
+      "Edit(/out/**)"
+    ]
+  }
+}

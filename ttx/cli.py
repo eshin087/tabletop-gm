@@ -1,6 +1,7 @@
 """ttx command line.
 
   ttx demo                        build the whole sample exercise in one step and open it
+  ttx report                      after the exercise: score the tracker, write the AAR and executive summary
   ttx packs                       list industry packs and their verification status
   ttx flags --industry SLUG       plain-language regulated-status questions for the intake
   ttx ingest-plan DOC... --out    extract uploaded plans to text with section anchors
@@ -60,6 +61,28 @@ def _print_result(result, as_json: bool) -> int:
 
 
 # --------------------------------------------------------------------------- #
+
+def cmd_report(args) -> int:
+    from .demo import open_folder
+    from .report import run_report
+
+    result = run_report(args.pack, args.tracker, args.out, args.narrative)
+    for note in result["notes"]:
+        print(note)
+    print(f"Exercise: {result['pack']}")
+    print(f"Tracker:  {result['tracker']}")
+    print(f"\n{result['headline']}")
+    print(f"Overall readiness: {result['rating']} ({result['percent']}%)")
+    print("\nTop risks:")
+    for r in result["risks"]:
+        print(f"  - {r}")
+    print("\nWritten:")
+    for name, path in result["files"].items():
+        print(f"  {name:<26} {path}")
+    if args.open and open_folder(result["out"]):
+        print("Opened the folder.")
+    return 0
+
 
 def cmd_demo(args) -> int:
     from .demo import open_folder, run_sample, write_guide
@@ -332,6 +355,11 @@ def cmd_build(args) -> int:
     outputs = build_all(pack, args.out, only=only, allow_draft=args.draft)
     for name, path in outputs.items():
         print(f"{name:<20} {path}")
+    if getattr(args, "open", False):
+        from .demo import open_folder
+
+        if open_folder(args.out):
+            print("Opened the folder.")
     return 0
 
 
@@ -369,6 +397,14 @@ def build_parser() -> argparse.ArgumentParser:
     p.add_argument("--version", action="version", version=f"ttx {__version__}")
     p.add_argument("--packs-dir", help="industry packs directory (default: ./skills/industry_packs)")
     sub = p.add_subparsers(dest="command", required=True)
+
+    s = sub.add_parser("report", help="after the exercise: find the filled tracker, score it, write the AAR and executive summary")
+    s.add_argument("--pack", help="approved exercise pack (default: out/exercise_pack.json)")
+    s.add_argument("--tracker", help="filled tracker .xlsx or decision log .csv (default: newest filled tracker for this exercise)")
+    s.add_argument("--narrative", help="optional narrative.json (headline, summary) from the scoring_aar skill")
+    s.add_argument("--out", help="output folder (default: out/report)")
+    s.add_argument("--open", action="store_true", help="open the folder afterwards")
+    s.set_defaults(func=cmd_report)
 
     s = sub.add_parser("demo", help="build the complete sample exercise in one step and open the folder")
     s.add_argument("--out", default="out/demo")
@@ -441,6 +477,7 @@ def build_parser() -> argparse.ArgumentParser:
     s.add_argument("--out", required=True)
     s.add_argument("--only", help="comma list: deck,guide,handout,tracker,signin,signoff")
     s.add_argument("--draft", action="store_true", help="build from an unapproved outline, watermarked DRAFT")
+    s.add_argument("--open", action="store_true", help="open the output folder afterwards")
     s.set_defaults(func=cmd_build)
 
     s = sub.add_parser("score", help="score the decision tracker")

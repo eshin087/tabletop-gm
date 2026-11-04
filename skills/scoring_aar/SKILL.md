@@ -5,13 +5,20 @@ description: The deterministic scoring rubric, gap labels, plan coverage map, an
 
 # Scoring and the after-action report
 
-## Score
+## Score and report in one step
 
 ```
-ttx score --pack out/exercise_pack.json --tracker out/build/decision_tracker.xlsx --out out/score.json
+ttx report
 ```
 
-Same tracker, same score, every time. The engine scores each recorded decision 1 to 3 on five dimensions. A dimension that does not apply is null and is left out of the totals.
+`ttx report` finds the approved exercise and the newest filled tracker for it, scores it, and writes `out/report/` in one step:
+
+- `score.json`
+- `after_action_report.docx`
+- `executive_summary.pptx`
+- `executive_summary.docx`
+
+`/tabletop-report` walks the host through it. `ttx score` and `ttx aar` remain for scripting. Same tracker, same score, every time. The engine scores each recorded decision 1 to 3 on five dimensions. A dimension that does not apply is null and is left out of the totals.
 
 | Dimension | 3 | 2 | 1 |
 |---|---|---|---|
@@ -35,11 +42,21 @@ Every gap carries an owner role and a due date (people 30 days, plan 60, technic
 
 Every org plan item is followed, deviated from, not reached, or not covered by this scenario; every recorded gap topic is silent and exercised or silent and not exercised. "Not covered" is not a failure; it tells the plan owner what the next exercise should test.
 
-## Build the report
+## The executive summary
 
-```
-ttx aar --pack out/exercise_pack.json --score out/score.json --out out/build/after_action_report.docx
-```
+Senior management gets six slides and a one-page memo built from the same content.
+
+- **Bottom line:** a plain-language sentence giving the readiness rating, the score, and the biggest exposure.
+- **Overall readiness:** Strong (85% and up), Adequate (70 to 84%), or Needs work (below 70%).
+- **Area status:** five areas, each Good (2.5 and up on the 3-point scale), Mixed (2.0 to 2.4), or Weak (below 2.0).
+- **Regulatory exposure:** missed or unplanned notices.
+- **Top three risks.**
+- **Top five fixes,** with owner and due date.
+- **Decisions needed from leadership.**
+
+It never shows finding IDs or rubric detail; the after-action report has those.
+
+## A better headline
 
 The engine writes a default headline. To write a better one, create `out/narrative.json`:
 
@@ -50,7 +67,7 @@ The engine writes a default headline. To write a better one, create `out/narrati
 }
 ```
 
-and pass `--narrative out/narrative.json`. The build rejects any number in the narrative that does not appear in the score or the pack.
+and pass `ttx report --narrative out/narrative.json`. The headline replaces the default in the after-action report and in both executive summary files. The build rejects any number in the narrative that does not appear in the score or the pack.
 
 ## How to write the narrative
 

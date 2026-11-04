@@ -12,7 +12,7 @@ It ships as a Claude Code skill (`/tabletop`) on top of a deterministic Python e
 
 ## What it does
 
-1. **Intake.** Claude interviews you one short question at a time, with clickable choices where it can. It covers organization, industry, where you operate, the data you hold, regulated status, severity 1 to 4, audience, and duration (60, 90, or 180 minutes).
+1. **Intake.** A quick-start interview: a few screens of clickable choices, with typing only for the organization's name and its US states. It covers industry, length (30, 60, or 90 minutes), severity 1 to 4, the data you hold, and regulated status. Anything not asked uses a default you can change on the summary screen.
 2. **Policy ingest (optional).** `ttx ingest-plan` extracts your plans with section anchors. Claude fills `org_plan.json`, where every item carries a verbatim quote, and the validator rejects any quote it cannot find in the source.
 3. **Data pull.** `ttx seed` picks the entry, pivot, and crown jewel from your exposure data and records the rule that fired for each.
    - The entry is an exploitable internet-facing finding, KEV first, then highest VPR.
@@ -23,7 +23,9 @@ It ships as a Claude Code skill (`/tabletop`) on top of a deterministic Python e
 5. **Outline.** `ttx outline` writes a complete, valid skeleton of the exercise. Each inject cites a finding or a labeled assumption and names the plan procedure it tests. Claude refines the narrative, then reviews it adversarially.
 6. **Approval gate.** A human approves the outline with `ttx approve`. Nothing builds before that, and any later edit breaks the approval hash.
 7. **Build.** `ttx build` produces the deck, facilitator guide, handout, decision tracker, attendance sheet, and sign-off sheet.
-8. **Score and report.** `ttx score` scores the tracker against your plan, or the pack defaults when you uploaded none. `ttx aar` writes the after-action report with gap labels, the plan coverage map, and an evidence page.
+8. **Score and report.** After the exercise, `/tabletop-report` (or `ttx report`) finds the filled tracker, scores it against your plan or the pack defaults, and writes everything in one step:
+   - the after-action report, with gap labels, the plan coverage map, and an evidence page
+   - an executive summary for senior management, as six slides and a one-page memo
 
 Industry packs shipped (`ttx packs`):
 
@@ -70,16 +72,29 @@ The first run takes a minute or two. The launcher creates a private `.venv` fold
 
 ### What happens in option 2
 
-Claude asks short questions one at a time and waits for each answer. Most have clickable choices, and "not sure" picks a sensible default. It covers:
+`/tabletop` opens with three choices: build a new exercise, score one you've run, or see the sample.
 
-- Your organization, industry, and where it operates
-- The data you hold and the regulators you answer to
-- Severity, audience, and length (60, 90, or 180 minutes)
-- Where your exposure data comes from
+**Building takes a few minutes, mostly clicks:**
 
-You can drop your IR plan, playbooks, or scan exports into the `uploads/` folder. Claude then shows you the outline: each inject, the decision it forces, who owns it, and which of your procedures it tests. Nothing is built until you approve it.
+1. Type the organization's name.
+2. Click through industry, length (30, 60, or 90 minutes), severity, and whether it's publicly traded.
+3. Type the US states it operates in.
+4. Tick the data it holds and the regulated statuses that apply.
+5. Pick the exposure data source.
+6. Review a summary screen with sensible defaults for everything else.
 
-Your documents land in `out/build/`. After the exercise, fill in the decision tracker, ask Claude to score it, and you get the after-action report.
+You can drop your IR plan, playbooks, or scan exports into the `uploads/` folder, and Claude offers to use them.
+
+Claude then shows the outline as a table: each inject, the decision it forces, who owns it, and which of your procedures it tests. Click **Approve**, **Change an inject**, **Make it easier**, or **Make it harder**. Nothing is built until you approve. The documents land in `out/build/` and the folder opens.
+
+**After the exercise:**
+
+1. Save the filled tracker into the `uploads` folder, or drag it into the chat.
+2. Type `/tabletop-report`.
+
+It scores the tracker and writes the after-action report and the executive summary into `out/report/`.
+
+The project pre-approves only Tabletop GM's own commands (`.claude/settings.json`), so Claude Code doesn't ask permission at every step. Claude Code shows these rules in its trust prompt the first time you open the folder.
 
 If you already use Claude Code, you can skip the launcher. Open the downloaded folder in Claude Code and type `/tabletop`; it installs what it needs on its own.
 
@@ -96,11 +111,12 @@ Everything the launcher and Claude do is a plain `ttx` command, and every docume
 | `deck.pptx` | The room | Title, ground rules, objectives, roles, setup, one slide per inject, hot wash, next steps. Inject slides are numbered to match the guide. Host lines are in the speaker notes. No spoilers. |
 | `facilitator_guide.docx` | Facilitator | Timing table, then per inject: host lines, the decision and its owner, a "what the plan says" box with the verbatim quote, good answers, where teams fail, expected-action checklists, hints, probing questions, and the source finding. Ends with every clock and its source. |
 | `participant_handout.docx` | Everyone | Roles, ground rules, a contact-list template, and note space. No inject content. |
-| `decision_tracker.xlsx` | Host, live | One row per inject (decision, role, minutes, notified, actions, plan step, documented) and a Clocks sheet (owner, planned hours). `ttx score` reads it. |
+| `decision_tracker.xlsx` | Host, live | One color-coded block per inject with plain questions and dropdowns: who made the call, how fast, Yes/No for each expected action and notification, plan followed, written down. Only the two optional note rows are typed. A Notification clocks sheet records who owns each notice and when they'll send it. `ttx report` reads it. |
 | `attendance_signin.xlsx`, `signoff_sheet.docx` | Audit evidence | Sign-in and roles-present sheets. The sign-off covers scope, approval record, documents exercised, requirements supported, clocks, and an attestation. |
-| `after_action_report.docx` (from `ttx aar`) | Leadership, auditors | Headline, scores by dimension and decision, and regulatory exposure: each clock met or missed by hours, plus the plan's own standards. Plan, people, and technical gaps with citation, fix, owner, and due date. Plan coverage map, decision log, and an evidence page with hashes. |
+| `after_action_report.docx` (from `ttx report`) | Security team, auditors | Headline, scores by dimension and decision, and regulatory exposure: each clock met or missed by hours, plus the plan's own standards. Plan, people, and technical gaps with citation, fix, owner, and due date. Plan coverage map, decision log, and an evidence page with hashes. |
+| `executive_summary.pptx`, `executive_summary.docx` (from `ttx report`) | Senior management | Six slides and a one-page memo: a plain-language bottom line, an overall readiness rating (Strong, Adequate, Needs work), regulatory exposure, the top three risks, the top five fixes with owners and dates, and the decisions needed from leadership. No finding IDs or rubric detail. |
 
-Option 1 in the launcher (or `ttx demo`) rebuilds the same sample into `out/demo/` with a `START_HERE.txt` guide. `samples/outputs/` holds one complete synthetic run: the documents above plus `seed.json`, `clocks.json`, `exercise_pack.json`, a synthetic completed tracker, and `score.json`. The sample scores 82.8%. Its regulatory clock line is the HIPAA media notice, missed by 60 hours. The California health department report had no owner. The sample report lists 2 plan gaps, 11 people gaps, and 3 technical gaps.
+Option 1 in the launcher (or `ttx demo`) rebuilds the same sample into `out/demo/` with a `START_HERE.txt` guide. `samples/outputs/` holds one complete synthetic run: the documents above plus `seed.json`, `clocks.json`, `exercise_pack.json`, a synthetic completed tracker, and `score.json`. The sample rates Adequate at 82.8%. Its regulatory clock line is the HIPAA media notice, planned 30 days late. The California health department report had no owner. The sample report lists 2 plan gaps, 11 people gaps, and 3 technical gaps.
 
 ## Known limitations
 
@@ -117,6 +133,8 @@ Option 1 in the launcher (or `ttx demo`) rebuilds the same sample into `out/demo
 - **The CLI never calls a model.** `ttx outline` writes template prose that is valid and buildable but generic. The tailored narrative comes from Claude in the `/tabletop` workflow.
 - **Scoring is only as good as the tracker.** It is deterministic given the tracker, but timeliness uses the minutes the host records.
 - **Samples are synthetic.** Valley Regional, its estate, its IR plan, and its completed tracker are invented. CVE identifiers are real public identifiers, used so the KEV logic means something. IP addresses use documentation ranges.
+- **Pre-approved commands depend on Claude Code's trust prompt.** Claude Code applies the project's allow rules only after you accept the trust prompt for the folder. The Windows rule's backslash path has not been confirmed in a live session; if Claude Code still asks, choose "don't ask again" once.
+- **Executive ratings use fixed thresholds.** Strong is 85% and up, Adequate is 70 to 84%, and Needs work is below 70%. Tune them to your organization's appetite in `ttx/build/exec_summary.py`.
 - **Launchers were tested on Windows only.** The Windows launcher was run from a fresh copy. The macOS and Linux launchers are plain shell scripts but have not been run on a Mac or a Linux desktop yet. macOS Gatekeeper asks for a right-click Open the first time.
 - **Only one host workflow ships.** The browser host console (`host.html`) and `ttx host` are not shipped. Run the exercise from the facilitator guide and the tracker; see Roadmap.
 

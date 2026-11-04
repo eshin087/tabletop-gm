@@ -6,7 +6,7 @@
   "required": ["title", "organization", "intake", "pack", "severity_level", "duration_minutes", "scenario", "seed", "clocks", "org_plan", "roles", "notify_parties", "ground_rules", "objectives", "injects", "hot_wash", "next_steps", "assumptions", "banner", "approval"],
   "properties": {
     "severity_level": {"enum": [1, 2, 3, 4]},
-    "duration_minutes": {"enum": [60, 90, 180]},
+    "duration_minutes": {"enum": [30, 60, 90]},
     "seed": {"$ref": "seed.schema.json"},
     "org_plan": {"$ref": "org_plan.schema.json"},
     "clocks": {
@@ -18,8 +18,8 @@
     "roles": {"type": "array", "items": {"type": "object", "required": ["id", "name"]}},
     "injects": {
       "type": "array",
-      "minItems": 5,
-      "maxItems": 10,
+      "minItems": 3,
+      "maxItems": 7,
       "items": {
         "type": "object",
         "required": ["id", "order", "phase", "time_marker", "title", "what_happens", "recipients", "decision_forced", "decision_owner_role", "procedure_tested", "what_good_looks_like", "where_teams_fail", "expected_actions", "hints", "host_lines", "source", "slide_number", "flags"],

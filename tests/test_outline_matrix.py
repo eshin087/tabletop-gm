@@ -54,7 +54,7 @@ def test_every_pack_outlines_without_a_plan(industry):
     assert pack["clocks"], f"no clocks for {industry}"
 
 
-@pytest.mark.parametrize("duration,severity", [(60, 1), (90, 2), (180, 4)])
+@pytest.mark.parametrize("duration,severity", [(30, 1), (60, 2), (90, 4)])
 def test_durations_and_severities_with_the_sample_plan(duration, severity, org_plan, tmp_path):
     intake = _intake("healthcare", duration, severity)
     intake["regulated"] = ["ca_licensed_health_facility"]
@@ -63,7 +63,7 @@ def test_durations_and_severities_with_the_sample_plan(duration, severity, org_p
     pack = build_outline(intake, seed, evaluate(intake), org_plan)
     result = validate_exercise_pack(pack)
     assert result.ok, result.summary()
-    assert len(pack["injects"]) == {60: 5, 90: 7, 180: 10}[duration]
+    assert len(pack["injects"]) == {30: 3, 60: 5, 90: 7}[duration]
     stamp_approval(pack, "test")
     built = build_all(pack, tmp_path)
     assert len(built) == 6

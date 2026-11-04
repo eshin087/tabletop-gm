@@ -19,6 +19,14 @@ The launchers (`start-windows.bat`, `start-mac.command`, `start-linux.sh`) make 
 
 The launcher never installs Claude Code. When Claude Code is missing it prints the official install commands for you to run.
 
+`.claude/settings.json` pre-approves only these commands in Claude Code, so they run without a permission prompt:
+
+- the `ttx` engine from the project's own `.venv`
+- `scripts/bootstrap.py`
+- file edits under `out/`
+
+Every other command and edit still asks. Claude Code lists these rules in its trust prompt before applying them.
+
 The guided workflow runs inside Claude Code, which has its own outbound traffic:
 
 | Call | When | What is sent |

@@ -84,7 +84,9 @@ def main(argv: list[str]) -> int:
         return 0 if st["python_ok"] and st["installed"] else 1
     ttx = setup(quiet="--quiet" in argv)
     if "--setup" in argv:
-        print(f"ttx command: {ttx}")
+        # the short form is what the project's permission rules pre-approve
+        short = ".venv\\Scripts\\ttx.exe" if os.name == "nt" else ".venv/bin/ttx"
+        print(f"ttx command (run from the repository root): {short}")
         return 0
     launcher = REPO / "scripts" / "launcher.py"
     return subprocess.run([str(venv_python()), str(launcher)] + [a for a in argv if a != "--quiet"], cwd=REPO).returncode

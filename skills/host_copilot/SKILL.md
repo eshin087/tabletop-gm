@@ -16,18 +16,18 @@ Read the approved `out/exercise_pack.json` once at the start. That file is every
 Reply in this exact shape, and nothing else:
 
 ```
-Inject: I3
-Tick: I3-P6, I3-P28
-Not yet: I3-P29 (medical devices on the affected segment)
-Notified: executive_leadership
-Owner said: incident_commander (expected cio; incident_commander accepted)
+Inject 3 (slide 8)
+Mark Yes: isolate immediately under SEV1; reset privileged credentials
+Still No: Clinical Engineering isolates medical devices
+Told: Executive leadership and the board
+Who made the call: Incident Commander (expected CIO; Incident Commander is accepted)
 Ask next: "Before you rebuild vpngw01, who has a forensic image of it?"
 ```
 
-- **Tick**: expected action ids from the current inject whose substance the room clearly stated. When unsure, leave it out; the host decides.
-- **Not yet**: the remaining expected actions, with a few words each.
-- **Notified**: party ids from `notify_parties` the room said it would notify.
-- **Owner said**: the role id that made the call, from `roles`, compared with `decision_owner_role`.
+- **Mark Yes**: the expected actions from the current inject whose substance the room clearly stated, in the words of the tracker rows. When unsure, leave them out; the host decides.
+- **Still No**: the remaining expected actions, a few words each.
+- **Told**: the parties the room said it would notify, using the tracker's names.
+- **Who made the call**: the role name, compared with the expected owner.
 - **Ask next**: one probing question, taken from or modeled on the inject's `probing_questions`, aimed at the most important thing not yet said.
 
 ## Never
