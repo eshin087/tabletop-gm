@@ -43,6 +43,7 @@ Greet the person in one sentence, then ask with the AskUserQuestion tool (one qu
 
 - **Build a new exercise** (recommended): go to step 1.
 - **After the exercise: score it and write the reports**: follow `.claude/skills/tabletop-report/SKILL.md` from its first step. It is the same as typing `/tabletop-report`.
+- **Run an exercise live in this chat**: Claude facilitates with the chat on the projector. Follow `skills/facilitate/SKILL.md` from its first step. It offers the built-in sample when no exercise has been built yet.
 - **See a finished sample first**: run `ttx demo`, tell them the folder opened and to start with `START_HERE.txt`, then ask this question again.
 
 If their first message already says what they want, skip the question.
@@ -189,7 +190,7 @@ Two ways to run the exercise:
 
 **A. In the room with the deck.** The deck goes on the projector. The facilitator runs from `facilitator_guide.docx` and records decisions in `decision_tracker.xlsx`. If the facilitator wants a private co-host in this chat, follow `skills/host_copilot/SKILL.md`.
 
-**B. Live in this chat.** No deck: the chat itself goes on the projector, Claude presents one inject at a time, the host types the room's decisions, and `ttx log` records them. Tell the person to open a **fresh Claude Code session** in this folder on exercise day, say "Run the exercise live", and Claude follows `skills/facilitate/SKILL.md`. Running it in this prep chat would put the expected answers and the scoring notes in front of the room.
+**B. Live in chat.** No deck: the chat goes on the projector, Claude presents one inject at a time, the host types the room's decisions, and `ttx log` records them. Tell the person, in one line: on exercise day, open a new chat in this folder, type `/tabletop`, and choose "Run an exercise live". It must be a new chat, because this one holds the expected answers.
 
 ### 9. Score and report
 

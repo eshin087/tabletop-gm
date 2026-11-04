@@ -2,6 +2,7 @@
 
   1  See a finished sample exercise (no account, no internet)
   2  Build an exercise for my organization (opens Claude Code with /tabletop)
+  3  Run an exercise live in chat (opens Claude Code; Claude facilitates)
 
 Non-interactive use (tests, scripts):  launcher.py --choice demo [--no-open]
 """
@@ -19,15 +20,15 @@ sys.path.insert(0, str(REPO))
 
 CLAUDE_PROMPT = ("Use the tabletop skill (/tabletop) to build a cybersecurity tabletop exercise for my organization. "
                  "Start with the intake interview.")
+CLAUDE_LIVE_PROMPT = "Use the tabletop skill (/tabletop) and choose: Run an exercise live in this chat."
 INSTALL_HELP = """
 Claude Code is not installed (or not on your PATH).
 
-Option 2 uses Claude Code to interview you, read your plans, and write the scenario.
-It needs a Claude account. To install it:
+Options 2 and 3 use Claude Code, which needs a Claude account. To install it:
   Windows (PowerShell):   irm https://claude.ai/install.ps1 | iex
   macOS or Linux:         curl -fsSL https://claude.ai/install.sh | bash
   Setup guide:            https://code.claude.com/docs/en/setup
-Then run this launcher again and choose 2.
+Then run this launcher again.
 
 Already use the Claude desktop app? Open this folder in its Code tab and type /tabletop.
 Meanwhile, option 1 shows a complete sample exercise with no account needed.
@@ -54,7 +55,7 @@ def run_demo(open_after: bool = True, out: Path | None = None) -> int:
     return 0
 
 
-def run_claude() -> int:
+def run_claude(live: bool = False) -> int:
     claude = shutil.which("claude")
     if not claude:
         print(INSTALL_HELP)
@@ -62,6 +63,10 @@ def run_claude() -> int:
     env = dict(os.environ)
     bindir = str(Path(sys.executable).parent)
     env["PATH"] = bindir + os.pathsep + env.get("PATH", "")  # so `ttx` resolves inside Claude Code
+    if live:
+        print("\nStarting Claude Code in this folder. Put this window on the projector.")
+        print("Claude runs the exercise one step at a time; you type what the room decides. Type /exit to leave.\n")
+        return subprocess.run([claude, CLAUDE_LIVE_PROMPT], cwd=REPO, env=env).returncode
     print("\nStarting Claude Code in this folder. It will interview you, then build the exercise.")
     print("Nothing is built until you approve the outline. Type /exit to leave Claude Code.\n")
     return subprocess.run([claude, CLAUDE_PROMPT], cwd=REPO, env=env).returncode
@@ -72,16 +77,19 @@ def menu() -> int:
     while True:
         print("  1  See a finished sample exercise (no account needed)")
         print("  2  Build an exercise for my organization (uses Claude Code)")
+        print("  3  Run an exercise live in chat (uses Claude Code)")
         print("  Q  Quit\n")
-        choice = input("Choose 1, 2, or Q: ").strip().lower()
+        choice = input("Choose 1, 2, 3, or Q: ").strip().lower()
         if choice in {"1", "demo"}:
             run_demo()
         elif choice in {"2", "build"}:
             run_claude()
+        elif choice in {"3", "live"}:
+            run_claude(live=True)
         elif choice in {"q", "quit", "exit", ""}:
             return 0
         else:
-            print("Please type 1, 2, or Q.\n")
+            print("Please type 1, 2, 3, or Q.\n")
             continue
         print()
 
@@ -94,7 +102,9 @@ def main(argv: list[str]) -> int:
             return run_demo(open_after="--no-open" not in argv, out=out)
         if choice == "build":
             return run_claude()
-        print(f"unknown choice {choice}; use demo or build")
+        if choice == "live":
+            return run_claude(live=True)
+        print(f"unknown choice {choice}; use demo, build, or live")
         return 2
     try:
         return menu()

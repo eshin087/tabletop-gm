@@ -292,3 +292,14 @@ def test_log_commands_from_the_cli(tmp_path):
     assert "Called the Incident Commander within 8 minutes" in _docx_text(tmp_path / "aar.docx")
     log = read_json(tmp_path / "live" / "decision_log.json")
     assert [e["type"] for e in log["entries"]] == ["mark", "decision", "decision", "note", "clocks", "decision"]
+
+
+def test_report_with_log_writes_the_whole_record_set_in_one_step(tmp_path):
+    out = tmp_path / "live"
+    r = _run("report", "--log", "samples/live/poor/decision_log.json", "--out", str(out))
+    assert r.returncode == 0, r.stdout + r.stderr
+    for name in ("decisions.csv", "decisions_clocks.csv", "score.json", "after_action_report.docx",
+                 "executive_summary.pptx", "executive_summary.docx"):
+        assert (out / name).exists(), name
+    assert read_json(out / "score.json")["summary"]["percent"] == 39.3
+    assert "Appendix: decision timeline" in _docx_text(out / "after_action_report.docx")
