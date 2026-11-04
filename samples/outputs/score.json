@@ -1,10 +1,11 @@
 {
   "schema_version": "1",
   "inputs": {
-    "exercise_pack_hash": "b444028205cceb8aad4d45f5451163d024b245b2cafe3a1196cb252aa6feb5e2",
-    "approval_hash": "b444028205cceb8aad4d45f5451163d024b245b2cafe3a1196cb252aa6feb5e2",
+    "exercise_pack_hash": "589ce6fc14bbcc7651e4d5b2b4d78a497330074a79567e639f99a3ce4f8a40a4",
+    "approval_hash": "589ce6fc14bbcc7651e4d5b2b4d78a497330074a79567e639f99a3ce4f8a40a4",
     "tracker_file": "decision_tracker_completed.xlsx",
-    "tracker_sha256": "80d86582080dd81308660be024ae405c9838884a8c95aaaeb03af7c8b30eb366",
+    "tracker_sha256": "d41154faadaed99cf34e12a652e2258bfdf9ae87dae620e450047e26718acc67",
+    "tracker_matches_pack": true,
     "incident_file": null
   },
   "rubric": {
@@ -81,7 +82,7 @@
       },
       "reasons": {
         "right_owner": "decided by Director of Security Operations",
-        "timely": "25 minutes against a 15-minute commitment",
+        "timely": "30 minutes against a 15-minute commitment",
         "escalation_notification": "no notifications expected at this inject",
         "documented": "partly documented",
         "followed_plan": "2 of 3 expected actions"
@@ -128,7 +129,7 @@
       },
       "reasons": {
         "right_owner": "decided by Incident Commander",
-        "timely": "20 minutes against a 30-minute commitment",
+        "timely": "30 minutes against a 30-minute commitment",
         "escalation_notification": "2 of 3 expected parties notified",
         "documented": "decision recorded and documented",
         "followed_plan": "3 of 3 expected actions"
@@ -183,7 +184,7 @@
       },
       "reasons": {
         "right_owner": "decided by Incident Commander",
-        "timely": "45 minutes against a 30-minute commitment",
+        "timely": "60 minutes against a 30-minute commitment",
         "escalation_notification": "1 of 1 expected parties notified",
         "documented": "decision recorded and documented",
         "followed_plan": "2 of 3 expected actions; plan step followed in part"
@@ -234,7 +235,7 @@
       },
       "reasons": {
         "right_owner": "decided by Chief Financial Officer; expected Chief Executive Officer",
-        "timely": "14 minutes of a 10-minute budget (no plan commitment)",
+        "timely": "15 minutes of a 10-minute budget (no plan commitment)",
         "escalation_notification": "1 of 1 expected parties notified",
         "documented": "not documented",
         "followed_plan": "the plan is silent on this decision; scored as a plan gap instead"
@@ -285,7 +286,7 @@
       },
       "reasons": {
         "right_owner": "decided by Chief Information Officer",
-        "timely": "9 minutes of a 10-minute budget (no plan commitment)",
+        "timely": "10 minutes of a 10-minute budget (no plan commitment)",
         "escalation_notification": "1 of 1 expected parties notified",
         "documented": "decision recorded and documented",
         "followed_plan": "2 of 3 expected actions"
@@ -395,7 +396,7 @@
       },
       "reasons": {
         "right_owner": "decided by Chief Executive Officer",
-        "timely": "12 minutes of a 10-minute budget (no plan commitment)",
+        "timely": "15 minutes of a 10-minute budget (no plan commitment)",
         "escalation_notification": "2 of 2 expected parties notified",
         "documented": "decision recorded and documented",
         "followed_plan": "2 of 3 expected actions"
@@ -434,19 +435,19 @@
       "name": "California, sample copy of the breach notification to the Attorney General (more than 500 residents)",
       "regulator": "California Attorney General",
       "deadline_text": "shall electronically submit a single sample copy of that security breach notification, excluding any personally identifiable information, to the Attorney General within 15 calendar days of notifying affected consumers of the security breach",
-      "deadline_hours": 1060.0,
+      "deadline_hours": 1080.0,
       "deadline_is_business_day_approximation": false,
       "tier": "researched",
       "verified_date": "2026-11-03",
       "source_url": "https://leginfo.legislature.ca.gov/faces/codes_displaySection.xhtml?lawCode=CIV&sectionNum=1798.82",
       "citation": "Cal. Civ. Code 1798.82(f)",
       "owner_role": "general_counsel",
-      "planned_notify_hours": 1000.0,
+      "planned_notify_hours": 360.0,
       "basis": "tracker planned_notify_hours",
       "after_clock": "state_ca_individual_notice",
       "status": "met",
       "met": true,
-      "margin_hours": 60.0
+      "margin_hours": 720.0
     },
     {
       "clock_id": "ca_health_facility_unauthorized_access_15bd",
@@ -479,12 +480,12 @@
       "source_url": "https://leginfo.legislature.ca.gov/faces/codes_displaySection.xhtml?lawCode=CIV&sectionNum=1798.82",
       "citation": "Cal. Civ. Code 1798.82(a)(2)(A)",
       "owner_role": "privacy_officer",
-      "planned_notify_hours": 700.0,
+      "planned_notify_hours": 720.0,
       "basis": "tracker planned_notify_hours",
       "after_clock": null,
       "status": "met",
       "met": true,
-      "margin_hours": 20.0
+      "margin_hours": 0.0
     },
     {
       "clock_id": "hipaa_hhs_notice_500_or_more",
@@ -498,12 +499,12 @@
       "source_url": "https://www.ecfr.gov/current/title-45/subtitle-A/subchapter-C/part-164/subpart-D/section-164.408",
       "citation": "45 CFR 164.408(b)",
       "owner_role": "general_counsel",
-      "planned_notify_hours": 1200.0,
+      "planned_notify_hours": 1440.0,
       "basis": "tracker planned_notify_hours",
       "after_clock": null,
       "status": "met",
       "met": true,
-      "margin_hours": 240.0
+      "margin_hours": 0.0
     },
     {
       "clock_id": "hipaa_individual_notice",
@@ -517,18 +518,18 @@
       "source_url": "https://www.ecfr.gov/current/title-45/subtitle-A/subchapter-C/part-164/subpart-D/section-164.404",
       "citation": "45 CFR 164.404(b)",
       "owner_role": "privacy_officer",
-      "planned_notify_hours": 700.0,
+      "planned_notify_hours": 720.0,
       "basis": "tracker planned_notify_hours",
       "after_clock": null,
       "status": "met",
       "met": true,
-      "margin_hours": 740.0,
+      "margin_hours": 720.0,
       "internal_deadline_hours": 1080.0,
       "internal_source": "P25",
       "internal_quote": "VRHS's internal standard is to issue individual notifications within 45 calendar days of discovery, which is stricter than the regulatory outer limit.",
       "internal_section": "5.2",
       "internal_met": true,
-      "internal_margin_hours": 380.0
+      "internal_margin_hours": 360.0
     },
     {
       "clock_id": "hipaa_media_notice",
@@ -542,12 +543,12 @@
       "source_url": "https://www.ecfr.gov/current/title-45/subtitle-A/subchapter-C/part-164/subpart-D/section-164.406",
       "citation": "45 CFR 164.406",
       "owner_role": "communications",
-      "planned_notify_hours": 1500.0,
+      "planned_notify_hours": 2160.0,
       "basis": "tracker planned_notify_hours",
       "after_clock": null,
       "status": "missed",
       "met": false,
-      "margin_hours": -60.0
+      "margin_hours": -720.0
     }
   ],
   "gaps": [
@@ -567,7 +568,7 @@
       "id": "GAP2",
       "label": "people",
       "inject_id": "I1",
-      "finding": "Slower than the plan's commitment: 25 minutes against a 15-minute commitment.",
+      "finding": "Slower than the plan's commitment: 30 minutes against a 15-minute commitment.",
       "citation": "IR Plan section 4.1: \"Security Operations notifies the Incident Commander within 15 minutes of identifying a suspected SEV1 or SEV2 incident.\"",
       "fix": "Rehearse this escalation step against the clock; confirm the on-call path reaches the named role in time.",
       "owner_role": "security_operations",
@@ -601,7 +602,7 @@
       "id": "GAP5",
       "label": "people",
       "inject_id": "I3",
-      "finding": "Slower than the plan's commitment: 45 minutes against a 30-minute commitment.",
+      "finding": "Slower than the plan's commitment: 60 minutes against a 30-minute commitment.",
       "citation": "IR Plan section 2.3: \"In a SEV1 incident the Incident Commander may isolate a system immediately and must notify the CIO within 30 minutes of doing so.\"",
       "fix": "Rehearse this escalation step against the clock; confirm the on-call path reaches the named role in time.",
       "owner_role": "cio",
@@ -693,7 +694,7 @@
       "id": "GAP13",
       "label": "people",
       "inject_id": "I6",
-      "finding": "HIPAA Breach Notification Rule, notice to prominent media outlets: planned at 1500 hours against a 1440-hour limit, missed by 60 hours.",
+      "finding": "HIPAA Breach Notification Rule, notice to prominent media outlets: planned at 90 days against a 60 days limit, missed by 30 days.",
       "citation": "45 CFR 164.406 (researched tier; source on the evidence page)",
       "fix": "Name the owner for this clock in the plan, pre-draft the notice, and put the deadline in the incident checklist.",
       "owner_role": "communications",
@@ -1513,5 +1514,5 @@
     ]
   },
   "plan_source": "org_plan",
-  "headline": "VRHS scored 82.8% across 7 decisions; strongest on right owner, weakest on timely; HIPAA Breach Notification Rule, notice to prominent media outlets missed by 60 hours. 2 plan, 11 people, and 3 technical gaps."
+  "headline": "VRHS scored 82.8% across 7 decisions; strongest on right owner, weakest on timely; HIPAA Breach Notification Rule, notice to prominent media outlets missed by 30 days. 2 plan, 11 people, and 3 technical gaps."
 }

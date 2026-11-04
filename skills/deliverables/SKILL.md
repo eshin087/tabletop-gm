@@ -31,12 +31,41 @@ Date and place, objectives, ground rules, the roles table with a "played by" col
 
 ## decision_tracker.xlsx (the host, live)
 
-`Decisions`: one row per inject with yellow input cells for decision, deciding role (dropdown), discussion minutes, scenario minutes, parties notified, expected action ids completed, plan step followed (yes, partial, no, plan_unclear, n/a), documented, notes. `Clocks`: owner role and planned notification hours per clock. Reference sheets: expected actions, roles, parties, instructions. `ttx score` reads it.
+Built for the host to fill in fast, with dropdowns everywhere except two optional note rows.
+
+`Host tracker` has one color-coded block per inject, headed with its slide number and time. The questions are:
+
+- Who made the call? (role names)
+- How fast did they say they would act? (Immediately through Next day or later)
+- Minutes the room spent on this inject
+- Yes/No for each expected action
+- Yes/No for each expected notification
+- Did they follow the plan? (Yes, Partly, No, The plan was unclear, Not applicable)
+- Was the decision written down?
+
+Each row shows the expected owner or plan reference beside it. Yes turns green and No turns red.
+
+`Notification clocks` has one row per notice, with who owns it and when they will send it (Within 24 hours through Within 90 days; typed values like "Within 50 days" also work).
+
+Hidden sheets hold the dropdown lists and the exercise's approval hash, so `ttx report` can match the tracker to its exercise.
 
 ## attendance_signin.xlsx and signoff_sheet.docx (audit evidence)
 
 Sign-in sheet (name, title, role played, department, times, signature) and a roles-present sheet. The sign-off sheet records scope, the approval record, documents exercised, requirements the exercise supports, clocks exercised with tiers, an attestation, and signature lines for the facilitator, the executive sponsor, and the plan owner.
 
-## after_action_report.docx (leadership, auditors, regulators)
+## executive_summary.pptx and executive_summary.docx (senior management)
 
-Built by `ttx aar` from `score.json`: the headline line, scores at a glance and by decision, regulatory exposure (each clock: limit, planned, met or missed by how many hours, owner, tier) with the plan's internal standards, gaps grouped as plan, people, and technical with citation, fix, owner, and due date, the plan coverage map (by section and by item, plus silent topics), the decision log with every score's reason, and an evidence page (approval record and hash, input hashes, documents, requirements, clocks with verification status, the exposure data behind the scenario, and the scoring rubric).
+Built by `ttx report` alongside the after-action report. Six slides:
+
+1. Title
+2. The bottom line: a plain sentence, the overall readiness rating, and five areas marked Good, Mixed, or Weak
+3. Regulatory exposure
+4. What worries us most: three risks
+5. What we are fixing: five actions with owners and due dates
+6. Decisions we need from leadership
+
+The memo is the same content on one page. No finding IDs or rubric detail.
+
+## after_action_report.docx (security team, auditors, regulators)
+
+Built by `ttx report` (or `ttx aar`) from `score.json`: the headline line, scores at a glance and by decision, regulatory exposure (each clock: limit, planned, met or missed by how many hours, owner, tier) with the plan's internal standards, gaps grouped as plan, people, and technical with citation, fix, owner, and due date, the plan coverage map (by section and by item, plus silent topics), the decision log with every score's reason, and an evidence page (approval record and hash, input hashes, documents, requirements, clocks with verification status, the exposure data behind the scenario, and the scoring rubric).

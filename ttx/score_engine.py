@@ -94,25 +94,33 @@ DECISION_INPUTS = ["decision", "decided_by_role", "discussion_minutes", "scenari
 
 def _recorded(row: dict) -> bool:
     """A prefilled row with every input cell empty means the inject was not reached."""
-    return any(_clean(row.get(c)) not in (None, "") for c in DECISION_INPUTS)
+    return bool(row.get("_answered")) or any(_clean(row.get(c)) not in (None, "") for c in DECISION_INPUTS)
 
 
 def read_tracker(path: str | Path) -> dict:
-    """Return {"decisions": {inject_id: row}, "clocks": {clock_id: row}}."""
-    decisions, clocks = _read_tracker_raw(path)
-    return {"decisions": {k: v for k, v in decisions.items() if _recorded(v)}, "clocks": clocks}
+    """Return {"decisions": {inject_id: row}, "clocks": {clock_id: row}, "meta": {...}}.
+
+    Accepts the host tracker built by ttx build (Host tracker sheet), the earlier
+    one-row-per-inject layout (Decisions sheet), or a CSV decision log.
+    """
+    decisions, clocks, meta = _read_tracker_raw(path)
+    return {"decisions": {k: v for k, v in decisions.items() if _recorded(v)}, "clocks": clocks, "meta": meta}
 
 
-def _read_tracker_raw(path: str | Path) -> tuple[dict, dict]:
+def _read_tracker_raw(path: str | Path) -> tuple[dict, dict, dict]:
     p = Path(path)
     decisions: dict[str, dict] = {}
     clocks: dict[str, dict] = {}
     if p.suffix.lower() == ".xlsx":
         from openpyxl import load_workbook
 
-        wb = load_workbook(p, data_only=True, read_only=True)
+        from .build.tracker import is_host_tracker, read_host_tracker
+
+        wb = load_workbook(p, data_only=True)
+        if is_host_tracker(wb):
+            return read_host_tracker(wb)
         if "Decisions" not in wb.sheetnames:
-            raise ValueError(f"{p.name} has no 'Decisions' sheet; build the tracker with ttx build")
+            raise ValueError(f"{p.name} is not a Tabletop GM decision tracker; use the decision_tracker.xlsx from ttx build")
         for row in _rows_from_sheet(wb["Decisions"]):
             if row.get("inject_id"):
                 decisions[str(row["inject_id"])] = row
@@ -120,7 +128,6 @@ def _read_tracker_raw(path: str | Path) -> tuple[dict, dict]:
             for row in _rows_from_sheet(wb["Clocks"]):
                 if row.get("clock_id"):
                     clocks[str(row["clock_id"])] = row
-        wb.close()
     elif p.suffix.lower() == ".csv":
         with open(p, "r", encoding="utf-8-sig", newline="") as fh:
             for row in csv.DictReader(fh):
@@ -136,7 +143,7 @@ def _read_tracker_raw(path: str | Path) -> tuple[dict, dict]:
                         clocks[str(row["clock_id"])] = row
     else:
         raise ValueError("tracker must be the .xlsx built by ttx build or a .csv decision log")
-    return decisions, clocks
+    return decisions, clocks, {}
 
 
 # --------------------------------------------------------------------------- #
@@ -198,6 +205,17 @@ def _action_item_id(action: dict) -> str | None:
     if src.startswith("org_plan:"):
         return src.split(":", 1)[1]
     return None
+
+
+def hours_words(hours: float | None) -> str:
+    """72 -> '72 hours'; 720 -> '30 days'; 60 -> '60 hours'. Days from 48 hours up."""
+    if hours is None:
+        return "unknown"
+    h = float(hours)
+    if h >= 48:
+        days = h / 24.0
+        return f"{days:g} days" if days == int(days) else f"{days:.1f} days"
+    return f"{h:g} hours"
 
 
 def _ratio_score(hit: int, total: int) -> int:
@@ -521,7 +539,7 @@ def _gaps(pack: dict, inject_results: list[dict], clock_results: list[dict]) -> 
     starter = next((j["id"] for j in pack.get("injects", []) if as_list((j.get("flags") or {}).get("starts_clock"))), None)
     for c in clock_results:
         if c["status"] == "missed":
-            add("people", starter, f"{c['name']}: planned at {c['planned_notify_hours']:g} hours against a {c['deadline_hours']:g}-hour limit, missed by {abs(c['margin_hours']):g} hours.",
+            add("people", starter, f"{c['name']}: planned at {hours_words(c['planned_notify_hours'])} against a {hours_words(c['deadline_hours'])} limit, missed by {hours_words(abs(c['margin_hours']))}.",
                 f"{c['citation']} ({c['tier']} tier; source on the evidence page)",
                 "Name the owner for this clock in the plan, pre-draft the notice, and put the deadline in the incident checklist.",
                 c.get("owner_role") or _plan_owner_role(pack), FIX_DAYS["people"], clock_id=c["clock_id"])
@@ -634,7 +652,7 @@ def _headline(pack: dict, summary: dict, clock_results: list[dict], gaps: list[d
     unplanned = [c for c in clock_results if c["status"] == "not_planned"]
     if missed:
         c = missed[0]
-        clock_line = f"{c['name']} missed by {abs(c['margin_hours']):g} hours"
+        clock_line = f"{c['name']} missed by {hours_words(abs(c['margin_hours']))}"
     elif unplanned:
         clock_line = f"{unplanned[0]['name']} had no plan or owner"
     elif clock_results:
@@ -686,6 +704,8 @@ def score_tracker(pack: dict, tracker_path: str | Path, incident_file: str | Pat
             "approval_hash": (pack.get("approval") or {}).get("outline_hash"),
             "tracker_file": Path(tracker_path).name,
             "tracker_sha256": sha256_file(tracker_path),
+            "tracker_matches_pack": (tracker["meta"].get("outline_hash") == (pack.get("approval") or {}).get("outline_hash"))
+                                    if tracker.get("meta", {}).get("outline_hash") else None,
             "incident_file": Path(incident_file).name if incident_file else None,
         },
         "rubric": RUBRIC,

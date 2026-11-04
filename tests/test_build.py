@@ -86,15 +86,25 @@ def test_guide_carries_plan_quotes_sources_and_banner(sample_pack, built):
         assert c["source_url"] in text
 
 
-def test_tracker_columns_match_score_engine(sample_pack, built):
-    from ttx.score_engine import CLOCK_COLUMNS, DECISION_COLUMNS
-
+def test_tracker_has_a_row_for_every_question(sample_pack, built):
     out, _ = built
     wb = load_workbook(out / "decision_tracker.xlsx")
-    assert [c.value for c in wb["Decisions"][1]] == DECISION_COLUMNS
-    assert [c.value for c in wb["Clocks"][1]] == CLOCK_COLUMNS
-    assert wb["Decisions"].max_row == 1 + len(sample_pack["injects"])
-    assert wb["Clocks"].max_row == 1 + len(sample_pack["clocks"])
+    assert wb.sheetnames[:2] == ["Host tracker", "Notification clocks"]
+    assert wb["Lists"].sheet_state == "hidden"
+    keys = {str(r[0].value) for r in wb["Host tracker"].iter_rows() if r[0].value}
+    for inj in sample_pack["injects"]:
+        for field in ("header", "decided_by", "speed", "discussion", "plan_step", "documented", "decision", "notes"):
+            assert f"{inj['id']}|{field}" in keys
+        for a in inj["expected_actions"]:
+            assert f"{inj['id']}|action|{a['id']}" in keys
+        for n in inj["expected_notifications"]:
+            assert f"{inj['id']}|notify|{n}" in keys
+    clock_ids = {r[0].value for r in wb["Notification clocks"].iter_rows(min_row=5) if r[0].value}
+    assert clock_ids == {c["id"] for c in sample_pack["clocks"]}
+    role_names = [c.value for c in wb["Lists"]["A"][1:] if c.value]
+    assert role_names == [r["name"] for r in sample_pack["roles"]]
+    # the host never has to type an id: every dropdown is a plain-language list
+    assert all(len(dv.sqref.ranges) >= 1 for dv in wb["Host tracker"].data_validations.dataValidation)
 
 
 def test_signoff_lists_documents_and_clocks(sample_pack, built):

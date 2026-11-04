@@ -1,0 +1,23 @@
+# The host tracker built by ttx build (decision_tracker.xlsx). Column A of the
+# visible sheets holds hidden keys; column C (Host tracker) or D and E
+# (Notification clocks) hold the host's answers. ttx/build/tracker.py defines the
+# dropdown values below and maps them to the engine values score_engine uses.
+# The CSV decision log (tracker_columns.yaml) is a separate, unchanged format.
+
+host_tracker_keys:          # one block per inject
+  - "<inject>|header"
+  - "<inject>|decided_by"        # role name -> role id
+  - "<inject>|speed"             # how fast they said they would act -> scenario_minutes
+  - "<inject>|discussion"        # minutes the room spent -> discussion_minutes
+  - "<inject>|action|<action id>"   # Yes or No, one row per expected action
+  - "<inject>|notify|<party id>"    # Yes or No, one row per expected notification
+  - "<inject>|plan_step"         # -> plan_step_followed
+  - "<inject>|documented"
+  - "<inject>|decision"          # optional typed note
+  - "<inject>|notes"             # optional typed note
+
+speed:            {Immediately: 5, Within 15 minutes: 15, Within 30 minutes: 30, Within 1 hour: 60, Within 4 hours: 240, Same day: 720, Next day or later: 1440, Not stated: null}
+discussion:       [5, 10, 15, 20, 30, 45]
+plan_step:        {"Yes": "yes", "Partly": "partial", "No": "no", "The plan was unclear": "plan_unclear", "Not applicable": "n/a"}
+documented:       {"Yes": "yes", "Partly": "partial", "No": "no"}
+clock_timing:     {Within 24 hours: 24, Within 72 hours: 72, Within 7 days: 168, Within 15 days: 360, Within 30 days: 720, Within 45 days: 1080, Within 60 days: 1440, Within 90 days: 2160, Not planned: null}

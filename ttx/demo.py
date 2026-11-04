@@ -15,59 +15,59 @@ into samples/outputs.
 
 from __future__ import annotations
 
-import shutil
 from pathlib import Path
 
 from .common import REPO_ROOT, read_json, read_yaml, write_json
 
 SAMPLES = REPO_ROOT / "samples"
 
-# What a host might record during the exercise. Action entries name the plan item
-# (P16) or pack default (d1) and are matched to the inject's expected action ids.
+# What a host might pick in the tracker during the exercise (dropdown text, as the host sees it).
+# Action entries name the plan item (P16) or pack default (d1); they are matched to the inject's
+# expected action ids. Every answer below is invented for the sample.
 DECISIONS = {
     "detection": dict(
+        decided_by="security_operations", speed="Within 30 minutes", discussion="10", actions=["P16", "d1"], notified=[],
+        plan_step="Yes", documented="Partly",
         decision="Analyst confirmed the session against firewall logs and paged the Director of Security Operations, who called the CISO.",
-        decided_by_role="security_operations", discussion_minutes=8, scenario_minutes=25, notified="",
-        actions=["P16", "d1"], plan_step_followed="yes", documented="partial",
         notes="No incident record opened until the CISO asked for one."),
     "escalation": dict(
+        decided_by="incident_commander", speed="Within 30 minutes", discussion="10", actions=["P35", "P17", "P18"],
+        notified=["executive_leadership", "legal_counsel"], plan_step="Yes", documented="Yes",
         decision="CISO declared SEV1 and requested Hospital Command Center activation; CIO and Privacy Officer called; CIO briefed the CEO and General Counsel.",
-        decided_by_role="incident_commander", discussion_minutes=9, scenario_minutes=20, notified="executive_leadership, legal_counsel",
-        actions=["P35", "P17", "P18"], plan_step_followed="yes", documented="yes",
         notes="Nobody called the cyber insurer; General Counsel assumed the CFO would."),
     "containment": dict(
+        decided_by="incident_commander", speed="Within 1 hour", discussion="15", actions=["P6", "P28"],
+        notified=["executive_leadership"], plan_step="Partly", documented="Yes",
         decision="CISO isolated vpngw01 under SEV1 authority but kept dc1 online on the vendor's word that the gateway was patched; privileged credential resets started.",
-        decided_by_role="incident_commander", discussion_minutes=12, scenario_minutes=45, notified="executive_leadership",
-        actions=["P6", "P28"], plan_step_followed="partial", documented="yes",
         notes="Medical devices on the affected segment were not discussed."),
     "tradeoff": dict(
+        decided_by="cfo", speed="Not stated", discussion="15", actions=["P34", "P21"], notified=["executive_leadership"],
+        plan_step="Not applicable", documented="No",
         decision="No decision on payment. The CFO opened contact with the insurer's negotiator before counsel joined; the room could not say who may talk to the attacker.",
-        decided_by_role="cfo", discussion_minutes=14, scenario_minutes=40, notified="executive_leadership",
-        actions=["P34", "P21"], plan_step_followed="n/a", documented="no",
         notes="Ransom note preserved. Downtime procedures activated by the CNO."),
     "recovery": dict(
+        decided_by="cio", speed="Not stated", discussion="10", actions=["P32", "P31"], notified=["executive_leadership"],
+        plan_step="Yes", documented="Yes",
         decision="CIO approved restoring Active Directory first and the EHR database second, after the Director of Infrastructure confirmed the backup predates the compromise.",
-        decided_by_role="cio", discussion_minutes=9, scenario_minutes=None, notified="executive_leadership",
-        actions=["P32", "P31"], plan_step_followed="yes", documented="yes",
         notes="No one could state the EHR recovery time objective; no test restore this year."),
     "notification": dict(
+        decided_by="general_counsel", speed="Not stated", discussion="10", actions=["P26", "P25", "P23"],
+        notified=["hhs_ocr", "fbi", "cyber_insurer", "patients"], plan_step="Partly", documented="Yes",
         decision="General Counsel owns the regulatory notices and the Privacy Officer owns patient letters; FBI and insurer notified. Nobody took the state health department report.",
-        decided_by_role="general_counsel", discussion_minutes=11, scenario_minutes=None, notified="hhs_ocr, fbi, cyber_insurer, patients",
-        actions=["P26", "P25", "P23"], plan_step_followed="partial", documented="yes",
         notes="Team debated whether data was really taken before starting the clock."),
     "public": dict(
+        decided_by="ceo", speed="Within 1 hour", discussion="15", actions=["P42", "P43"],
+        notified=["executive_leadership", "legal_counsel"], plan_step="Yes", documented="Yes",
         decision="Communications drafted a holding statement from the template, General Counsel reviewed it, and the CEO approved it.",
-        decided_by_role="ceo", discussion_minutes=12, scenario_minutes=50, notified="executive_leadership, legal_counsel",
-        actions=["P42", "P43"], plan_step_followed="yes", documented="yes",
         notes="Staff social media posting was raised and left unanswered."),
 }
-# Clocks sheet: owner role and planned notification hours after the clock starts.
+# Notification clocks sheet: who owns each notice and when the team plans to send it.
 CLOCKS = {
-    "hipaa_individual_notice": ("privacy_officer", 700),
-    "state_ca_individual_notice": ("privacy_officer", 700),
-    "state_ca_ag_sample_notice": ("general_counsel", 1000),
-    "hipaa_hhs_notice_500_or_more": ("general_counsel", 1200),
-    "hipaa_media_notice": ("communications", 1500),
+    "hipaa_individual_notice": ("privacy_officer", "Within 30 days"),
+    "state_ca_individual_notice": ("privacy_officer", "Within 30 days"),
+    "state_ca_ag_sample_notice": ("general_counsel", "Within 15 days"),
+    "hipaa_hhs_notice_500_or_more": ("general_counsel", "Within 60 days"),
+    "hipaa_media_notice": ("communications", "Within 90 days"),
     # ca_health_facility_unauthorized_access_15bd: left blank on purpose (no owner, no plan)
 }
 
@@ -81,11 +81,13 @@ Open these first
   deck.pptx                         What the room sees on the projector. Speaker notes hold the host lines.
   facilitator_guide.docx            The script: what to read aloud, what the plan says, what good looks like.
   after_action_report.docx          The scored result: headline, clocks met or missed, gaps, plan coverage map.
+  executive_summary.pptx            Six slides for senior management: rating, regulatory exposure, risks, fixes, asks.
+  executive_summary.docx            The same summary as a one-page memo to send ahead of the meeting.
 
 Also built
   participant_handout.docx          For everyone at the table. No spoilers.
-  decision_tracker.xlsx             The blank tracker the host fills in during the exercise.
-  decision_tracker_completed.xlsx   The same tracker with invented answers, used for the sample score.
+  decision_tracker.xlsx             The blank tracker the host fills in during the exercise (dropdowns and Yes/No).
+  decision_tracker_completed.xlsx   The same tracker filled with invented answers, used for the sample score.
   attendance_signin.xlsx            Sign-in sheet for audit evidence.
   signoff_sheet.docx                Facilitator and sponsor sign-off.
 
@@ -103,10 +105,10 @@ or open the Tabletop GM folder in Claude Code and type /tabletop.
 def run_sample(out_dir: str | Path, sample_pack_path: str | Path | None = None,
                approver: str = "Sample approver (synthetic run; a human signs here in real use)") -> dict:
     """Run the whole sample pipeline into out_dir. Returns {"files": {...}, "headline": str}."""
-    from openpyxl import load_workbook
-
     from .build import build_all
+    from .build.tracker import fill_host_tracker
     from .build.aar import build_aar
+    from .build.exec_summary import build_exec_deck, build_exec_memo
     from .clock_engine import evaluate
     from .outline import apply_narrative, build_outline, stamp_approval
     from .plan_ingest import documents_index, ingest
@@ -147,34 +149,20 @@ def run_sample(out_dir: str | Path, sample_pack_path: str | Path | None = None,
     files = {k: str(v) for k, v in build_all(pack, out).items()}
 
     completed = out / "decision_tracker_completed.xlsx"
-    shutil.copyfile(out / "decision_tracker.xlsx", completed)
-    wb = load_workbook(completed)
-    ws = wb["Decisions"]
-    col = {c.value: i for i, c in enumerate(ws[1])}
-    injects = {j["id"]: j for j in pack["injects"]}
-    for row in ws.iter_rows(min_row=2):
-        inj = injects.get(row[col["inject_id"]].value)
-        if not inj:
-            continue
-        d = DECISIONS[inj["slot"]]
+    by_inject = {}
+    for inj in pack["injects"]:
+        d = dict(DECISIONS[inj["slot"]])
         ids = [a["id"] for a in inj["expected_actions"]]
-        done = [i for i in ids if i.split("-", 1)[1] in d["actions"]]
-        values = dict(d, actions_completed=", ".join(done))
-        for key in ("decision", "decided_by_role", "discussion_minutes", "scenario_minutes", "notified",
-                    "actions_completed", "plan_step_followed", "documented", "notes"):
-            row[col[key]].value = values.get(key)
-    wc = wb["Clocks"]
-    ccol = {c.value: i for i, c in enumerate(wc[1])}
-    for row in wc.iter_rows(min_row=2):
-        cid = row[ccol["clock_id"]].value
-        if cid in CLOCKS:
-            row[ccol["owner_role"]].value, row[ccol["planned_notify_hours"]].value = CLOCKS[cid]
-    wb.save(completed)
+        d["actions"] = [i for i in ids if i.split("-", 1)[1] in d["actions"]]
+        by_inject[inj["id"]] = d
+    fill_host_tracker(out / "decision_tracker.xlsx", pack, by_inject, CLOCKS, out_path=completed)
     files["decision_tracker_completed"] = str(completed)
 
     score = score_tracker(pack, completed)
     write_json(out / "score.json", score)
     files["after_action_report"] = str(build_aar(pack, score, out / "after_action_report.docx"))
+    files["executive_summary_slides"] = str(build_exec_deck(pack, score, out / "executive_summary.pptx"))
+    files["executive_summary_memo"] = str(build_exec_memo(pack, score, out / "executive_summary.docx"))
     return {"files": files, "headline": score["headline"]}
 
 

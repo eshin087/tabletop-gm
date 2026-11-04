@@ -20,10 +20,12 @@ from .packs import load_pack
 from .validators import approval_hash
 
 SLOT_PLANS: dict[int, list[str]] = {
-    60: ["detection", "escalation", "containment", "recovery", "notification"],
+    30: ["escalation", "tradeoff", "notification"],
+    60: ["detection", "escalation", "containment", "tradeoff", "notification"],
     90: ["detection", "escalation", "containment", "tradeoff", "recovery", "notification", "public"],
-    180: ["detection", "second_signal", "escalation", "severity", "containment", "conflict", "tradeoff", "recovery", "notification", "public"],
 }
+# minutes kept for the welcome and the hot wash; the rest is split across the injects
+OVERHEAD_MINUTES = {30: 8, 60: 15, 90: 20}
 PHASE_OF_SLOT = {
     "detection": "detection", "second_signal": "detection", "escalation": "escalation", "severity": "escalation",
     "containment": "containment", "conflict": "containment", "tradeoff": "containment", "recovery": "recovery",
@@ -251,7 +253,8 @@ def build_outline(intake: dict, seed: dict, clocks: dict, org_plan: dict | None 
     }
 
     slots = SLOT_PLANS[duration]
-    per_inject = (duration - 20) // len(slots)
+    overhead = OVERHEAD_MINUTES[duration]
+    per_inject = (duration - overhead) // len(slots)
     used_items: set[str] = set()
     injects: list[dict] = []
     slide = 6
@@ -265,7 +268,7 @@ def build_outline(intake: dict, seed: dict, clocks: dict, org_plan: dict | None 
     used_pack_actions: set[str] = set()
     for i, slot in enumerate(slots, start=1):
         phase = PHASE_OF_SLOT[slot]
-        start_min = 10 + (i - 1) * per_inject
+        start_min = overhead // 2 + (i - 1) * per_inject
         part_name, part = source_cycle[slot]
         if part.get("finding_id"):
             source = {"type": "finding", "ref": part["finding_id"], "note": f"{part_name} finding on {part.get('asset')}"}
@@ -351,9 +354,11 @@ def build_outline(intake: dict, seed: dict, clocks: dict, org_plan: dict | None 
 
     # a 60-minute exercise has no dedicated conflict or tradeoff slot; mark them on existing injects
     if not any(j["flags"]["conflicting_information"] for j in injects):
-        injects[2]["flags"]["conflicting_information"] = True
-        injects[2]["what_happens"] += _fmt(" Then a second report contradicts the first: the vendor says {entry_asset} was patched last month and the alert is a false positive, while the forensics lead says the patch was never applied.", ctx)
-        injects[2]["probing_questions"].append("Two credible sources disagree. What do you do with containment while you find out which is right?")
+        # put the contradiction on the first containment-phase inject (the second inject in a short exercise)
+        k = next((n for n, j in enumerate(injects) if j["phase"] == "containment"), min(1, len(injects) - 1))
+        injects[k]["flags"]["conflicting_information"] = True
+        injects[k]["what_happens"] += _fmt(" Then a second report contradicts the first: the vendor says {entry_asset} was patched last month and the alert is a false positive, while the forensics lead says the patch was never applied.", ctx)
+        injects[k]["probing_questions"].append("Two credible sources disagree. What do you do with containment while you find out which is right?")
     if not any(j["flags"]["business_tradeoff"] for j in injects):
         injects[-2]["flags"]["business_tradeoff"] = True
     if plan_present and not any(j["flags"]["plan_silent"] for j in injects):

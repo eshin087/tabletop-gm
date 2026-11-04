@@ -73,7 +73,15 @@ ttx approve out/exercise_pack.json --by "Your Name"
 ttx build out/exercise_pack.json --out out/build
 ```
 
-After the exercise, fill `out/build/decision_tracker.xlsx` (Decisions and Clocks sheets), then:
+After the exercise, fill `out/build/decision_tracker.xlsx` (the Host tracker and Notification clocks sheets), save it, then:
+
+```bash
+ttx report --open
+```
+
+`ttx report` finds the approved exercise and the newest filled tracker for it in `uploads/` or `out/`, then writes four files into `out/report/`: `score.json`, `after_action_report.docx`, `executive_summary.pptx`, and `executive_summary.docx`. Pass `--tracker <file>` to name the tracker yourself.
+
+The lower-level steps are still available:
 
 ```bash
 ttx score --pack out/exercise_pack.json --tracker out/build/decision_tracker.xlsx --out out/score.json
@@ -98,7 +106,9 @@ python samples/make_sample_run.py
 | Command | Does |
 |---|---|
 | `ttx demo` | Build the whole sample exercise and open it |
+| `ttx report` | After the exercise: score the tracker, write the AAR and executive summary |
 | `ttx packs` | List industry packs and clock counts |
+| `ttx flags --industry SLUG --states CA,NV` | Plain-language regulated-status questions for the intake |
 | `ttx ingest-plan DOC... --out` | Extract uploaded plans with section anchors |
 | `ttx seed --intake --out` | Pick entry, pivot, and target from exposure data |
 | `ttx clocks --intake --out` | Applicable notification clocks with sources and tiers |
@@ -106,7 +116,7 @@ python samples/make_sample_run.py
 | `ttx narrate PACK OVERLAY` | Apply a narrative overlay (narrative fields only) |
 | `ttx validate KIND FILE` | seed, pack, packs, clocks, org-plan, outline, exercise-pack |
 | `ttx approve PACK --by NAME` | Human approval gate |
-| `ttx build PACK --out` | Every document from the approved pack |
+| `ttx build PACK --out [--open]` | Every document from the approved pack |
 | `ttx score --pack --tracker --out` | Deterministic score from the tracker |
 | `ttx aar --pack --score --out` | After-action report |
 

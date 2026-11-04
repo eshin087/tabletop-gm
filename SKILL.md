@@ -26,55 +26,86 @@ Run, from the repository root:
 python scripts/bootstrap.py --setup
 ```
 
-Use `python3` on macOS and Linux, or `py -3` on Windows if `python` is not found. The script needs Python 3.11 or newer. It creates a private `.venv` in the repository and installs the engine if needed; later runs return in a second. It prints the `ttx` command to use, for example `.venv\Scripts\ttx.exe` or `.venv/bin/ttx`. If plain `ttx` is not on the PATH, use that full path everywhere this skill says `ttx`.
+Use `python3` on macOS and Linux, or `py -3` on Windows if `python` is not found. The script needs Python 3.11 or newer. It creates a private `.venv` in the repository and installs the engine if needed; later runs return in a second.
+
+**How to run `ttx` without permission prompts.** The project pre-approves only Tabletop GM's own commands (`.claude/settings.json`), and the approval matches the start of the command. So wherever this skill says `ttx`, run it exactly like this, from the repository root:
+
+- Windows: `.venv\Scripts\ttx.exe <subcommand> ...`
+- macOS and Linux: `.venv/bin/ttx <subcommand> ...`
+
+Run one `ttx` command per tool call. Do not prefix it with `cd`, do not chain commands with `&&`, `;`, or pipes, and do not wrap it in another shell. Write files only under `out/`. Anything else will prompt the person for approval, which is the point: they see every action outside Tabletop GM's own engine.
 
 If Python is missing or too old, tell the person in one sentence and point them to the launcher for their system (`start-windows.bat`, `start-mac.command`, or `start-linux.sh`). On Windows the launcher can install Python for them. Do not install Python yourself.
 
-Then greet the person in two sentences: what Tabletop GM will build, and that nothing is built until they approve the outline. Offer to show the finished sample first (`ttx demo`) if they have never seen one.
+### Start here: ask what they want to do
 
-### 1. Intake: one question at a time
+Greet the person in one sentence, then ask with the AskUserQuestion tool (one question):
 
-Interview the person like a consultant, not a form. Ask **one question per message**, then stop and wait for the answer before asking the next. Never list the remaining questions, never ask two things in one message, and keep each question to one or two short sentences.
+- **Build a new exercise** (recommended): go to step 1.
+- **After the exercise: score it and write the reports**: follow `.claude/skills/tabletop-report/SKILL.md` from its first step. It is the same as typing `/tabletop-report`.
+- **See a finished sample first**: run `ttx demo`, tell them the folder opened and to start with `START_HERE.txt`, then ask this question again.
 
-- **Use clickable choices** when the answer is a choice: call the AskUserQuestion tool with one question, two to four options, and a short description for each. The person can always type their own answer instead. Use `multiSelect` for "pick all that apply" questions. If that tool is not available, offer numbered options in plain text.
-- **Show progress** lightly at the start of each question, for example "(3 of 11)".
-- **Skip what you already know.** If the person's first message or an earlier answer already covers a question, do not ask it; mention what you understood in the next question instead.
-- **Accept "not sure" or "skip."** Use the default shown below, and say in a few words that you did.
-- **Accept everything at once.** If the person pastes all their answers in one message, take them and skip ahead.
-- **Keep it plain.** Never show flag names, pack slugs, or file names in a question; translate them into ordinary words.
+If their first message already says what they want, skip the question.
 
-Ask in this order:
+### 1. Intake: quick start, mostly clicks
 
-1. **Organization.** "What's the organization's name, and what does it do in a sentence?"
-2. **Industry.** Run `ttx packs` first. Offer the three closest packs as choices, with display names, never slugs; the person can type another. If none fits, offer to draft one with `skills/pack_research/SKILL.md`.
-3. **Size.** "Roughly how many employees?" Default: unknown.
-4. **Where it operates.** "Which countries does it operate in, and for the US, which states?" Default: US only.
-5. **Data it holds.** A multi-select with plain names, mapped as follows:
+Make the intake fast. Typing is limited to the organization's name and its states; everything else is a click. Use the AskUserQuestion tool, which shows up to four questions in one screen, each with two to four options. The person can always type their own answer instead of clicking.
+
+Rules:
+
+- Never show flag names, pack slugs, or file names. Use plain words.
+- Skip anything the person already told you.
+- Put the recommended option first and mark it "(Recommended)".
+- Use the defaults listed below for anything you do not ask, and show them on the summary screen so the person can change them.
+
+**Reuse.** If `out/intake.yaml` already exists, first ask (one question) whether to start from the same organization's answers. If yes, show the summary screen straight away.
+
+**Screen 1 (typed, one line).** "What's the organization called? Add a few words on what it does if you like."
+
+**Screen 2 (one AskUserQuestion call, four questions).** Run `ttx packs` first.
+
+1. **Industry.** Offer the three packs that best fit the name and description, using display names. Add one line naming the other packs, so the person can type one of them under Other.
+2. **Length.** 60 minutes (Recommended), 30 minutes, or 90 minutes. Each option's description gives the inject count: 30 minutes is 3 injects, 60 is 5, 90 is 7.
+3. **Severity.** Four options with the one-line meanings from `skills/severity_levels/SKILL.md`. For a first exercise, recommend 2.
+4. **Publicly traded.** No (Recommended) or Yes.
+
+**Screen 3 (typed, one line).** "Which US states does it operate in? Two-letter codes are fine, for example CA, NV. Say 'outside the US' if none."
+
+**Screen 4 (one AskUserQuestion call, up to four questions).** Run `ttx flags --industry <pack> --states <codes>` first.
+
+1. **Data it holds** (multi-select). Offer the four most likely for the industry, in plain words:
    - patient health records: PHI
-   - personal information such as names, SSNs, and addresses: PII
+   - personal information: PII
    - payment card data: PCI
    - customer financial records: PFI
    - student records: FERPA
    - controlled unclassified information: CUI
    - industrial control systems: OT
+2. **Regulated status** (multi-select). The first four questions from `ttx flags`, phrased as short labels with the plain question as the description. If `ttx flags` lists more than four, add a second multi-select question with the next four. Unticked means no.
+3. **People affected** if the most sensitive system leaked: under 500, 500 to 10,000 (Recommended), 10,000 to 100,000, or over 100,000. Store the middle of the range.
 
-   Offer the four most likely for the industry and let them type others.
-6. **Public company.** "Is it publicly traded?" Yes or no. Default: no.
-7. **Regulated status.** Run `ttx flags --industry <pack> --states <states>`. Ask its questions as multi-select checklists of up to four statuses each, using the plain question text; "None of these" is always fine. Most industries need one or two checklists. Map ticked answers back to the flag names yourself.
-8. **People affected.** "If the most sensitive system leaked, roughly how many people's records would be exposed?" Offer ranges (under 500, 500 to 10,000, 10,000 to 100,000, over 100,000) and store the middle of the range. Default: 1,000.
-9. **Severity.** Four choices with their one-line meanings from `skills/severity_levels/SKILL.md`. Default and recommended for a first exercise: 2.
-10. **Audience and length.** Ask audience first (executives, technical team, or mixed; default mixed). Then, as a separate question, length (60, 90, or 180 minutes; default 90).
-11. **Their documents and data.** Ask first: "Do you have an incident response plan or playbooks you'd like the exercise to test?" If yes, ask them to drop the files into the `uploads` folder and say "done". Then ask separately where the exposure data comes from:
-    - their Tenable account: keys go in `.env`, and never paste keys in chat
-    - a scan export file in `uploads`
-    - the synthetic sample
-    - none, which gives a generic scenario with every assumption labeled
+**Screen 5 (one AskUserQuestion call, two questions).**
 
-    Default: none.
+1. **Exposure data.** Options:
+   - "Use the built-in sample data" (Recommended for a first try)
+   - "My Tenable account"
+   - "A scan export file"
+   - "None, keep it generic"
 
-Optional, only if the person wants it in the documents: exercise date, location, facilitator, and sponsor. Ask these as one short final question they can skip.
+   For Tenable, tell them the keys go in `.env` and never in chat. For an export, ask them to drop it into the `uploads` folder. Check `uploads/` first: if a .csv, .json, or .nessus file is already there, offer it as the first option.
+2. **Plans to test.** "Do you have an incident response plan or playbooks to test?" Options: "Not now" (Recommended), and "Yes, I'll put them in the uploads folder". If documents are already in `uploads/`, say which ones and offer "Use these".
 
-When the questions are done, show a short summary of the answers in plain words and ask "Anything to change?" Then write `out/intake.yaml` in the shape of `samples/intake_valley_regional.yaml`, with flag names and data codes filled in from their answers. Tell them what happens next in one sentence.
+**Defaults for anything not asked:**
+
+| Setting | Default |
+|---|---|
+| Audience | Mixed |
+| Countries | US, or as stated in screen 3 |
+| Scenario family | Ransomware for severity 3 and 4; business email compromise for 1 and 2 |
+| Size | Unknown |
+| Exercise date, location, facilitator, sponsor | Blank |
+
+**Summary screen.** Show the answers and the defaults as a short table, then ask (one question): "Build the outline with these settings?" Options: "Yes, build it (Recommended)" or "Change something". If they want a change, ask only about that item. Then write `out/intake.yaml` in the shape of `samples/intake_valley_regional.yaml`, filling in flag names and data codes from the answers.
 
 ### 2. Policy ingest (if documents were uploaded)
 
@@ -120,7 +151,16 @@ ttx narrate out/exercise_pack.json out/narrative_overlay.json
 
 ### 6. Review and approval gate
 
-Run the adversarial review in `skills/outline_review/SKILL.md` and fix what it finds. Show the person the outline: the scenario summary, each inject's title, decision, owner, and the procedure it tests, and the clocks. Ask for edits. When they say it is approved:
+Run the adversarial review in `skills/outline_review/SKILL.md` and fix what it finds. Show the person the outline as one compact table: inject number and time, title, the decision it forces, who owns it, and the procedure it tests. Then list the clocks in one line each.
+
+Then ask with the AskUserQuestion tool (one question), with these options:
+
+- **Approve it** (Recommended)
+- **Change an inject**
+- **Make it easier**: lower the pressure
+- **Make it harder**: more pressure, less time
+
+For a change, ask which inject and what to change. Apply it with `ttx narrate` (a short overlay) and show the changed row only. When they choose Approve, ask their name if you do not know it, then run:
 
 ```
 ttx approve out/exercise_pack.json --by "<their name>"
@@ -131,10 +171,17 @@ The approved file is the single source of truth. Any later edit breaks the appro
 ### 7. Build
 
 ```
-ttx build out/exercise_pack.json --out out/build
+ttx build out/exercise_pack.json --out out/build --open
 ```
 
-Describe each output using `skills/deliverables/SKILL.md`.
+The folder opens on their computer. In four short lines, say what each file is for, using `skills/deliverables/SKILL.md`:
+
+- `deck.pptx` goes on the projector.
+- The facilitator guide is the script.
+- The handout goes to everyone.
+- The decision tracker is filled in during the exercise.
+
+End with one sentence: after the exercise, run `/tabletop-report` (or `/tabletop` and choose "After the exercise") with the filled tracker.
 
 ### 8. Run
 
@@ -142,12 +189,7 @@ The deck goes on the projector. The facilitator runs from `facilitator_guide.doc
 
 ### 9. Score and report
 
-```
-ttx score --pack out/exercise_pack.json --tracker out/build/decision_tracker.xlsx --out out/score.json
-ttx aar --pack out/exercise_pack.json --score out/score.json --out out/build/after_action_report.docx
-```
-
-Follow `skills/scoring_aar/SKILL.md` to explain the result. If you write a headline or summary, put it in `out/narrative.json` and pass `--narrative out/narrative.json`; the build rejects any number that is not in the score or the pack.
+Follow `.claude/skills/tabletop-report/SKILL.md`, the same flow as `/tabletop-report`. One `ttx report` finds the filled tracker, scores it, and writes four files: the after-action report, the executive summary slides, the one-page executive memo, and `score.json`.
 
 ## Sub-skills
 

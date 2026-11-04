@@ -2,6 +2,34 @@
 
 Blockers hit during the build and the option chosen, newest first. Each entry says what the spec or prompt asked for, what was found, and what was done instead.
 
+## 2026-11-04 (prep and report experience)
+
+- **Lengths are 30, 60, or 90 minutes.** The spec had 60, 90, and 180. Eric asked for shorter options, so the engine now builds 3, 5, or 7 injects.
+  - The 30-minute exercise runs escalation, the business tradeoff, and notification.
+  - The 60-minute exercise swaps recovery for the tradeoff, so the ransom decision and the plan-silent inject stay in.
+- **Quick-start intake.** In testing, the one-question-at-a-time interview felt long. The intake now uses Claude Code's multi-question screens of clickable choices; typing is limited to the organization's name and its states. Unasked settings use defaults shown on a summary screen, and the interview can reuse an earlier `out/intake.yaml`.
+- **Host-friendly tracker.** The tracker is now one color-coded block per inject:
+  - plain questions with dropdowns, and Yes/No per expected action and notification instead of typed IDs
+  - a Notification clocks sheet with owner and timing dropdowns
+  - hidden machine keys in column A, so scoring stays exact
+
+  The CSV decision-log format (`schemas/tracker_columns.yaml`, `DECISION_COLUMNS`) is unchanged, so the live GM feature's `ttx log export` keeps working. The earlier one-row-per-inject `.xlsx` is still read.
+- **One step after the exercise.** `ttx report` finds the approved exercise and the newest filled tracker built for it, using the approval hash stored in the tracker. It writes the score, the after-action report, and the executive summary together. `/tabletop-report` and a "After the exercise" option in the `/tabletop` start menu guide the host. `ttx aar` is unchanged, which leaves room for the live GM feature's `--log` flag.
+- **Executive summary.** Senior management gets six slides and a one-page memo, built from the same deterministic content as the AAR:
+  - a plain-language bottom line
+  - fixed rating thresholds: Strong at 85% and up, Adequate at 70 to 84%, Needs work below 70%
+  - regulatory exposure and the top three risks
+  - the top five fixes, with owners and dates
+  - the decisions needed from leadership
+
+  It has no finding IDs.
+- **Pre-approved commands.** `.claude/settings.json` pre-approves only:
+  - the project's `ttx` engine
+  - `scripts/bootstrap.py`
+  - file edits under `out/`
+
+  The two skills also declare the engine in `allowed-tools`. Claude Code applies project allow rules only after the person accepts the folder's trust prompt, which lists them.
+
 ## 2026-11-04
 
 - **Intake is one question at a time.** The spec asked for a single intake message. In testing, Eric found that a single message of questions overwhelms people, so the `/tabletop` intake now asks one short question per message and waits for the answer. It uses Claude Code's clickable choices where it can, skips what it already knows, and accepts "not sure" with a stated default. Regulated statuses come from `ttx flags`, which turns every clock flag into a plain yes/no question (`schemas/flags.yaml`) and drops statuses for states the organization does not operate in. A test fails if a clock uses a flag with no question.

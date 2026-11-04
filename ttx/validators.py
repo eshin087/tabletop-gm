@@ -25,7 +25,7 @@ from .plan_ingest import verify_org_plan
 
 TIERS = {"verified", "researched"}
 PHASES = ["detection", "escalation", "containment", "recovery", "notification"]
-INJECT_COUNT = {60: 5, 90: 7, 180: 10}
+INJECT_COUNT = {30: 3, 60: 5, 90: 7}
 INJECT_REQUIRED = [
     "id", "order", "phase", "time_marker", "title", "what_happens", "recipients",
     "decision_forced", "decision_owner_role", "procedure_tested", "what_good_looks_like",

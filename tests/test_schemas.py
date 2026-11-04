@@ -39,3 +39,14 @@ def test_tracker_columns_doc_matches_score_engine():
     doc = read_yaml(SCHEMAS / "tracker_columns.yaml")
     assert doc["decisions"] == DECISION_COLUMNS
     assert doc["clocks"] == CLOCK_COLUMNS
+
+
+def test_host_tracker_doc_matches_the_builder():
+    from ttx.build import tracker
+
+    doc = read_yaml(SCHEMAS / "host_tracker.yaml")
+    assert doc["speed"] == tracker.SPEED
+    assert [str(x) for x in doc["discussion"]] == tracker.DISCUSSION
+    assert doc["plan_step"] == tracker.PLAN_STEP
+    assert doc["documented"] == tracker.DOCUMENTED
+    assert doc["clock_timing"] == tracker.CLOCK_TIMING

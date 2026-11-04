@@ -15,3 +15,6 @@ venv/
 
 # Office lock files
 ~$*
+
+# Personal Claude Code settings (the shared project settings.json is committed)
+.claude/settings.local.json
