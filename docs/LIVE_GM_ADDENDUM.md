@@ -2,7 +2,7 @@
 
 Add a third way to run an exercise: Claude facilitates the tabletop live in the Claude Code chat. No deck, no projector slides, no paper tracker. The chat itself is on the projector. The host types what the room decides; the engine logs it; the same score and AAR pipeline runs at the end. This is additive: nothing in the existing prep, build, score, or AAR paths changes behavior.
 
-Credit: design adapted from Steven's live-mode brief (Nov 3), fitted to the existing `ttx` CLI instead of an MCP server.
+Credit: design adapted from Eric's live-mode brief (Nov 3), fitted to the existing `ttx` CLI instead of an MCP server.
 
 ## How it runs, end to end
 

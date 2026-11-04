@@ -1,6 +1,6 @@
 # Tabletop GM: Build Spec v2 (final for Claude Code, Nov 3, 2026)
 
-Consolidated from Eric's design decisions, Steven's build spec (Nov 3), the Exchange reviewer checklist, and Eric's Nov 3 answers. This is the document Claude Code works from. Decisions in this version supersede the project instructions where they differ.
+Consolidated from Eric's design decisions, Eric's build spec (Nov 3), the Exchange reviewer checklist, and Eric's Nov 3 answers. This is the document Claude Code works from. Decisions in this version supersede the project instructions where they differ.
 
 ## 1. What we're building
 
@@ -13,7 +13,7 @@ Phase 2: the audience only ever sees the slide deck. The host runs a second lapt
 ## 2. Decisions (Nov 3)
 
 - Name: **Tabletop GM**, slug `tabletop-gm`, listing file `skills/tabletop-gm.md`
-- Entrant: Eric (gcd) is the registered participant and listing author. Steven is helping but is not on the team (Tenable mods confirmed he can't be added), so his name is left out of the listing and README for now
+- Entrant: Eric (gcd) is the registered participant, listing author, and sole team member
 - Deadline: PR opened by Wednesday Nov 4, 11am PT (organizers). Opened counts. We then merge so the product is live for the demo and make later edits with new PRs
 - Room setup: the audience sees only the .pptx on the projector; the host has a separate laptop running `host.html` for the model engagement and transcription. Phase 2 is attempted for Thursday: `host.html` first, AI co-host via `ttx host` second; fallback is the facilitator guide read aloud
 - Tenable data is an optional mode, never a requirement; the user enables it by putting API keys in `.env`, and the product pulls the data itself. The demo runs live with Eric's lab keys; an export file is the fallback if the API is unreachable
@@ -58,7 +58,7 @@ tabletop-gm/
   SKILL.md                  entry skill: intake, workflow, rules, approval gate
   skills/
     scenario_design/SKILL.md     attack path + org plan -> timed, escalating story; inject rules
-    inject_style/SKILL.md        how a good inject reads: voice, pacing, realism, examples (Steven's craft)
+    inject_style/SKILL.md        how a good inject reads: voice, pacing, realism, examples (Eric's craft)
     severity_levels/SKILL.md     levels 1 to 4
     policy_ingest/SKILL.md       how to fill org_plan.json from uploaded documents, citation rules
     pack_research/SKILL.md       how to research a sector's regulations from authoritative sources and draft a pack with citations (unverified until a human checks)
@@ -130,8 +130,8 @@ Two verification tiers, enforced by the validator and shown in every output:
 
 Pack set for v1 (owner, target tier by Wednesday):
 - healthcare (Eric, verified)
-- banking and credit unions (Steven, verified)
-- insurance incl. NYDFS (Steven, researched)
+- banking and credit unions (Eric, verified)
+- insurance incl. NYDFS (Eric, researched)
 - public sector: state, local, tribal, education K-12 (Eric, researched)
 - higher education, FERPA (researched)
 - SaaS and technology, SOC 2 / GDPR / SEC (researched)
@@ -238,8 +238,8 @@ Fallback chain for Thursday: `ttx host` with co-host, else `host.html`, else the
 PR opened by Wednesday Nov 4, 11am PT; submit by 10am; then merge.
 
 Tonight (Tue):
-1. Eric: repo on personal GitHub (`tabletop-gm`, MIT, `.env.example`, `.gitignore` with `.env` and `uploads/`); commits stay under Eric's account, Steven sends pack files; Tenable field shapes recorded in section 7; synthetic sample estate hand-written to match them
-2. Steven: healthcare and banking packs with `clocks.yaml` verified; insurance researched; `severity_levels`
+1. Eric: repo on personal GitHub (`tabletop-gm`, MIT, `.env.example`, `.gitignore` with `.env` and `uploads/`); commits stay under Eric's account; Tenable field shapes recorded in section 7; synthetic sample estate hand-written to match them
+2. Eric: healthcare and banking packs with `clocks.yaml` verified; insurance researched; `severity_levels`
 3. Claude Code: `seed_engine`, `clock_engine`, `plan_ingest`, `validators`, `cli`, tests, `samples/sample_ir_plan.md`
 4. Together: first full run on the sample estate with the sample IR plan; review the outline; tweak
 
@@ -262,4 +262,4 @@ Testing note: the Tenable lab API is exercised from Eric's machine in Claude Cod
 
 Q&A prep: "isn't this just prompting" (engine, validators, tests, citation checks); "how is scoring fair" (deterministic given the tracker and the plan); "why not generic scenarios" (real KEV finding on their real gateway, their own §4.2); "industries you don't have" (`pack_research` plus the template; researched tier is banner-flagged until verified); "how do you avoid wrong deadlines" (tiers, sources, validator).
 
-Steven owns the pitch narrative and the inject writing style; Eric presents.
+Eric owns the pitch narrative and the inject writing style, and presents.
