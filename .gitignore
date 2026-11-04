@@ -1,0 +1,14 @@
+# Secrets and local data never enter the repo
+.env
+uploads/
+out/
+
+# Python
+__pycache__/
+*.pyc
+*.egg-info/
+.pytest_cache/
+.venv/
+venv/
+build/
+dist/
