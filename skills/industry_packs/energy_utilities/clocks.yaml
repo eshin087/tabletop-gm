@@ -1,0 +1,204 @@
+# Clocks for the energy and utilities pack. This file is the only place these deadlines live.
+# Every clock was drafted by the pack_research skill from the primary source on 2026-11-03 and is
+# therefore researched tier until a human opens source_url and promotes it.
+# Shared clocks (GDPR, SEC Form 8-K, state breach laws, CIRCIA) come from clocks_common.yaml.
+#
+# tier:
+#   verified    a human opened source_url on verified_date and confirmed the deadline. Used silently.
+#   researched  drafted by the pack_research skill from an authoritative source, not yet human-checked.
+#               Every output that uses it carries a "verify before exercise" banner.
+#
+# applies_when: all listed keys must hold (AND). List-valued keys hold when any value matches (OR).
+#   flags used by this pack: nerc_registered_entity, doe_electric_utility, tsa_pipeline_owner, water_utility
+#
+# To promote a clock after checking the source: set tier: verified, verifier: <your name>,
+# verified_date: <date you checked>.
+
+pack: energy_utilities
+display_name: Energy and utilities
+includes_common: true
+
+clocks:
+  - id: nerc_cip_008_one_hour
+    name: NERC CIP-008-6 R4, initial notification of a Reportable Cyber Security Incident
+    regulator: E-ISAC and CISA (successor to NCCIC)
+    jurisdiction: US-federal (FERC-approved NERC Reliability Standard; E-ISAC notice applies to all NERC registered entities, CISA notice to US entities)
+    trigger: determination under the R1 Part 1.2 process that a Cyber Security Incident is a Reportable Cyber Security Incident
+    deadline_hours: 1
+    deadline_business_days: null
+    deadline_text: "provide initial notification within the following timelines: One hour after the determination of a Reportable Cyber Security Incident"
+    applies_when:
+      flags: [nerc_registered_entity]
+    source_url: https://www.nerc.com/pa/Stand/Reliability%20Standards/CIP-008-6.pdf
+    citation: "NERC CIP-008-6, Requirement R4, Table R4 Part 4.2 (page 12 of 20)"
+    tier: researched
+    verified_date: 2026-11-03
+    verifier: "pack_research skill (Claude), not yet human-checked"
+    notes: "PDF opened and text extracted on 2026-11-03. Applies to High and Medium Impact BES Cyber Systems and their associated EACMS. The clock starts at determination, not detection, so the exercise should test how fast the R1 Part 1.2 determination is made. Initial notice must include, to the extent known, the functional impact, the attack vector used, and the level of intrusion achieved or attempted (Part 4.1). Notice is 'unless prohibited by law'. Filing a DOE-417 with the sharing box on line W checked satisfies CIP-008 reporting for criteria 2 and 14 per the DOE-417 instructions."
+
+  - id: nerc_cip_008_attempt_next_calendar_day
+    name: NERC CIP-008-6 R4, notification of a Cyber Security Incident that was an attempt to compromise
+    regulator: E-ISAC and CISA (successor to NCCIC)
+    jurisdiction: US-federal (FERC-approved NERC Reliability Standard)
+    trigger: determination under the R1 Part 1.2.1 criteria that a Cyber Security Incident was an attempt to compromise an applicable system
+    deadline_hours: 24
+    deadline_business_days: null
+    deadline_text: "By the end of the next calendar day after determination that a Cyber Security Incident was an attempt to compromise a system identified in the Applicable Systems column for this Part"
+    applies_when:
+      flags: [nerc_registered_entity]
+    source_url: https://www.nerc.com/pa/Stand/Reliability%20Standards/CIP-008-6.pdf
+    citation: "NERC CIP-008-6, Requirement R4, Table R4 Part 4.2 (page 12 of 20)"
+    tier: researched
+    verified_date: 2026-11-03
+    verifier: "pack_research skill (Claude), not yet human-checked"
+    notes: "PDF opened and text extracted on 2026-11-03. Labeled assumption: deadline_hours 24 is the earliest the deadline can fall; the standard says end of the next calendar day after determination, which is between 24 and 48 hours depending on the time of determination. The facilitator should compute the real deadline as 23:59 local time on the day after determination. The entity must have documented criteria for what counts as an attempt to compromise (R1 Part 1.2.1)."
+
+  - id: nerc_cip_008_update_seven_days
+    name: NERC CIP-008-6 R4, update of new or changed incident attributes
+    regulator: E-ISAC and CISA (successor to NCCIC)
+    jurisdiction: US-federal (FERC-approved NERC Reliability Standard)
+    trigger: determination of new or changed attribute information (functional impact, attack vector, level of intrusion) after the initial notification
+    deadline_hours: 168
+    deadline_business_days: null
+    deadline_text: "Provide updates, if any, within 7 calendar days of determination of new or changed attribute information required in Part 4.1"
+    applies_when:
+      flags: [nerc_registered_entity]
+    source_url: https://www.nerc.com/pa/Stand/Reliability%20Standards/CIP-008-6.pdf
+    citation: "NERC CIP-008-6, Requirement R4, Table R4 Part 4.3 (page 12 of 20)"
+    tier: researched
+    verified_date: 2026-11-03
+    verifier: "pack_research skill (Claude), not yet human-checked"
+    notes: "PDF opened and text extracted on 2026-11-03. Useful as a late-exercise inject: the attack vector changes after forensics and the team must remember the 7-day update."
+
+  - id: doe_oe417_emergency_alert_one_hour
+    name: DOE Form OE-417 (DOE-417), Emergency Alert for a Reportable Cyber Security Incident or a cyber event that interrupts operations
+    regulator: US Department of Energy, Office of Cybersecurity, Energy Security, and Emergency Response (CESER)
+    jurisdiction: US-federal
+    trigger: an Emergency Alert criterion is met, including criterion 2 (Reportable Cyber Security Incident) or criterion 3 (cyber event that is not a Reportable Cyber Security Incident that causes interruptions of electrical system operations)
+    deadline_hours: 1
+    deadline_business_days: null
+    deadline_text: "EMERGENCY ALERT: Within One Hour of Incident: Schedule 1 and lines N-S and the Cyber Attributes on line T (if criteria 2 is met) of Schedule 2 must be filed if one or more of the following criteria are met"
+    applies_when:
+      flags: [doe_electric_utility]
+    source_url: https://doe417.pnnl.gov/files/DOE417_Form_Instructions.pdf
+    citation: "Form DOE-417 Instructions, OMB No. 1901-0288 (expires 05/31/2027), When to Submit, criteria 1 to 9"
+    tier: researched
+    verified_date: 2026-11-03
+    verifier: "pack_research skill (Claude), not yet human-checked"
+    notes: "PDF opened and text extracted on 2026-11-03 from the DOE-417 online system host (doe417.pnnl.gov). The DOE page at oe.netl.doe.gov refused the connection on 2026-11-03; the instructions point to https://www.oe.netl.doe.gov/OE417/ for online filing. Who must file: Balancing Authorities, Reliability Coordinators, generating entities with 300 MW or more dedicated to end-use customers, and electric utilities. Telephone notice to the DOE Emergency Operations Center (202-586-8100) is acceptable pending the written form when operations are critically affected. An Update report is filed when significant information changes; see doe_oe417_final_report_72h for the final report."
+
+  - id: doe_oe417_normal_report_six_hours
+    name: DOE Form OE-417 (DOE-417), Normal Report for a cyber event that could potentially impact adequacy or reliability
+    regulator: US Department of Energy, CESER
+    jurisdiction: US-federal
+    trigger: criterion 11 (cyber event that could potentially impact electric power system adequacy or reliability) is met and no Emergency Alert criterion applies
+    deadline_hours: 6
+    deadline_business_days: null
+    deadline_text: "NORMAL REPORT: Within Six Hours of Incident: Schedule 1 and lines N-S of Schedule 2 must be filed if one or more of the following criteria are met and none of the Emergency Alert criteria apply"
+    applies_when:
+      flags: [doe_electric_utility]
+    source_url: https://doe417.pnnl.gov/files/DOE417_Form_Instructions.pdf
+    citation: "Form DOE-417 Instructions, OMB No. 1901-0288, When to Submit, criteria 10 to 13"
+    tier: researched
+    verified_date: 2026-11-03
+    verifier: "pack_research skill (Claude), not yet human-checked"
+    notes: "PDF opened and text extracted on 2026-11-03. The exercise decision point is whether the event 'could potentially impact' adequacy or reliability (six hours) or already 'causes interruptions' (one hour). Computer centers and physical security offices may file criteria 1, 3, 10, or 11 directly with DOE."
+
+  - id: doe_oe417_attempted_cyber_compromise_next_day
+    name: DOE Form OE-417 (DOE-417), Attempted Cyber Compromise report
+    regulator: US Department of Energy, CESER
+    jurisdiction: US-federal
+    trigger: determination that a Cyber Security Incident was an attempt to compromise High or Medium Impact BES Cyber Systems or their associated EACMS (criterion 14) and no Emergency Alert or Normal Report criterion applies
+    deadline_hours: 24
+    deadline_business_days: null
+    deadline_text: "ATTEMPTED CYBER COMPROMISE: Within 1 calendar day of determination of the attempted cyber compromise: Schedule 1 and lines N-S and the Cyber Attributes on line T of Schedule 2 must be filed"
+    applies_when:
+      flags: [doe_electric_utility]
+    source_url: https://doe417.pnnl.gov/files/DOE417_Form_Instructions.pdf
+    citation: "Form DOE-417 Instructions, OMB No. 1901-0288, When to Submit, criterion 14 and Schedule 1 instructions"
+    tier: researched
+    verified_date: 2026-11-03
+    verifier: "pack_research skill (Claude), not yet human-checked"
+    notes: "PDF opened and text extracted on 2026-11-03. Labeled assumption: deadline_hours 24 is the floor; the Schedule 1 instructions say 'by the end of the next calendar day after the determination of the attempted cyber compromise'. Per the instructions, criteria 2 and 14 satisfy CIP-008 reporting if the filer selects sharing with the E-ISAC and CISA on Schedule 2 line W."
+
+  - id: doe_oe417_final_report_72h
+    name: DOE Form OE-417 (DOE-417), Final Report
+    regulator: US Department of Energy, CESER
+    jurisdiction: US-federal
+    trigger: any DOE-417 filing (the final report follows the initial Emergency Alert, Normal Report, Attempted Cyber Compromise, or System Report)
+    deadline_hours: 72
+    deadline_business_days: null
+    deadline_text: "Within 72 hours of incident a Final Report must be filed unless an interim update has been provided. An updated Form DOE-417 Schedule 1 and all of Schedule 2 are both due within 72 hours of the incident"
+    applies_when:
+      flags: [doe_electric_utility]
+    source_url: https://doe417.pnnl.gov/files/DOE417_Form_Instructions.pdf
+    citation: "Form DOE-417 Instructions, OMB No. 1901-0288, Update Report and Final Report"
+    tier: researched
+    verified_date: 2026-11-03
+    verifier: "pack_research skill (Claude), not yet human-checked"
+    notes: "PDF opened and text extracted on 2026-11-03. Schedule 2 asks for cyber attributes: functional impact, attack vector, and level of intrusion. The NERC EOP-004 disturbance report may be supplied as an equivalent document."
+
+  - id: tsa_pipeline_sd_incident_report
+    name: TSA Security Directive Pipeline-2021-01G, report of a cybersecurity incident to CISA
+    regulator: CISA Central (report required by TSA Security Directive)
+    jurisdiction: US-federal
+    trigger: the Owner/Operator identifies a cybersecurity incident in an IT or OT system it is responsible to operate or maintain (unauthorized access, malicious software, denial of service, physical attack on network infrastructure, or operational disruption)
+    deadline_hours: 72
+    deadline_business_days: null
+    deadline_text: "Owner/Operators must report the information required by Section II.C., as soon as practicable, but no later than 72 hours after the Owner/Operator identifies a cybersecurity incident"
+    applies_when:
+      flags: [tsa_pipeline_owner]
+    source_url: https://www.tsa.gov/sites/default/files/signed_security-directive-pipeline-2021-01g-and-transmittal-memo_508c.pdf
+    citation: "TSA Security Directive Pipeline-2021-01G, Section II.C.3, effective January 16, 2026 through January 15, 2027"
+    tier: researched
+    verified_date: 2026-11-03
+    verifier: "pack_research skill (Claude), not yet human-checked"
+    notes: "PDF opened and text extracted on 2026-11-03; listed on https://www.tsa.gov/sd-and-ea under January 15, 2026. The current directive says 72 hours, not the 24 hours that earlier versions required: Security Directive Pipeline-2021-01D (effective May 29, 2024, also fetched) said 'no later than 24 hours after a cybersecurity incident is identified'. The directive series is renewed about once a year, so check tsa.gov/sd-and-ea for the version in force on the exercise date. Reports go to CISA Central at http://www.cisa.gov/report or (844) 729-2472; if information is incomplete, file an initial report in time and supplement within 24 hours of the information becoming available. The directive also requires a primary and alternate Cybersecurity Coordinator reachable by TSA and CISA 24 hours a day, 7 days a week. Applies to owners and operators notified by TSA that their hazardous liquid or natural gas pipeline system or LNG facility is critical."
+
+  - id: epa_water_sector_guidance
+    name: EPA water sector cybersecurity guidance (no federal deadline confirmed)
+    regulator: EPA Office of Water and the state drinking water primacy agency
+    jurisdiction: US-federal and state
+    trigger: cybersecurity incident at a community water system or wastewater utility
+    deadline_hours: null
+    deadline_business_days: null
+    deadline_text: "No reporting deadline is stated on the EPA water sector cybersecurity page; it offers incident response guidance, a response checklist, and a contact form for reporting a problem"
+    applies_when:
+      flags: [water_utility]
+    source_url: https://www.epa.gov/waterresilience/epa-cybersecurity-water-sector
+    citation: "EPA, Cybersecurity for the Water Sector (guidance only)"
+    tier: researched
+    verified_date: 2026-11-03
+    verifier: "pack_research skill (Claude), not yet human-checked"
+    notes: "Page opened on 2026-11-03. Guidance only: it does not set a deadline and does not mention state primacy agencies. State primacy agency and state public utility commission reporting rules vary by state and are not drafted here; the facilitator must add the state's own rule before using this pack for a water utility. Community water systems serving more than 3,300 people also carry America's Water Infrastructure Act risk and resilience assessment and emergency response plan obligations, which the EPA page references without stating deadlines. CIRCIA (clocks_common.yaml) will apply once the final rule is effective."
+
+exercise_requirements:
+  - id: nerc_cip_008_r2_test_15_months
+    name: NERC CIP-008-6 R2 Part 2.1, test each Cyber Security Incident response plan at least once every 15 calendar months
+    requirement: "Test each Cyber Security Incident response plan(s) at least once every 15 calendar months: By responding to an actual Reportable Cyber Security Incident; With a paper drill or tabletop exercise of a Reportable Cyber Security Incident; or With an operational exercise of a Reportable Cyber Security Incident"
+    frequency: every 15 calendar months
+    source_url: https://www.nerc.com/pa/Stand/Reliability%20Standards/CIP-008-6.pdf
+    citation: "NERC CIP-008-6, Requirement R2, Table R2 Part 2.1 (page 7 of 20)"
+    tier: researched
+    verified_date: 2026-11-03
+    verifier: "pack_research skill (Claude), not yet human-checked"
+
+  - id: nerc_cip_008_r2_document_deviations
+    name: NERC CIP-008-6 R2 Part 2.2, use the plan and document deviations during an exercise
+    requirement: "Use the Cyber Security Incident response plan(s) under Requirement R1 when responding to a Reportable Cyber Security Incident, responding to a Cyber Security Incident that attempted to compromise a system identified in the Applicable Systems column for this Part, or performing an exercise of a Reportable Cyber Security Incident. Document deviations from the plan(s) taken during the response to the incident or exercise"
+    frequency: every exercise or incident
+    source_url: https://www.nerc.com/pa/Stand/Reliability%20Standards/CIP-008-6.pdf
+    citation: "NERC CIP-008-6, Requirement R2, Table R2 Part 2.2 (page 7 of 20)"
+    tier: researched
+    verified_date: 2026-11-03
+    verifier: "pack_research skill (Claude), not yet human-checked"
+
+  - id: nerc_gridex_biennial_practice
+    name: NERC E-ISAC GridEx, voluntary biennial grid security exercise (practice, not a requirement)
+    requirement: "Every two years the E-ISAC hosts GridEx, the electricity industry's largest cyber and physical security exercise in North America. GridEx gives industry and government partners the opportunity to practice how they would respond to and recover from coordinated cyber and physical security threats to the grid"
+    frequency: every two years (voluntary)
+    source_url: https://www.nerc.com/programs/e-isac/grid-ex
+    citation: "NERC E-ISAC, GridEx program page"
+    tier: researched
+    verified_date: 2026-11-03
+    verifier: "pack_research skill (Claude), not yet human-checked"

@@ -18,36 +18,20 @@
 #
 # US state breach laws, SEC Form 8-K, GDPR, and CIRCIA are not repeated here; they come from
 # clocks_common.yaml (includes_common: true). Mastercard ADC timing is pack.md guidance only
-# because the source documents could not be opened during research.
+# because the source documents could not be opened during research. The Visa three-day
+# Compromise Event notice lives in clocks_common.yaml (pci_visa_compromise_notice_3_days) so
+# every PCI merchant gets it once.
 
 pack: retail_ecommerce
 display_name: Retail and e-commerce
 includes_common: true
 
 clocks:
-  - id: retail_visa_compromise_event_notice
-    name: Visa, Compromise Event notification to Global Risk Investigations
-    regulator: Visa Global Risk Investigations (card brand rule, routed through the acquiring bank)
-    jurisdiction: Visa network rules (global)
-    trigger: discovery of evidence sufficient to raise a reasonable suspicion of, or to confirm, a Compromise Event
-    deadline_hours: 72
-    deadline_business_days: null
-    deadline_text: "ensure that the Compromise Event is reported to Visa's Global Risk Investigations group within three (3) calendar days of either: the discovery of evidence sufficient to raise a reasonable suspicion of a Compromise Event, or the discovery of evidence sufficient to confirm the existence of a Compromise Event"
-    applies_when:
-      industries: [retail_ecommerce]
-      data_types: [PCI]
-    source_url: https://usa.visa.com/dam/VCOM/download/merchants/cisp-what-to-do-if-compromised.pdf
-    citation: "Visa, What To Do If Compromised, Visa Supplemental Requirements, Version 10.0, effective 25 June 2026, Section A-1.1"
-    tier: researched
-    verified_date: 2026-11-03
-    verifier: "pack_research skill (Claude), not yet human-checked"
-    notes: "Three calendar days, not business days; some regional Visa summary pages say business days but the supplemental requirements govern. A contractual rule enforced through the acquirer agreement, not law; the document lists non-compliance assessments of up to USD 100,000 per incident against the Member. At-risk account numbers are also due to Visa within three calendar days of discovery (Section A-4.1)."
-
   - id: retail_visa_incident_report
     name: Visa, initial Incident Report after notification
     regulator: Visa Global Risk Investigations and the acquiring bank
     jurisdiction: Visa network rules (global)
-    trigger: notification to Visa under Section A-1 (the retail_visa_compromise_event_notice clock)
+    trigger: notification to Visa under Section A-1 (the pci_visa_compromise_notice_3_days clock in clocks_common.yaml)
     deadline_hours: 72
     deadline_business_days: null
     deadline_text: "within three (3) calendar days of notifying Visa in accordance with Section A-1, provide a report describing the event (the Incident Report) to Visa and the Acquiring bank (if applicable)"

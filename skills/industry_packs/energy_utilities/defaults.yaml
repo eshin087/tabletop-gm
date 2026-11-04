@@ -1,0 +1,95 @@
+# Pack defaults used when the organization uploads no plan. score_engine reads
+# expected_actions and notify_parties; scenario_design reads roles and phases.
+pack: energy_utilities
+
+roles:
+  - id: incident_commander
+    name: Cyber Security Incident Response Lead (Incident Commander)
+    decides: [incident_declaration, reportable_incident_determination, containment_actions]
+  - id: control_center_manager
+    name: Control Center Manager (System Operations)
+    decides: [manual_operations, load_shed, reliability_coordinator_contact]
+  - id: ot_lead
+    name: OT and SCADA Engineering Lead
+    decides: [ot_isolation, ems_scada_restore_order]
+  - id: ciso
+    name: Chief Information Security Officer
+    decides: [severity_rating, it_ot_segmentation_changes, forensic_engagement]
+  - id: nerc_compliance
+    name: NERC CIP Compliance Officer
+    decides: [cip_008_notification, evidence_retention, regional_entity_contact]
+  - id: legal
+    name: General Counsel
+    decides: [notification_obligations, law_enforcement_contact, privilege]
+  - id: comms
+    name: Communications and Customer Affairs Lead
+    decides: [public_statement, customer_outage_messaging]
+  - id: physical_security
+    name: Physical Security Manager
+    decides: [site_access_restrictions, substation_response]
+  - id: ceo
+    name: Chief Executive or General Manager
+    decides: [ransom_decision, business_shutdown, mutual_assistance_request]
+
+notify_parties:
+  - id: e_isac
+    name: E-ISAC (Electricity Information Sharing and Analysis Center)
+  - id: cisa
+    name: CISA Central
+  - id: doe_eoc
+    name: DOE Emergency Operations Center (Form DOE-417)
+  - id: reliability_coordinator
+    name: Reliability Coordinator and Balancing Authority
+  - id: regional_entity
+    name: NERC Regional Entity (CIP compliance)
+  - id: state_puc
+    name: State public utility commission
+  - id: tsa_surface
+    name: TSA Surface Operations (pipeline operators)
+  - id: state_primacy_agency
+    name: State drinking water primacy agency (water utilities)
+  - id: law_enforcement
+    name: FBI field office
+  - id: cyber_insurer
+    name: Cyber insurance carrier
+  - id: executive_leadership
+    name: Executive leadership and board
+
+expected_actions:
+  detection:
+    - id: d1
+      text: Confirm the alert with a second source and decide whether it touches an EACMS or BES Cyber System
+    - id: d2
+      text: Open an incident ticket and start a timeline with the time of first detection
+    - id: d3
+      text: Tell the control center on shift that an incident is open before any network change
+  escalation:
+    - id: e1
+      text: Declare the incident and notify the incident commander and the NERC CIP compliance officer
+    - id: e2
+      text: Run the documented R1 Part 1.2 process and record the Reportable Cyber Security Incident or attempt to compromise determination with a timestamp
+    - id: e3
+      text: Engage legal counsel and decide whether the reliability coordinator needs a call
+  containment:
+    - id: c1
+      text: Isolate affected IT systems without severing the control center view of the grid
+    - id: c2
+      text: Decide on manual operations and staff the control room before cutting IT to OT links
+    - id: c3
+      text: Preserve logs and images from the EACMS and jump hosts before rebuilding
+  recovery:
+    - id: r1
+      text: Confirm EMS and SCADA backups are intact and agree the restore order with operations
+    - id: r2
+      text: Verify field device configurations against known-good baselines before returning to automatic control
+    - id: r3
+      text: Hold a return-to-normal decision with operations, OT, and security sign-off
+  notification:
+    - id: n1
+      text: Decide which clocks apply (CIP-008, DOE-417, TSA, state) and who owns each notification
+    - id: n2
+      text: File the E-ISAC and CISA notice within one hour of the Reportable Cyber Security Incident determination
+    - id: n3
+      text: File DOE-417 with the sharing box selected so one filing covers CIP-008
+    - id: n4
+      text: Notify the cyber insurer before engaging outside forensics

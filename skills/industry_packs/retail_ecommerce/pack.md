@@ -39,7 +39,7 @@ Outside the building: the acquiring bank, the payment processor and POS vendor, 
 
 | Clock id | Goes to | Deadline | Tier |
 |---|---|---|---|
-| `retail_visa_compromise_event_notice` | Visa Global Risk Investigations, through the acquirer | 3 calendar days from reasonable suspicion or confirmation of a Compromise Event | researched |
+| `pci_visa_compromise_notice_3_days (clocks_common.yaml)` | Visa Global Risk Investigations, through the acquirer | 3 calendar days from reasonable suspicion or confirmation of a Compromise Event | researched |
 | `retail_visa_incident_report` | Visa and the acquiring bank | 3 calendar days after notifying Visa (Incident Report) | researched |
 | `retail_ftc_safeguards_notice` | Federal Trade Commission | as soon as possible and no later than 30 days after discovery, 500 or more consumers, non-bank financial institutions only | researched |
 

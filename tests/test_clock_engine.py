@@ -108,4 +108,19 @@ def test_shortest_clock(intake):
     result = evaluate(intake)
     tight = shortest_clock(result)
     assert tight is not None
-    assert tight["id"] == "ca_health_facility_unauthorized_access_15bd"
+    # the sample intake is a PCI merchant, so the Visa three-day notice is tighter than any HIPAA clock
+    assert tight["id"] == "pci_visa_compromise_notice_3_days"
+    assert tight["deadline_hours"] == 72
+
+
+def test_common_state_clock_applies_by_state(intake):
+    by_id = {c["id"]: c for c in evaluate(intake)["clocks"]}
+    assert "state_ca_individual_notice" in by_id or any(k.startswith("state_ca_") for k in by_id)
+    assert not any(k.startswith("state_tx_") for k in by_id)
+
+
+def test_no_clock_appears_twice(intake):
+    ids = [c["id"] for c in evaluate(intake)["clocks"]]
+    assert len(ids) == len(set(ids))
+    names = [(c["regulator"], c["deadline_hours"], c["trigger"]) for c in evaluate(dict(intake, industry="retail_ecommerce"))["clocks"]]
+    assert len(names) == len(set(names))

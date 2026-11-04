@@ -1,0 +1,1093 @@
+# Clocks shared by many packs. Any pack with includes_common: true loads this file. This file is the
+# only place these deadlines live; the validator fails the build on any clock without source_url,
+# verified_date, tier, and deadline_text.
+#
+# tier:
+#   verified    a human opened source_url on verified_date and confirmed the deadline. Used silently.
+#   researched  drafted by the pack_research skill from an authoritative source, not yet human-checked.
+#               Every output that uses it carries a "verify before exercise" banner.
+#
+# applies_when: all listed keys must hold (AND). List-valued keys hold when any value matches (OR).
+#   industries        omitted here: these clocks apply to any industry
+#   data_types        PHI, PII, PCI, PFI, FERPA, CUI, OT, trade_secrets, biometric, SSN
+#   countries         ISO 3166-1 alpha-2
+#   states            US state codes
+#   public_company    true or false
+#   flags             intake.regulated flags that must all be present
+#   min_affected      the clock applies only when intake.affected_estimate is at least this number
+#                     ("more than 500" is recorded as 501; "500 or more" as 500)
+#
+# To promote a clock after checking the source: set tier: verified, verifier: <your name>,
+# verified_date: <date you checked>.
+
+pack: common
+display_name: Clocks shared by many packs
+notes: "Drafted by the pack_research skill on 2026-11-03 from primary sources. Coverage: GDPR, UK GDPR, SEC Form 8-K Item 1.05, CIRCIA, Visa card brand compromise rules, and US state breach laws for the 20 most populous states plus every other state whose statute sets a day count that could be confirmed on the legislature or attorney general site (Alabama, Colorado, Connecticut, Delaware, Louisiana, Maine, New Mexico, Oklahoma, Oregon, Rhode Island, South Dakota, Vermont). Not confirmed on an official site and marked in their notes: Georgia (code hosted only on a commercial platform), Tennessee (public chapter PDF returned 403; legislature bill page used), Indiana (legislature site did not render; attorney general FAQ used). Mastercard account data compromise rules were not fetched; the PCI clock rests on the Visa document only. Several state sites block automated fetching: those marked 'opened in the desktop browser pane' were read through the Claude desktop browser rather than WebFetch. Every state clock here is for notice to individuals holding personal information (data_types PII); regulator and attorney general clocks are listed separately where the statute sets its own timing or threshold. Day counts are converted to calendar hours (days times 24)."
+
+clocks:
+  - id: gdpr_art33_supervisory_authority
+    name: GDPR Article 33, notification of a personal data breach to the supervisory authority
+    regulator: Competent EU supervisory authority (Article 55)
+    jurisdiction: EU
+    trigger: the controller becomes aware of a personal data breach that is not unlikely to result in a risk to the rights and freedoms of natural persons
+    deadline_hours: 72
+    deadline_business_days: null
+    deadline_text: "the controller shall without undue delay and, where feasible, not later than 72 hours after having become aware of it, notify the personal data breach to the supervisory authority competent in accordance with Article 55, unless the personal data breach is unlikely to result in a risk to the rights and freedoms of natural persons. Where the notification to the supervisory authority is not made within 72 hours, it shall be accompanied by reasons for the delay"
+    applies_when:
+      flags: [eu_data_subjects]
+    source_url: https://eur-lex.europa.eu/legal-content/EN/TXT/HTML/?uri=CELEX:32016R0679
+    citation: "Regulation (EU) 2016/679, Article 33(1)"
+    tier: researched
+    verified_date: 2026-11-03
+    verifier: "pack_research skill (Claude), not yet human-checked"
+    notes: "Opened in the desktop browser pane on 2026-11-03 (WebFetch returned an empty body for every eur-lex URL tried). Article 33(2) requires the processor to notify the controller without undue delay. Article 33(4) allows information to be provided in phases. Awareness, not detection, starts the clock; recital 85 says the controller should notify as soon as it becomes aware."
+
+  - id: gdpr_art34_data_subjects
+    name: GDPR Article 34, communication of a personal data breach to the data subject
+    regulator: Competent EU supervisory authority (enforcement)
+    jurisdiction: EU
+    trigger: the personal data breach is likely to result in a high risk to the rights and freedoms of natural persons
+    deadline_hours: null
+    deadline_business_days: null
+    deadline_text: "When the personal data breach is likely to result in a high risk to the rights and freedoms of natural persons, the controller shall communicate the personal data breach to the data subject without undue delay"
+    applies_when:
+      flags: [eu_data_subjects]
+    source_url: https://eur-lex.europa.eu/legal-content/EN/TXT/HTML/?uri=CELEX:32016R0679
+    citation: "Regulation (EU) 2016/679, Article 34(1)"
+    tier: researched
+    verified_date: 2026-11-03
+    verifier: "pack_research skill (Claude), not yet human-checked"
+    notes: "Opened in the desktop browser pane on 2026-11-03. No hour count in the text. Article 34(3) lists the exceptions (encryption rendering the data unintelligible, subsequent measures, or disproportionate effort with a public communication instead); Article 34(4) lets the supervisory authority require the communication."
+
+  - id: uk_gdpr_art33_ico
+    name: UK GDPR Article 33, notification of a personal data breach to the Information Commissioner
+    regulator: Information Commissioner's Office (ICO)
+    jurisdiction: GB
+    trigger: the controller becomes aware of a personal data breach that is not unlikely to result in a risk to the rights and freedoms of natural persons
+    deadline_hours: 72
+    deadline_business_days: null
+    deadline_text: "without undue delay and, where feasible, not later than 72 hours after having become aware of it"
+    applies_when:
+      flags: [uk_data_subjects]
+    source_url: https://www.legislation.gov.uk/eur/2016/679/article/33
+    citation: "UK GDPR (retained Regulation (EU) 2016/679), Article 33(1)"
+    tier: researched
+    verified_date: 2026-11-03
+    verifier: "pack_research skill (Claude), not yet human-checked"
+    notes: "legislation.gov.uk page opened on 2026-11-03; the retained text names the Commissioner as the recipient. The ICO guidance page at ico.org.uk/for-organisations/report-a-breach/personal-data-breach/ returned a bot-check challenge to both WebFetch and the browser pane, so it is not cited. Article 34(1) of the UK GDPR (also opened at https://www.legislation.gov.uk/eur/2016/679/article/34) requires communication to the data subject without undue delay when the breach is likely to result in a high risk."
+
+  - id: sec_8k_item_105_material_incident
+    name: SEC Form 8-K Item 1.05, disclosure of a material cybersecurity incident
+    regulator: US Securities and Exchange Commission
+    jurisdiction: US-federal
+    trigger: the registrant determines that it has experienced a material cybersecurity incident
+    deadline_hours: null
+    deadline_business_days: 4
+    deadline_text: "A report pursuant to Item 1.05 is to be filed within four business days after the registrant determines that it has experienced a material cybersecurity incident"
+    applies_when:
+      public_company: true
+      countries: [US]
+    source_url: https://www.sec.gov/files/form8-k.pdf
+    citation: "Form 8-K, General Instruction B.1 and Item 1.05(a), with Instruction 1 to Item 1.05"
+    tier: researched
+    verified_date: 2026-11-03
+    verifier: "pack_research skill (Claude), not yet human-checked"
+    notes: "PDF opened and text extracted on 2026-11-03 (pages 3 and 11 to 12 of 40). The clock runs from the materiality determination, and Instruction 1 requires that determination to be made without unreasonable delay after discovery, so the exercise should test who makes it and when. Item 1.05(c) allows a delay of up to 30 days (extendable) if the US Attorney General determines in writing that disclosure poses a substantial risk to national security or public safety. Information not yet determined at filing must be added by amendment within four business days after it becomes available (Instruction 2). Foreign private issuers report on Form 6-K and are not covered by this clock."
+
+  - id: circia_covered_incident_72h
+    name: CIRCIA, report of a covered cyber incident to CISA (final rule not yet effective)
+    regulator: CISA
+    jurisdiction: US-federal
+    trigger: the covered entity reasonably believes that a covered cyber incident has occurred
+    deadline_hours: 72
+    deadline_business_days: null
+    deadline_text: "A covered entity that experiences a covered cyber incident shall report the covered cyber incident to the Agency not later than 72 hours after the covered entity reasonably believes that the covered cyber incident has occurred"
+    applies_when:
+      countries: [US]
+      flags: [critical_infrastructure]
+    source_url: https://www.cisa.gov/topics/cyber-threats-and-advisories/information-sharing/cyber-incident-reporting-critical-infrastructure-act-2022-circia
+    citation: "6 U.S.C. 681b(a)(1)(A); CISA CIRCIA program page; proposed rule published April 4, 2024"
+    tier: researched
+    verified_date: 2026-11-03
+    verifier: "pack_research skill (Claude), not yet human-checked"
+    notes: "CISA page opened on 2026-11-03 and statute text confirmed at https://www.law.cornell.edu/uscode/text/6/681b. Status as of 2026-11-03: the final rule is not yet effective. The CISA page says the NPRM was published April 4, 2024, that CISA held four town hall meetings between June 15 and June 18, 2026, that funding lapses affected the rulemaking, that 'CISA continues to work on the final rule', and that 'Until the effective date of the final rule, organizations are not required to submit covered cyber incident or ransom payment reports under CIRCIA'. The clock is included so exercises rehearse it; the final rule may change the definitions of covered entity and covered cyber incident and the reporting form. The exercise should treat it as expected practice, not a live obligation, until the rule is effective."
+
+  - id: circia_ransom_payment_24h
+    name: CIRCIA, report of a ransom payment to CISA (final rule not yet effective)
+    regulator: CISA
+    jurisdiction: US-federal
+    trigger: the covered entity makes a ransom payment as the result of a ransomware attack
+    deadline_hours: 24
+    deadline_business_days: null
+    deadline_text: "A covered entity that makes a ransom payment as the result of a ransomware attack against the covered entity shall report the payment to the Agency not later than 24 hours after the ransom payment has been made"
+    applies_when:
+      countries: [US]
+      flags: [critical_infrastructure]
+    source_url: https://www.cisa.gov/topics/cyber-threats-and-advisories/information-sharing/cyber-incident-reporting-critical-infrastructure-act-2022-circia
+    citation: "6 U.S.C. 681b(a)(2)(A); CISA CIRCIA program page"
+    tier: researched
+    verified_date: 2026-11-03
+    verifier: "pack_research skill (Claude), not yet human-checked"
+    notes: "CISA page opened on 2026-11-03 and statute text confirmed at https://www.law.cornell.edu/uscode/text/6/681b. Same status caveat as circia_covered_incident_72h: not required until the final rule is effective. The statute applies even when the ransomware attack is not itself a covered cyber incident, and payments made by a third party on the entity's behalf count."
+
+  - id: pci_visa_compromise_notice_3_days
+    name: Visa What To Do If Compromised, notification of a suspected or confirmed Compromise Event to Visa
+    regulator: Visa Global Risk Investigations (card brand rules, enforced through the acquiring bank)
+    jurisdiction: Global (Visa payment system participants)
+    trigger: discovery of evidence sufficient to raise a reasonable suspicion of, or to confirm, a Compromise Event involving Visa payment account data or a system that stores, processes, or transmits it
+    deadline_hours: 72
+    deadline_business_days: null
+    deadline_text: "An entity that suspects or confirms unauthorized access to any Visa payment account data, or to any payment system that stores, processes, or transmits Visa payment account data, is required to ensure that the Compromise Event is reported to Visa's Global Risk Investigations group within three (3) calendar days of either: a. The discovery of evidence sufficient to raise a reasonable suspicion of a Compromise Event, or b. The discovery of evidence sufficient to confirm the existence of a Compromise Event"
+    applies_when:
+      data_types: [PCI]
+      flags: [pci_merchant]
+    source_url: https://usa.visa.com/dam/VCOM/download/merchants/cisp-what-to-do-if-compromised.pdf
+    citation: "Visa, What To Do If Compromised, Visa Supplemental Requirements, Version 10.0, effective 25 June 2026, Section A-1.1"
+    tier: researched
+    verified_date: 2026-11-03
+    verifier: "pack_research skill (Claude), not yet human-checked"
+    notes: "PDF opened and text extracted on 2026-11-03. Follow-on deadlines in the same document: an Incident Report to Visa and the acquiring bank within three calendar days of notifying Visa (A-2.1); at-risk account numbers to Visa within three calendar days of discovery, a Visa request, or determination of the window of exposure (A-4.1); if Visa requires a PCI Forensic Investigator, a signed PFI contract within five business days, a preliminary report within five business days of retaining the PFI, and a final report within ten business days of completing the investigation (A-5.1). Section A-3.1 says to immediately notify the issuing or acquiring bank. Mastercard's account data compromise rules were not fetched; add them before using this clock for a Mastercard-only dispute. State breach laws apply in parallel when card data counts as personal information."
+
+  - id: state_ca_individual_notice
+    name: California, notice of a data breach to affected residents
+    regulator: California Attorney General (enforcement)
+    jurisdiction: US-CA
+    trigger: discovery or notification of a breach of the security of the system involving unencrypted personal information of a California resident
+    deadline_hours: 720
+    deadline_business_days: null
+    deadline_text: "the disclosure required by this subdivision shall be made within 30 calendar days of discovery or notification of the data breach"
+    applies_when:
+      countries: [US]
+      states: [CA]
+      data_types: [PII]
+    source_url: https://leginfo.legislature.ca.gov/faces/codes_displaySection.xhtml?lawCode=CIV&sectionNum=1798.82
+    citation: "Cal. Civ. Code 1798.82(a)(2)(A)"
+    tier: researched
+    verified_date: 2026-11-03
+    verifier: "pack_research skill (Claude), not yet human-checked"
+    notes: "Opened in the desktop browser pane on 2026-11-03 (WebFetch returned 403). The page text read on 2026-11-03 contains a 30 calendar day limit at 1798.82(a)(2)(A); older summaries describe only the open-ended 'most expedient time possible and without unreasonable delay' standard, so this is a recent amendment and a human should confirm its effective date. Disclosure may be delayed for the legitimate needs of law enforcement (subdivision (c)) or as necessary to determine the scope of the breach and restore integrity (subdivision (a)(2)(B))."
+
+  - id: state_ca_ag_sample_notice
+    name: California, sample copy of the breach notification to the Attorney General (more than 500 residents)
+    regulator: California Attorney General
+    jurisdiction: US-CA
+    trigger: notifying affected consumers of a breach that requires notice to more than 500 California residents
+    deadline_hours: 360
+    deadline_business_days: null
+    deadline_text: "shall electronically submit a single sample copy of that security breach notification, excluding any personally identifiable information, to the Attorney General within 15 calendar days of notifying affected consumers of the security breach"
+    applies_when:
+      countries: [US]
+      states: [CA]
+      data_types: [PII]
+      min_affected: 501
+    source_url: https://leginfo.legislature.ca.gov/faces/codes_displaySection.xhtml?lawCode=CIV&sectionNum=1798.82
+    citation: "Cal. Civ. Code 1798.82(f)"
+    tier: researched
+    verified_date: 2026-11-03
+    verifier: "pack_research skill (Claude), not yet human-checked"
+    notes: "Opened in the desktop browser pane on 2026-11-03. The clock runs from the date consumers are notified, not from discovery. Submitted through the Attorney General's online breach reporting form (https://oag.ca.gov/privacy/databreach/reporting, also opened on 2026-11-03)."
+
+  - id: state_tx_individual_notice
+    name: Texas, notice of a breach of system security to affected individuals
+    regulator: Texas Attorney General (enforcement)
+    jurisdiction: US-TX
+    trigger: the person determines that a breach of system security involving sensitive personal information occurred
+    deadline_hours: 1440
+    deadline_business_days: null
+    deadline_text: "The disclosure shall be made without unreasonable delay and in each case not later than the 60th day after the date on which the person determines that the breach occurred, except as provided by Subsection (d) or as necessary to determine the scope of the breach and restore the reasonable integrity of the data system"
+    applies_when:
+      countries: [US]
+      states: [TX]
+      data_types: [PII]
+    source_url: https://statutes.capitol.texas.gov/?tab=1&code=BC&chapter=BC.521&artSec=521.053
+    citation: "Tex. Bus. & Com. Code 521.053(b)"
+    tier: researched
+    verified_date: 2026-11-03
+    verifier: "pack_research skill (Claude), not yet human-checked"
+    notes: "Opened in the desktop browser pane on 2026-11-03 (the statutes site renders through scripts and returned only navigation to WebFetch). Subsection (d) allows delay at the request of law enforcement. Subsection (h) requires notice to consumer reporting agencies when more than 10,000 persons are notified."
+
+  - id: state_tx_ag_notice
+    name: Texas, notice of a breach to the Attorney General (at least 250 residents)
+    regulator: Texas Attorney General
+    jurisdiction: US-TX
+    trigger: the person determines that a breach of system security occurred and the breach involves at least 250 residents of Texas
+    deadline_hours: 720
+    deadline_business_days: null
+    deadline_text: "shall notify the attorney general of that breach as soon as practicable and not later than the 30th day after the date on which the person determines that the breach occurred if the breach involves at least 250 residents of this state"
+    applies_when:
+      countries: [US]
+      states: [TX]
+      data_types: [PII]
+      min_affected: 250
+    source_url: https://statutes.capitol.texas.gov/?tab=1&code=BC&chapter=BC.521&artSec=521.053
+    citation: "Tex. Bus. & Com. Code 521.053(i), as amended by Acts 2023, 88th Leg., S.B. 768"
+    tier: researched
+    verified_date: 2026-11-03
+    verifier: "pack_research skill (Claude), not yet human-checked"
+    notes: "Opened in the desktop browser pane on 2026-11-03; the 2023 amendment that shortened the deadline from the 60th day to the 30th day was also confirmed in the enrolled bill at https://capitol.texas.gov/tlodocs/88R/billtext/html/SB00768F.htm. The notice must be submitted electronically through the form on the Attorney General's website."
+
+  - id: state_fl_individual_notice
+    name: Florida, notice of a breach of security to individuals
+    regulator: Florida Department of Legal Affairs (Attorney General)
+    jurisdiction: US-FL
+    trigger: determination of a breach or reason to believe a breach occurred involving personal information of Florida individuals
+    deadline_hours: 720
+    deadline_business_days: null
+    deadline_text: "Notice to individuals shall be made as expeditiously as practicable and without unreasonable delay, taking into account the time necessary to allow the covered entity to determine the scope of the breach of security, to identify individuals affected by the breach, and to restore the reasonable integrity of the data system that was breached, but no later than 30 days after the determination of a breach or reason to believe a breach occurred"
+    applies_when:
+      countries: [US]
+      states: [FL]
+      data_types: [PII]
+    source_url: http://www.leg.state.fl.us/statutes/index.cfm?App_mode=Display_Statute&URL=0500-0599/0501/Sections/0501.171.html
+    citation: "Fla. Stat. 501.171(4)(a)"
+    tier: researched
+    verified_date: 2026-11-03
+    verifier: "pack_research skill (Claude), not yet human-checked"
+    notes: "Statute page opened on 2026-11-03. Notice may be delayed at the written request of a law enforcement agency (501.171(4)(b)). Notice is not required if, after investigation and consultation with law enforcement, the entity reasonably determines the breach has not and will not likely result in identity theft or financial harm, and documents that determination in writing within 30 days and provides it to the department (501.171(4)(c))."
+
+  - id: state_fl_dla_notice
+    name: Florida, notice of a breach to the Department of Legal Affairs (500 or more individuals)
+    regulator: Florida Department of Legal Affairs (Attorney General)
+    jurisdiction: US-FL
+    trigger: determination of a breach or reason to believe a breach occurred affecting 500 or more individuals in Florida
+    deadline_hours: 720
+    deadline_business_days: null
+    deadline_text: "A covered entity shall provide notice to the department of any breach of security affecting 500 or more individuals in this state. Such notice must be provided to the department as expeditiously as practicable, but no later than 30 days after the determination of the breach or reason to believe a breach occurred"
+    applies_when:
+      countries: [US]
+      states: [FL]
+      data_types: [PII]
+      min_affected: 500
+    source_url: http://www.leg.state.fl.us/statutes/index.cfm?App_mode=Display_Statute&URL=0500-0599/0501/Sections/0501.171.html
+    citation: "Fla. Stat. 501.171(3)(a)"
+    tier: researched
+    verified_date: 2026-11-03
+    verifier: "pack_research skill (Claude), not yet human-checked"
+    notes: "Statute page opened on 2026-11-03. The covered entity may receive 15 additional days on written request to the department if good cause is shown."
+
+  - id: state_ny_individual_notice
+    name: New York, notice of a breach of the security of the system to affected residents
+    regulator: New York Attorney General (enforcement)
+    jurisdiction: US-NY
+    trigger: discovery of a breach of the security of the system involving private information of New York residents
+    deadline_hours: 720
+    deadline_business_days: null
+    deadline_text: "The disclosure shall be made in the most expedient time possible and without unreasonable delay, provided that such notification shall be made within thirty days after the breach has been discovered"
+    applies_when:
+      countries: [US]
+      states: [NY]
+      data_types: [PII]
+    source_url: https://www.nysenate.gov/legislation/laws/GBS/899-AA
+    citation: "N.Y. Gen. Bus. Law 899-aa(2), as amended in December 2024"
+    tier: researched
+    verified_date: 2026-11-03
+    verifier: "pack_research skill (Claude), not yet human-checked"
+    notes: "Statute page opened on 2026-11-03. Subdivision 8(a) also requires notice to the state attorney general, the department of state, and the division of state police (and the department of financial services for entities covered by 23 NYCRR 500) as to the timing, content, and distribution of the notices; the statute sets no separate day count for that notice, so no separate clock is drafted. Notice may be delayed for the legitimate needs of law enforcement (subdivision 4)."
+
+  - id: state_pa_individual_notice
+    name: Pennsylvania, notice of a breach of the security of the system to residents
+    regulator: Pennsylvania Office of Attorney General (enforcement)
+    jurisdiction: US-PA
+    trigger: determination of a breach of the security of the system involving unencrypted and unredacted personal information of Pennsylvania residents
+    deadline_hours: null
+    deadline_business_days: null
+    deadline_text: "Except as provided in section 4 or in order to take any measures necessary to determine the scope of the breach and to restore the reasonable integrity of the data system, the notice shall be made without unreasonable delay"
+    applies_when:
+      countries: [US]
+      states: [PA]
+      data_types: [PII]
+    source_url: https://www.palegis.us/statutes/unconsolidated/law-information/view-statute?txtType=PDF&SessYr=2005&ActNum=0094.&SessInd=0
+    citation: "Breach of Personal Information Notification Act, Act 94 of 2005, Section 3(a) (73 P.S. 2303(a)), as amended Nov. 3, 2022, P.L.2139, No.151"
+    tier: researched
+    verified_date: 2026-11-03
+    verifier: "pack_research skill (Claude), not yet human-checked"
+    notes: "PDF opened and text extracted on 2026-11-03 (the HTML view renders through scripts). No day count for private entities; state agencies must notify within seven business days (Section 3(a.1)). Section 5 requires notice to nationwide consumer reporting agencies without unreasonable delay when more than 500 persons are notified."
+
+  - id: state_pa_ag_notice
+    name: Pennsylvania, concurrent notice to the Office of Attorney General (more than 500 individuals)
+    regulator: Pennsylvania Office of Attorney General
+    jurisdiction: US-PA
+    trigger: notice of the breach must be given to more than 500 affected individuals in Pennsylvania
+    deadline_hours: null
+    deadline_business_days: null
+    deadline_text: "When notice of the breach of the security of the system under this section must be given to more than 500 affected individuals in this Commonwealth, notice shall be made concurrently to the Office of Attorney General"
+    applies_when:
+      countries: [US]
+      states: [PA]
+      data_types: [PII]
+      min_affected: 501
+    source_url: https://www.palegis.us/statutes/unconsolidated/law-information/view-statute?txtType=PDF&SessYr=2005&ActNum=0094.&SessInd=0
+    citation: "Act 94 of 2005, Section 3(c.1) (73 P.S. 2303(c.1))"
+    tier: researched
+    verified_date: 2026-11-03
+    verifier: "pack_research skill (Claude), not yet human-checked"
+    notes: "PDF opened and text extracted on 2026-11-03. The deadline is concurrent with the individual notice, which itself has no day count; the clock engine should tie this to state_pa_individual_notice. The notice must include the organization name and location, the date of the breach, a summary, and the estimated number of individuals affected."
+
+  - id: state_il_individual_notice
+    name: Illinois, notice of a breach to affected residents
+    regulator: Illinois Attorney General (enforcement)
+    jurisdiction: US-IL
+    trigger: discovery or notification of a breach of the security of the system data involving personal information of Illinois residents
+    deadline_hours: null
+    deadline_business_days: null
+    deadline_text: "The disclosure notification shall be made in the most expedient time possible and without unreasonable delay, consistent with any measures necessary to determine the scope of the breach and restore the reasonable integrity, security, and confidentiality of the data system"
+    applies_when:
+      countries: [US]
+      states: [IL]
+      data_types: [PII]
+    source_url: https://www.ilga.gov/Legislation/ILCS/Articles?ActID=2702&ChapterID=67
+    citation: "815 ILCS 530/10(a) (Personal Information Protection Act)"
+    tier: researched
+    verified_date: 2026-11-03
+    verifier: "pack_research skill (Claude), not yet human-checked"
+    notes: "Opened in the desktop browser pane on 2026-11-03 (the ilga.gov certificate chain failed WebFetch). No day count for private entities."
+
+  - id: state_il_ag_notice
+    name: Illinois, notice to the Attorney General (more than 500 residents)
+    regulator: Illinois Attorney General
+    jurisdiction: US-IL
+    trigger: a single breach requires notice to more than 500 Illinois residents
+    deadline_hours: null
+    deadline_business_days: null
+    deadline_text: "Any data collector required to issue notice pursuant to this Section to more than 500 Illinois residents as a result of a single breach of the security system shall provide notice to the Attorney General of the breach. Such notification must be made in the most expedient time possible and without unreasonable delay but in no event later than the notice to consumers (closely paraphrased; the fetched page text was cut at this clause)"
+    applies_when:
+      countries: [US]
+      states: [IL]
+      data_types: [PII]
+      min_affected: 501
+    source_url: https://www.ilga.gov/Legislation/ILCS/Articles?ActID=2702&ChapterID=67
+    citation: "815 ILCS 530/10(b)(2)"
+    tier: researched
+    verified_date: 2026-11-03
+    verifier: "pack_research skill (Claude), not yet human-checked"
+    notes: "Opened in the desktop browser pane on 2026-11-03. The notice must describe the nature of the breach, the number of Illinois residents affected, and the steps taken or planned. The clock engine should tie this to state_il_individual_notice because the statute ties the AG notice to the consumer notice date."
+
+  - id: state_oh_individual_notice
+    name: Ohio, disclosure of a breach of the security of the system to residents
+    regulator: Ohio Attorney General (enforcement)
+    jurisdiction: US-OH
+    trigger: discovery or notification of a breach of the security of the system involving personal information of Ohio residents
+    deadline_hours: 1080
+    deadline_business_days: null
+    deadline_text: "The disclosure described in division (B)(1) of this section shall be made in the most expedient time possible but not later than forty-five days following its discovery or notification of the breach in the security of the system, subject to the legitimate needs of law enforcement activities"
+    applies_when:
+      countries: [US]
+      states: [OH]
+      data_types: [PII]
+    source_url: https://codes.ohio.gov/ohio-revised-code/section-1349.19
+    citation: "Ohio Rev. Code 1349.19(B)(2)"
+    tier: researched
+    verified_date: 2026-11-03
+    verifier: "pack_research skill (Claude), not yet human-checked"
+    notes: "Statute page opened on 2026-11-03. No attorney general notice is required by the statute; consumer reporting agencies must be notified when more than 1,000 residents are notified (division (F))."
+
+  - id: state_ga_individual_notice
+    name: Georgia, notice of a breach of the security of the system to residents
+    regulator: Georgia Attorney General (enforcement under the Fair Business Practices Act)
+    jurisdiction: US-GA
+    trigger: discovery or notification of a breach of the security of the system involving personal information of Georgia residents
+    deadline_hours: null
+    deadline_business_days: null
+    deadline_text: "in the most expedient time possible and without unreasonable delay (reported wording of O.C.G.A. 10-1-912(a); not confirmed on an official site)"
+    applies_when:
+      countries: [US]
+      states: [GA]
+      data_types: [PII]
+    source_url: https://www.legis.ga.gov/api/legislation/document/20072008/72300
+    citation: "O.C.G.A. 10-1-912(a)"
+    tier: researched
+    verified_date: 2026-11-03
+    verifier: "pack_research skill (Claude), not yet human-checked"
+    notes: "source not fetched; verify before use. The Georgia Code is published only on a commercial legal platform; the legislature's 2007 to 2008 bill document at the source_url was opened but its PDF text could not be extracted. Secondary summaries agree on the open-ended standard, no attorney general notice, and consumer reporting agency notice when more than 10,000 residents are notified (10-1-912(d))."
+
+  - id: state_nc_individual_notice
+    name: North Carolina, notice of a security breach to affected persons
+    regulator: North Carolina Attorney General, Consumer Protection Division
+    jurisdiction: US-NC
+    trigger: discovery or notification of a security breach involving personal information of North Carolina residents
+    deadline_hours: null
+    deadline_business_days: null
+    deadline_text: "The disclosure notification shall be made without unreasonable delay, consistent with the legitimate needs of law enforcement, as provided in subsection (c) of this section, and consistent with any measures necessary to determine sufficient contact information, determine the scope of the breach and restore the reasonable integrity, security, and confidentiality of the data system"
+    applies_when:
+      countries: [US]
+      states: [NC]
+      data_types: [PII]
+    source_url: https://www.ncleg.gov/EnactedLegislation/Statutes/HTML/BySection/Chapter_75/GS_75-65.html
+    citation: "N.C. Gen. Stat. 75-65(a)"
+    tier: researched
+    verified_date: 2026-11-03
+    verifier: "pack_research skill (Claude), not yet human-checked"
+    notes: "Statute page opened on 2026-11-03. G.S. 75-65(e1) requires the business to notify without unreasonable delay the Consumer Protection Division of the Attorney General's Office of the nature of the breach, the number of consumers affected, the steps taken, and other details; there is no threshold and no separate day count, so no separate clock is drafted."
+
+  - id: state_mi_individual_notice
+    name: Michigan, notice of a security breach to residents
+    regulator: Michigan Attorney General (enforcement)
+    jurisdiction: US-MI
+    trigger: discovery of a security breach involving unencrypted and unredacted personal information of Michigan residents
+    deadline_hours: null
+    deadline_business_days: null
+    deadline_text: "A person or agency shall provide any notice required under this section without unreasonable delay"
+    applies_when:
+      countries: [US]
+      states: [MI]
+      data_types: [PII]
+    source_url: https://www.legislature.mi.gov/Laws/MCL?objectName=mcl-445-72
+    citation: "Mich. Comp. Laws 445.72(4)"
+    tier: researched
+    verified_date: 2026-11-03
+    verifier: "pack_research skill (Claude), not yet human-checked"
+    notes: "Statute page opened on 2026-11-03. The section does not require notice to a state agency; subsection (8) requires notice to nationwide consumer reporting agencies when more than 1,000 residents are notified."
+
+  - id: state_nj_individual_notice
+    name: New Jersey, disclosure of a breach of security to customers
+    regulator: New Jersey Division of Consumer Affairs and Attorney General (enforcement)
+    jurisdiction: US-NJ
+    trigger: discovery or notification of a breach of security of computerized records including personal information of New Jersey residents
+    deadline_hours: null
+    deadline_business_days: null
+    deadline_text: "The disclosure to a customer shall be made in the most expedient time possible and without unreasonable delay, consistent with the legitimate needs of law enforcement, as provided in subsection c. of this section, or any measures necessary to determine the scope of the breach and restore the reasonable integrity of the data system"
+    applies_when:
+      countries: [US]
+      states: [NJ]
+      data_types: [PII]
+    source_url: https://pub.njleg.gov/bills/2018/PL19/95_.HTM
+    citation: "N.J.S.A. 56:8-163(a), as amended by P.L. 2019, c. 95"
+    tier: researched
+    verified_date: 2026-11-03
+    verifier: "pack_research skill (Claude), not yet human-checked"
+    notes: "Enacted session law text opened on the legislature's site on 2026-11-03; the codified statute is published on a commercial platform and was not opened. No day count."
+
+  - id: state_nj_state_police_notice
+    name: New Jersey, report to the Division of State Police before disclosure to customers
+    regulator: New Jersey Division of State Police, Department of Law and Public Safety
+    jurisdiction: US-NJ
+    trigger: a breach of security requires disclosure to New Jersey customers
+    deadline_hours: null
+    deadline_business_days: null
+    deadline_text: "shall, in advance of the disclosure to the customer, report the breach of security and any information pertaining to the breach to the Division of State Police in the Department of Law and Public Safety for investigation or handling"
+    applies_when:
+      countries: [US]
+      states: [NJ]
+      data_types: [PII]
+    source_url: https://pub.njleg.gov/bills/2018/PL19/95_.HTM
+    citation: "N.J.S.A. 56:8-163(c)(1), as amended by P.L. 2019, c. 95"
+    tier: researched
+    verified_date: 2026-11-03
+    verifier: "pack_research skill (Claude), not yet human-checked"
+    notes: "Enacted session law text opened on 2026-11-03. No threshold and no day count; the obligation is sequencing (State Police first, then customers), which the exercise should test explicitly."
+
+  - id: state_va_individual_notice
+    name: Virginia, notice of a breach of the security of the system to the Attorney General and affected residents
+    regulator: Virginia Office of the Attorney General
+    jurisdiction: US-VA
+    trigger: discovery or notification of a breach of the security of the system involving unencrypted or unredacted personal information of Virginia residents
+    deadline_hours: null
+    deadline_business_days: null
+    deadline_text: "shall disclose any breach of the security of the system following discovery or notification of the breach of the security of the system to the Office of the Attorney General and any affected resident of the Commonwealth without unreasonable delay"
+    applies_when:
+      countries: [US]
+      states: [VA]
+      data_types: [PII]
+    source_url: https://law.lis.virginia.gov/vacode/title18.2/chapter6/section18.2-186.6/
+    citation: "Va. Code 18.2-186.6(B)"
+    tier: researched
+    verified_date: 2026-11-03
+    verifier: "pack_research skill (Claude), not yet human-checked"
+    notes: "Statute page opened on 2026-11-03. The Attorney General notice is in the same sentence and carries the same timing, so it is not drafted as a separate clock. Subsection (E) adds notice to the Attorney General and nationwide consumer reporting agencies, without unreasonable delay, when notice is given to more than 1,000 persons at one time."
+
+  - id: state_wa_individual_notice
+    name: Washington, notice of a breach of the security of the system to consumers
+    regulator: Washington Attorney General (enforcement)
+    jurisdiction: US-WA
+    trigger: discovery of a breach of the security of the system involving personal information of Washington residents
+    deadline_hours: 720
+    deadline_business_days: null
+    deadline_text: "Notification to affected consumers under this section must be made in the most expedient time possible, without unreasonable delay, and no more than thirty calendar days after the breach was discovered, unless at the request of law enforcement as provided in subsection (3) of this section, or due to any measures necessary to determine the scope of the breach and restore the reasonable integrity of the data system"
+    applies_when:
+      countries: [US]
+      states: [WA]
+      data_types: [PII]
+    source_url: https://app.leg.wa.gov/RCW/default.aspx?cite=19.255.010
+    citation: "RCW 19.255.010(8)"
+    tier: researched
+    verified_date: 2026-11-03
+    verifier: "pack_research skill (Claude), not yet human-checked"
+    notes: "Statute page opened on 2026-11-03."
+
+  - id: state_wa_ag_notice
+    name: Washington, notice of a breach to the Attorney General (more than 500 residents)
+    regulator: Washington Attorney General
+    jurisdiction: US-WA
+    trigger: a single breach requires notification to more than 500 Washington residents
+    deadline_hours: 720
+    deadline_business_days: null
+    deadline_text: "Any person or business that is required to issue a notification pursuant to this section to more than five hundred Washington residents as a result of a single breach shall notify the attorney general of the breach no more than thirty days after the breach was discovered"
+    applies_when:
+      countries: [US]
+      states: [WA]
+      data_types: [PII]
+      min_affected: 501
+    source_url: https://app.leg.wa.gov/RCW/default.aspx?cite=19.255.010
+    citation: "RCW 19.255.010(7)"
+    tier: researched
+    verified_date: 2026-11-03
+    verifier: "pack_research skill (Claude), not yet human-checked"
+    notes: "Statute page opened on 2026-11-03. The notice to the attorney general must include the number of affected Washington residents (or an estimate), a list of the types of personal information, a timeline, a summary of the steps taken, and a sample copy of the consumer notice."
+
+  - id: state_az_individual_notice
+    name: Arizona, notification of a security system breach to affected individuals
+    regulator: Arizona Attorney General (enforcement)
+    jurisdiction: US-AZ
+    trigger: determination, after an investigation, that a security system breach involving personal information of Arizona residents occurred
+    deadline_hours: 1080
+    deadline_business_days: null
+    deadline_text: "within forty-five days after the determination, shall: 1. Notify the individuals affected"
+    applies_when:
+      countries: [US]
+      states: [AZ]
+      data_types: [PII]
+    source_url: https://www.azleg.gov/ars/18/00552.htm
+    citation: "A.R.S. 18-552(B)(1)"
+    tier: researched
+    verified_date: 2026-11-03
+    verifier: "pack_research skill (Claude), not yet human-checked"
+    notes: "Statute page opened on 2026-11-03. Subsection D allows delay if a law enforcement agency advises that notification would impede a criminal investigation."
+
+  - id: state_az_ag_notice
+    name: Arizona, notice to the Attorney General and the Department of Homeland Security (more than 1,000 individuals)
+    regulator: Arizona Attorney General and Director of the Arizona Department of Homeland Security
+    jurisdiction: US-AZ
+    trigger: a security system breach requires notification of more than 1,000 individuals
+    deadline_hours: 1080
+    deadline_business_days: null
+    deadline_text: "within forty-five days after the determination, shall: 2. If the breach requires notification of more than one thousand individuals, notify both: (a) The three largest nationwide consumer reporting agencies. (b) The attorney general and the director of the Arizona department of homeland security"
+    applies_when:
+      countries: [US]
+      states: [AZ]
+      data_types: [PII]
+      min_affected: 1001
+    source_url: https://www.azleg.gov/ars/18/00552.htm
+    citation: "A.R.S. 18-552(B)(2)"
+    tier: researched
+    verified_date: 2026-11-03
+    verifier: "pack_research skill (Claude), not yet human-checked"
+    notes: "Statute page opened on 2026-11-03. Same 45 day window as the individual notice."
+
+  - id: state_tn_individual_notice
+    name: Tennessee, disclosure of a breach of system security to residents
+    regulator: Tennessee Attorney General (enforcement)
+    jurisdiction: US-TN
+    trigger: discovery or notification of a breach of system security involving personal information of Tennessee residents
+    deadline_hours: 1080
+    deadline_business_days: null
+    deadline_text: "immediately, but no later than forty-five (45) days from the discovery or notification of the breach of system security, unless a longer period of time is required due to the legitimate needs of law enforcement"
+    applies_when:
+      countries: [US]
+      states: [TN]
+      data_types: [PII]
+    source_url: https://wapp.capitol.tn.gov/apps/BillInfo/Default.aspx?BillNumber=SB2005&GA=109
+    citation: "Tenn. Code Ann. 47-18-2107(b), as amended by Public Chapter 692 (2016), effective July 1, 2016"
+    tier: researched
+    verified_date: 2026-11-03
+    verifier: "pack_research skill (Claude), not yet human-checked"
+    notes: "Partially confirmed; verify before use. The Tennessee General Assembly bill page (opened 2026-11-03) records that Senate Amendment 1 set the deadline to 45 days and that the bill became Public Chapter 692 effective 07/01/2016, but the public chapter PDF at publications.tnsosfiles.com returned 403 and the codified text is published only on a commercial platform, so the quoted wording comes from the amendment summary and secondary sources. A 2017 amendment (S.B. 547) restored the encryption safe harbor and kept the 45 day limit. No attorney general notice is required by the statute."
+
+  - id: state_ma_individual_notice
+    name: Massachusetts, notice of a breach of security to the Attorney General, the Director of Consumer Affairs and Business Regulation, and residents
+    regulator: Massachusetts Attorney General and Office of Consumer Affairs and Business Regulation
+    jurisdiction: US-MA
+    trigger: the person knows or has reason to know of a breach of security or that personal information of a Massachusetts resident was acquired or used by an unauthorized person
+    deadline_hours: null
+    deadline_business_days: null
+    deadline_text: "shall provide notice, as soon as practicable and without unreasonable delay, when such person or agency knows or has reason to know of a breach of security"
+    applies_when:
+      countries: [US]
+      states: [MA]
+      data_types: [PII]
+    source_url: https://malegislature.gov/Laws/GeneralLaws/PartI/TitleXV/Chapter93H/Section3
+    citation: "Mass. Gen. Laws c. 93H, s. 3(b)"
+    tier: researched
+    verified_date: 2026-11-03
+    verifier: "pack_research skill (Claude), not yet human-checked"
+    notes: "Statute page opened on 2026-11-03. The same subsection requires notice to the attorney general and the director of consumer affairs and business regulation, with the same timing, so no separate clock is drafted. The statute says a notice shall not be delayed on the grounds that the total number of residents affected is not yet ascertained."
+
+  - id: state_in_individual_notice
+    name: Indiana, disclosure of a security breach to affected residents
+    regulator: Indiana Attorney General (enforcement)
+    jurisdiction: US-IN
+    trigger: discovery of a breach of the security of data involving personal information of Indiana residents
+    deadline_hours: null
+    deadline_business_days: null
+    deadline_text: "The disclosure must be made without unreasonable delay (wording from the Indiana Attorney General business FAQ; the codified text of IC 24-4.9-3-3 was not opened)"
+    applies_when:
+      countries: [US]
+      states: [IN]
+      data_types: [PII]
+    source_url: http://www.in.gov/attorneygeneral/consumer-protection-division/id-theft-prevention/security-breaches/security-breach-faqs-and-notification-form-for-businesses/
+    citation: "Ind. Code 24-4.9-3-3 (as described by the Indiana Attorney General)"
+    tier: researched
+    verified_date: 2026-11-03
+    verifier: "pack_research skill (Claude), not yet human-checked"
+    notes: "Partially confirmed; verify before use. The Indiana General Assembly statute site (iga.in.gov) did not render in either WebFetch or the browser pane on 2026-11-03. The Attorney General FAQ opened on that date gives only 'without unreasonable delay' and also requires notice to the Attorney General's office and, when more than 1,000 residents are notified, to consumer reporting agencies, with no day counts. Secondary sources report a 2024 amendment adding a 45 day outer limit to IC 24-4.9-3-3; if confirmed, set deadline_hours to 1080."
+
+  - id: state_md_individual_notice
+    name: Maryland, notification of a breach of the security of a system to individuals
+    regulator: Maryland Attorney General (enforcement)
+    jurisdiction: US-MD
+    trigger: the business discovers or is notified of a breach of the security of a system involving personal information of Maryland residents
+    deadline_hours: 1080
+    deadline_business_days: null
+    deadline_text: "shall be given as soon as reasonably practicable, but not later than 45 days after the business discovers or is notified of the breach of the security of a system"
+    applies_when:
+      countries: [US]
+      states: [MD]
+      data_types: [PII]
+    source_url: https://mgaleg.maryland.gov/mgawebsite/Laws/StatuteText?article=gcl&section=14-3504&enactments=false
+    citation: "Md. Code, Com. Law 14-3504(b)(3)"
+    tier: researched
+    verified_date: 2026-11-03
+    verifier: "pack_research skill (Claude), not yet human-checked"
+    notes: "Statute page opened on 2026-11-03. Subsection (d) allows delay for law enforcement or to determine the scope of the breach. Notice is not required if the business reasonably determines, after investigation, that the breach does not create a likelihood that personal information has been or will be misused; that determination must be documented and kept for three years."
+
+  - id: state_md_ag_notice
+    name: Maryland, notice to the Office of the Attorney General before notifying individuals
+    regulator: Maryland Office of the Attorney General
+    jurisdiction: US-MD
+    trigger: a breach of the security of a system requires notification of Maryland individuals
+    deadline_hours: 1080
+    deadline_business_days: null
+    deadline_text: "Prior to giving the notification required under subsection (b) of this section and subject to subsection (d) of this section, a business shall provide notice of a breach of the security of a system to the Office of the Attorney General"
+    applies_when:
+      countries: [US]
+      states: [MD]
+      data_types: [PII]
+    source_url: https://mgaleg.maryland.gov/mgawebsite/Laws/StatuteText?article=gcl&section=14-3504&enactments=false
+    citation: "Md. Code, Com. Law 14-3504(h)(1)"
+    tier: researched
+    verified_date: 2026-11-03
+    verifier: "pack_research skill (Claude), not yet human-checked"
+    notes: "Statute page opened on 2026-11-03. Labeled assumption: deadline_hours 1080 mirrors the 45 day outer limit of the individual notice because the Attorney General notice must precede it; the statute sets no separate day count and no numeric threshold."
+
+  - id: state_mo_individual_notice
+    name: Missouri, notice of a breach of security to affected consumers
+    regulator: Missouri Attorney General (enforcement)
+    jurisdiction: US-MO
+    trigger: discovery or notification of a breach of security involving personal information of Missouri residents
+    deadline_hours: null
+    deadline_business_days: null
+    deadline_text: "Made without unreasonable delay"
+    applies_when:
+      countries: [US]
+      states: [MO]
+      data_types: [PII]
+    source_url: https://revisor.mo.gov/main/OneSection.aspx?section=407.1500
+    citation: "Mo. Rev. Stat. 407.1500.2(1)(a)"
+    tier: researched
+    verified_date: 2026-11-03
+    verifier: "pack_research skill (Claude), not yet human-checked"
+    notes: "Statute page opened on 2026-11-03. Subsection 2(8) requires notice to the attorney general's office and nationwide consumer reporting agencies, without unreasonable delay, when notice is given to more than 1,000 consumers at one time; no separate day count, so no separate clock is drafted."
+
+  - id: state_wi_individual_notice
+    name: Wisconsin, notice of unauthorized acquisition of personal information
+    regulator: Wisconsin Department of Agriculture, Trade and Consumer Protection and Attorney General (enforcement)
+    jurisdiction: US-WI
+    trigger: the entity learns of the unauthorized acquisition of personal information of Wisconsin residents
+    deadline_hours: 1080
+    deadline_business_days: null
+    deadline_text: "within a reasonable time, not to exceed 45 days after the entity learns of the acquisition of personal information"
+    applies_when:
+      countries: [US]
+      states: [WI]
+      data_types: [PII]
+    source_url: https://docs.legis.wisconsin.gov/statutes/statutes/134/98
+    citation: "Wis. Stat. 134.98(3)(a)"
+    tier: researched
+    verified_date: 2026-11-03
+    verifier: "pack_research skill (Claude), not yet human-checked"
+    notes: "Statute page opened on 2026-11-03. Subject to a law enforcement delay under sub. (5). No state agency notice is required; consumer reporting agencies must be notified without unreasonable delay when 1,000 or more individuals are notified (134.98(2)(br))."
+
+  - id: state_co_individual_notice
+    name: Colorado, notice of a security breach to affected residents
+    regulator: Colorado Attorney General (enforcement)
+    jurisdiction: US-CO
+    trigger: determination that a security breach involving personal information of Colorado residents has occurred
+    deadline_hours: 720
+    deadline_business_days: null
+    deadline_text: "You must provide notice in the most expedient time possible, without unreasonable delay, and within 30 days after the date of determination that a security breach has occurred"
+    applies_when:
+      countries: [US]
+      states: [CO]
+      data_types: [PII]
+    source_url: https://coag.gov/resources/data-protection-laws/
+    citation: "C.R.S. 6-1-716(2), as summarized by the Colorado Attorney General"
+    tier: researched
+    verified_date: 2026-11-03
+    verifier: "pack_research skill (Claude), not yet human-checked"
+    notes: "Attorney General FAQ page opened in the desktop browser pane on 2026-11-03 (WebFetch returned an empty body). The Colorado Revised Statutes are published on a commercial platform and the statute text was not opened directly. Notice may be delayed for law enforcement or to determine the scope of the breach and restore integrity."
+
+  - id: state_co_ag_notice
+    name: Colorado, notice to the Attorney General (500 or more residents)
+    regulator: Colorado Attorney General
+    jurisdiction: US-CO
+    trigger: a security breach is reasonably believed to have affected 500 or more Colorado residents
+    deadline_hours: 720
+    deadline_business_days: null
+    deadline_text: "If the security breach is reasonably believed to have affected 500 or more Colorado residents, you must provide notice to the Colorado Attorney General. You must provide this notice in the most expedient time possible and without unreasonable delay, but not later than 30 days after the date of determination that a security breach occurred"
+    applies_when:
+      countries: [US]
+      states: [CO]
+      data_types: [PII]
+      min_affected: 500
+    source_url: https://coag.gov/resources/data-protection-laws/
+    citation: "C.R.S. 6-1-716(2)(f), as summarized by the Colorado Attorney General"
+    tier: researched
+    verified_date: 2026-11-03
+    verifier: "pack_research skill (Claude), not yet human-checked"
+    notes: "Attorney General FAQ page opened in the desktop browser pane on 2026-11-03. Filed through the Attorney General's online Data Breach Reporting Form. Consumer reporting agencies must also be notified when more than 1,000 residents are affected."
+
+  - id: state_al_individual_notice
+    name: Alabama, notice of a security breach to affected individuals
+    regulator: Alabama Attorney General (enforcement)
+    jurisdiction: US-AL
+    trigger: determination that a breach of security involving sensitive personally identifying information has occurred and is reasonably likely to cause substantial harm, or receipt of notice from a third-party agent
+    deadline_hours: 1080
+    deadline_business_days: null
+    deadline_text: "Notice to individuals under subsection (a) shall be made as expeditiously as possible and without unreasonable delay, taking into account the time necessary to allow the covered entity to conduct an investigation in accordance with Section 8-38-4. Except as provided in subsection (c), the covered entity shall provide notice within 45 days of the covered entity's receipt of notice from a third-party agent that a breach has occurred or upon the covered entity's determination that a breach has occurred and is reasonably likely to cause substantial harm to the individuals to whom the information relates"
+    applies_when:
+      countries: [US]
+      states: [AL]
+      data_types: [PII]
+    source_url: https://acua.alabama.gov/PDF/law/AlabamaDataBreachNotificationAct.pdf
+    citation: "Ala. Code 8-38-5(b) (Act 2018-396)"
+    tier: researched
+    verified_date: 2026-11-03
+    verifier: "pack_research skill (Claude), not yet human-checked"
+    notes: "PDF of the Act hosted on an alabama.gov site opened and text extracted on 2026-11-03; the Code of Alabama itself is published on a commercial platform. Third-party agents must notify the covered entity within 10 days (8-38-8). Law enforcement may require delay (8-38-5(c))."
+
+  - id: state_al_ag_notice
+    name: Alabama, written notice to the Attorney General (more than 1,000 individuals)
+    regulator: Alabama Attorney General
+    jurisdiction: US-AL
+    trigger: the number of individuals the covered entity must notify exceeds 1,000
+    deadline_hours: 1080
+    deadline_business_days: null
+    deadline_text: "If the number of individuals a covered entity is required to notify under Section 8-38-5 exceeds 1,000, the entity shall provide written notice of the breach to the Attorney General as expeditiously as possible and without unreasonable delay. Except as provided in subsection (c) of Section 8-38-5, the covered entity shall provide the notice within 45 days of the covered entity's receipt of notice from a third-party agent that a breach has occurred or upon the entity's determination that a breach has occurred and is reasonably likely to cause substantial harm"
+    applies_when:
+      countries: [US]
+      states: [AL]
+      data_types: [PII]
+      min_affected: 1001
+    source_url: https://acua.alabama.gov/PDF/law/AlabamaDataBreachNotificationAct.pdf
+    citation: "Ala. Code 8-38-6(a) (Act 2018-396)"
+    tier: researched
+    verified_date: 2026-11-03
+    verifier: "pack_research skill (Claude), not yet human-checked"
+    notes: "PDF opened and text extracted on 2026-11-03. The written notice must include a synopsis of the events, the approximate number of Alabama individuals affected, any services offered, and a contact."
+
+  - id: state_ct_individual_notice
+    name: Connecticut, notice of a breach of security to residents
+    regulator: Connecticut Attorney General (enforcement)
+    jurisdiction: US-CT
+    trigger: discovery of a breach of security involving personal information of Connecticut residents
+    deadline_hours: 1440
+    deadline_business_days: null
+    deadline_text: "Such notice shall be made without unreasonable delay but not later than sixty days after the discovery of such breach, unless a shorter time is required under federal law, subject to the provisions of subsection (d) of this section"
+    applies_when:
+      countries: [US]
+      states: [CT]
+      data_types: [PII]
+    source_url: https://www.cga.ct.gov/current/pub/chap_669.htm
+    citation: "Conn. Gen. Stat. 36a-701b(b)(1)"
+    tier: researched
+    verified_date: 2026-11-03
+    verifier: "pack_research skill (Claude), not yet human-checked"
+    notes: "Opened in the desktop browser pane on 2026-11-03 (the cga.ct.gov certificate chain failed WebFetch). Additional residents identified after the sixty days must be notified as expediently as possible. Notice is not required if, after investigation, the person reasonably determines the breach will not likely result in harm."
+
+  - id: state_ct_ag_notice
+    name: Connecticut, notice to the Attorney General not later than the notice to residents
+    regulator: Connecticut Attorney General
+    jurisdiction: US-CT
+    trigger: notice of a breach of security to Connecticut residents is required
+    deadline_hours: 1440
+    deadline_business_days: null
+    deadline_text: "The person who owns, licenses or maintains computerized data that includes personal information, shall, not later than the time when notice is provided to the resident, also provide notice of the breach of security to the Attorney General"
+    applies_when:
+      countries: [US]
+      states: [CT]
+      data_types: [PII]
+    source_url: https://www.cga.ct.gov/current/pub/chap_669.htm
+    citation: "Conn. Gen. Stat. 36a-701b(b)(2)(A)"
+    tier: researched
+    verified_date: 2026-11-03
+    verifier: "pack_research skill (Claude), not yet human-checked"
+    notes: "Opened in the desktop browser pane on 2026-11-03. No numeric threshold; the deadline is tied to the resident notice, so deadline_hours mirrors the sixty day outer limit."
+
+  - id: state_de_individual_notice
+    name: Delaware, notice of a breach of security to residents
+    regulator: Delaware Attorney General (enforcement)
+    jurisdiction: US-DE
+    trigger: determination of a breach of security involving personal information of Delaware residents
+    deadline_hours: 1440
+    deadline_business_days: null
+    deadline_text: "Notice required by subsection (a) of this section must be made without unreasonable delay but not later than 60 days after determination of the breach of security"
+    applies_when:
+      countries: [US]
+      states: [DE]
+      data_types: [PII]
+    source_url: https://delcode.delaware.gov/title6/c012b/index.html
+    citation: "6 Del. C. 12B-102(c)"
+    tier: researched
+    verified_date: 2026-11-03
+    verifier: "pack_research skill (Claude), not yet human-checked"
+    notes: "Statute page opened on 2026-11-03. Subject to the law enforcement delay in 12B-103 and the exception where the breach is determined to be unlikely to result in harm."
+
+  - id: state_de_ag_notice
+    name: Delaware, notice to the Attorney General (more than 500 residents)
+    regulator: Delaware Attorney General
+    jurisdiction: US-DE
+    trigger: the number of Delaware residents to be notified exceeds 500
+    deadline_hours: 1440
+    deadline_business_days: null
+    deadline_text: "If the affected number of Delaware residents to be notified exceeds 500 residents, the person required to provide notice shall, not later than the time when notice is provided to the resident, also provide notice of the breach of security to the Attorney General"
+    applies_when:
+      countries: [US]
+      states: [DE]
+      data_types: [PII]
+      min_affected: 501
+    source_url: https://delcode.delaware.gov/title6/c012b/index.html
+    citation: "6 Del. C. 12B-102(d)"
+    tier: researched
+    verified_date: 2026-11-03
+    verifier: "pack_research skill (Claude), not yet human-checked"
+    notes: "Statute page opened on 2026-11-03. Tied to the resident notice, so deadline_hours mirrors the 60 day outer limit."
+
+  - id: state_la_individual_notice
+    name: Louisiana, notice of a breach of the security of the system to residents
+    regulator: Louisiana Attorney General (enforcement)
+    jurisdiction: US-LA
+    trigger: discovery of a breach of the security of the system involving personal information of Louisiana residents
+    deadline_hours: 1440
+    deadline_business_days: null
+    deadline_text: "Notification shall be made in the most expedient time possible and without unreasonable delay but not later than sixty days from the discovery of the breach, consistent with the legitimate needs of law enforcement"
+    applies_when:
+      countries: [US]
+      states: [LA]
+      data_types: [PII]
+    source_url: https://legis.la.gov/Legis/Law.aspx?d=322030
+    citation: "La. R.S. 51:3074(E)"
+    tier: researched
+    verified_date: 2026-11-03
+    verifier: "pack_research skill (Claude), not yet human-checked"
+    notes: "Statute page opened on 2026-11-03. If notification is delayed, the entity must give the attorney general the reasons for the delay in writing within the sixty day period. The statute itself contains no separate attorney general notice; the Louisiana Attorney General's rule in the Louisiana Administrative Code requiring notice within 10 days of notifying citizens was not fetched and is not drafted here."
+
+  - id: state_me_individual_notice
+    name: Maine, notice of a breach of security to residents
+    regulator: Maine Attorney General and Department of Professional and Financial Regulation
+    jurisdiction: US-ME
+    trigger: the person becomes aware of a breach of security involving personal information of Maine residents
+    deadline_hours: 720
+    deadline_business_days: null
+    deadline_text: "The notices required under paragraphs A and B must be made as expediently as possible and without unreasonable delay, consistent with the legitimate needs of law enforcement pursuant to subsection 3 or with measures necessary to determine the scope of the security breach and restore the reasonable integrity, security and confidentiality of the data in the system, but no more than 30 days after the person identified in paragraph A or B becomes aware of a breach of security"
+    applies_when:
+      countries: [US]
+      states: [ME]
+      data_types: [PII]
+    source_url: https://legislature.maine.gov/statutes/10/title10sec1348.html
+    citation: "10 M.R.S. 1348(1)"
+    tier: researched
+    verified_date: 2026-11-03
+    verifier: "pack_research skill (Claude), not yet human-checked"
+    notes: "Statute page opened on 2026-11-03. Subsection 5 requires notice to the appropriate state regulators within the Department of Professional and Financial Regulation, or to the Attorney General for entities not regulated by that department, whenever resident notice is required; no separate day count, so no separate clock is drafted. Consumer reporting agencies must be notified when more than 1,000 persons are notified at a single time."
+
+  - id: state_nm_individual_notice
+    name: New Mexico, notification of a security breach to residents
+    regulator: New Mexico Attorney General (enforcement)
+    jurisdiction: US-NM
+    trigger: discovery of a security breach involving personal identifying information of New Mexico residents
+    deadline_hours: 1080
+    deadline_business_days: null
+    deadline_text: "Notification shall be made in the most expedient time possible, but not later than forty-five calendar days following discovery of the security breach, except as provided in Section 9 of the Data Breach Notification Act"
+    applies_when:
+      countries: [US]
+      states: [NM]
+      data_types: [PII]
+    source_url: https://www.nmlegis.gov/Sessions/17%20Regular/final/HB0015.pdf
+    citation: "NMSA 1978, 57-12C-6(A) (Data Breach Notification Act, 2017 House Bill 15, Section 6)"
+    tier: researched
+    verified_date: 2026-11-03
+    verifier: "pack_research skill (Claude), not yet human-checked"
+    notes: "Enacted bill PDF on the legislature's site opened and text extracted on 2026-11-03; the codified text on nmonesource.com was not opened. Notification is not required if, after an appropriate investigation, the person determines the breach does not give rise to a significant risk of identity theft or fraud."
+
+  - id: state_nm_ag_notice
+    name: New Mexico, notice to the Attorney General and consumer reporting agencies (more than 1,000 residents)
+    regulator: New Mexico Office of the Attorney General
+    jurisdiction: US-NM
+    trigger: a single security breach requires notification of more than 1,000 New Mexico residents
+    deadline_hours: 1080
+    deadline_business_days: null
+    deadline_text: "A person that is required to issue notification of a security breach pursuant to the Data Breach Notification Act to more than one thousand New Mexico residents as a result of a single security breach shall notify the office of the attorney general and major consumer reporting agencies that compile and maintain files on consumers on a nationwide basis of the security breach in the most expedient time possible, and no later than forty-five calendar days"
+    applies_when:
+      countries: [US]
+      states: [NM]
+      data_types: [PII]
+      min_affected: 1001
+    source_url: https://www.nmlegis.gov/Sessions/17%20Regular/final/HB0015.pdf
+    citation: "NMSA 1978, 57-12C-10 (Data Breach Notification Act, 2017 House Bill 15, Section 10)"
+    tier: researched
+    verified_date: 2026-11-03
+    verifier: "pack_research skill (Claude), not yet human-checked"
+    notes: "Enacted bill PDF opened and text extracted on 2026-11-03. The notice must state the number of residents notified and include a copy of the resident notice within forty-five calendar days of discovery."
+
+  - id: state_or_individual_notice
+    name: Oregon, notice of a breach of security to consumers
+    regulator: Oregon Department of Justice (Attorney General)
+    jurisdiction: US-OR
+    trigger: discovery or notification of a breach of security involving personal information of Oregon consumers
+    deadline_hours: 1080
+    deadline_business_days: null
+    deadline_text: "within 45 days of discovering the breach of security"
+    applies_when:
+      countries: [US]
+      states: [OR]
+      data_types: [PII]
+    source_url: https://www.doj.state.or.us/consumer-protection/id-theft-data-breaches/data-breaches/
+    citation: "ORS 646A.604(2), as summarized on the Oregon Department of Justice data breach page (Oregon Consumer Information Protection Act, ORS 646A.600 to 646A.628)"
+    tier: researched
+    verified_date: 2026-11-03
+    verifier: "pack_research skill (Claude), not yet human-checked"
+    notes: "Department of Justice page opened on 2026-11-03. The full ORS chapter 646A page on oregonlegislature.gov is too long for a single fetch and the section text was not read directly; the statute's own wording is 'in the most expeditious manner possible, without unreasonable delay' with the 45 day outer limit."
+
+  - id: state_or_ag_notice
+    name: Oregon, report and sample notice to the Department of Justice (more than 250 consumers)
+    regulator: Oregon Department of Justice (Attorney General)
+    jurisdiction: US-OR
+    trigger: a breach of security affects more than 250 Oregon consumers
+    deadline_hours: 1080
+    deadline_business_days: null
+    deadline_text: "For breaches affecting more than 250 Oregonians, the entity must also provide the DOJ with a report and a sample breach notice, also within 45 days"
+    applies_when:
+      countries: [US]
+      states: [OR]
+      data_types: [PII]
+      min_affected: 251
+    source_url: https://www.doj.state.or.us/consumer-protection/id-theft-data-breaches/data-breaches/
+    citation: "ORS 646A.604(2), as summarized on the Oregon Department of Justice data breach page"
+    tier: researched
+    verified_date: 2026-11-03
+    verifier: "pack_research skill (Claude), not yet human-checked"
+    notes: "Department of Justice page opened on 2026-11-03. Filed through the Department of Justice online data breach reporting form."
+
+  - id: state_ri_individual_notice
+    name: Rhode Island, notification of a breach of the security of the system to residents
+    regulator: Rhode Island Attorney General (enforcement)
+    jurisdiction: US-RI
+    trigger: confirmation of a breach of the security of the system involving personal information of Rhode Island residents
+    deadline_hours: 1080
+    deadline_business_days: null
+    deadline_text: "in the most expedient time possible, subject to the following: For persons subject to subsection (a)(1), which is not a state or municipal agency, no later than forty-five (45) calendar days after confirmation of the breach and the ability to ascertain the information required to fulfill the notice requirements"
+    applies_when:
+      countries: [US]
+      states: [RI]
+      data_types: [PII]
+    source_url: http://webserver.rilegislature.gov/Statutes/TITLE11/11-49.3/11-49.3-4.htm
+    citation: "R.I. Gen. Laws 11-49.3-4(a)(2)"
+    tier: researched
+    verified_date: 2026-11-03
+    verifier: "pack_research skill (Claude), not yet human-checked"
+    notes: "Statute page opened on 2026-11-03. When more than 500 Rhode Island residents are to be notified, the person must also notify the attorney general and the major credit reporting agencies as to the timing, content, and distribution of the notices, without delaying notice to residents; no separate day count, so no separate clock is drafted."
+
+  - id: state_sd_individual_notice
+    name: South Dakota, notice of a breach of system security to residents
+    regulator: South Dakota Attorney General (enforcement)
+    jurisdiction: US-SD
+    trigger: discovery or notification of a breach of system security involving personal or protected information of South Dakota residents
+    deadline_hours: 1440
+    deadline_business_days: null
+    deadline_text: "A disclosure under this section shall be made not later than sixty days from the discovery or notification of the breach of system security, unless a longer period of time is required due to the legitimate needs of law enforcement as provided under 22-40-21"
+    applies_when:
+      countries: [US]
+      states: [SD]
+      data_types: [PII]
+    source_url: https://sdlegislature.gov/Statutes/22-40-20
+    citation: "S.D. Codified Laws 22-40-20"
+    tier: researched
+    verified_date: 2026-11-03
+    verifier: "pack_research skill (Claude), not yet human-checked"
+    notes: "Opened in the desktop browser pane on 2026-11-03 (WebFetch received only a browser compatibility notice). The same section requires disclosure to the attorney general of any breach that exceeds 250 residents, with no separate day count, so no separate clock is drafted. Disclosure is not required if, after investigation and notice to the attorney general, the holder reasonably determines the breach will not likely result in harm."
+
+  - id: state_vt_individual_notice
+    name: Vermont, notice of a security breach to consumers
+    regulator: Vermont Attorney General and Department of Financial Regulation
+    jurisdiction: US-VT
+    trigger: discovery or notification of a security breach involving personally identifiable information of Vermont consumers
+    deadline_hours: 1080
+    deadline_business_days: null
+    deadline_text: "Notice of the security breach shall be made in the most expedient time possible and without unreasonable delay, but not later than 45 days after the discovery or notification, consistent with the legitimate needs of law enforcement agencies or with any measures necessary to determine the scope of the security breach and restore the reasonable integrity, security, and confidentiality of the data system"
+    applies_when:
+      countries: [US]
+      states: [VT]
+      data_types: [PII]
+    source_url: https://legislature.vermont.gov/statutes/section/09/062/02435
+    citation: "9 V.S.A. 2435(b)(1)"
+    tier: researched
+    verified_date: 2026-11-03
+    verifier: "pack_research skill (Claude), not yet human-checked"
+    notes: "Statute page opened on 2026-11-03; the page shows identical text for the version in force until January 1, 2027 and the version effective on that date."
+
+  - id: state_vt_ag_notice
+    name: Vermont, preliminary description of the breach to the Attorney General or Department of Financial Regulation
+    regulator: Vermont Attorney General (or Department of Financial Regulation for entities it regulates)
+    jurisdiction: US-VT
+    trigger: discovery of the security breach, or notice to consumers, whichever is sooner
+    deadline_hours: null
+    deadline_business_days: 14
+    deadline_text: "shall provide a preliminary description of the breach within 14 business days, consistent with the legitimate needs of law enforcement, of the data collector's discovery of the security breach or when the data collector provides notice to consumers, whichever is sooner"
+    applies_when:
+      countries: [US]
+      states: [VT]
+      data_types: [PII]
+    source_url: https://legislature.vermont.gov/statutes/section/09/062/02435
+    citation: "9 V.S.A. 2435(b)(3)(B)(i)"
+    tier: researched
+    verified_date: 2026-11-03
+    verifier: "pack_research skill (Claude), not yet human-checked"
+    notes: "Statute page opened on 2026-11-03. The notice includes the date of the breach and the date of discovery. Subsection (b)(3)(B)(ii) changes the timing for data collectors that have sworn to the Attorney General that they maintain a written breach policy; a copy of the consumer notice goes to the Attorney General when consumers are notified."
+
+  - id: state_ok_individual_notice
+    name: Oklahoma, notice of a breach of the security of the system to residents
+    regulator: Oklahoma Attorney General (enforcement)
+    jurisdiction: US-OK
+    trigger: determination of a breach of the security of the system involving personal information of Oklahoma residents
+    deadline_hours: null
+    deadline_business_days: null
+    deadline_text: "Except as provided in subsection D of this section or in order to take any measures necessary to determine the scope of the breach and to restore the reasonable integrity of the system, the disclosure shall be made without unreasonable delay"
+    applies_when:
+      countries: [US]
+      states: [OK]
+      data_types: [PII]
+    source_url: https://www.oklegislature.gov/cf_pdf/2025-26%20ENR/SB/SB626%20ENR.PDF
+    citation: "24 O.S. 163(A), as amended by Senate Bill 626 (2025), effective January 1, 2026"
+    tier: researched
+    verified_date: 2026-11-03
+    verifier: "pack_research skill (Claude), not yet human-checked"
+    notes: "Enrolled bill PDF on the legislature's site opened and text extracted on 2026-11-03; the codified text on oscn.net was not opened. No day count for individual notice."
+
+  - id: state_ok_ag_notice
+    name: Oklahoma, notice to the Attorney General (500 or more residents)
+    regulator: Oklahoma Attorney General
+    jurisdiction: US-OK
+    trigger: notice of a breach is provided to Oklahoma residents and the breach affects 500 or more residents
+    deadline_hours: 1440
+    deadline_business_days: null
+    deadline_text: "An individual or entity required to provide notice in accordance with subsection A or B of this section shall also provide notice to the Attorney General of such breach without unreasonable delay but in no event more than sixty (60) days after providing notice to impacted residents of this state as required by this section"
+    applies_when:
+      countries: [US]
+      states: [OK]
+      data_types: [PII]
+      min_affected: 500
+    source_url: https://www.oklegislature.gov/cf_pdf/2025-26%20ENR/SB/SB626%20ENR.PDF
+    citation: "24 O.S. 163(E), as amended by Senate Bill 626 (2025), effective January 1, 2026"
+    tier: researched
+    verified_date: 2026-11-03
+    verifier: "pack_research skill (Claude), not yet human-checked"
+    notes: "Enrolled bill PDF opened and text extracted on 2026-11-03. The clock runs from the date residents are notified, not from discovery. Breaches affecting fewer than 500 residents are exempt (fewer than 1,000 for a credit bureau). The notice must include the dates of the breach and of its determination, the nature of the breach, the type of personal information exposed, the number of residents affected, the estimated monetary impact, and the safeguards employed."

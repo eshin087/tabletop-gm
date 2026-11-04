@@ -1,0 +1,147 @@
+# Clocks for the federal and defense contractors pack. This file is the only place these deadlines live.
+# Every clock was drafted by the pack_research skill from the primary source on 2026-11-03 and is
+# therefore researched tier until a human opens source_url and promotes it.
+# Shared clocks (GDPR, SEC Form 8-K, state breach laws, CIRCIA) come from clocks_common.yaml.
+#
+# tier:
+#   verified    a human opened source_url on verified_date and confirmed the deadline. Used silently.
+#   researched  drafted by the pack_research skill from an authoritative source, not yet human-checked.
+#               Every output that uses it carries a "verify before exercise" banner.
+#
+# applies_when: all listed keys must hold (AND). List-valued keys hold when any value matches (OR).
+#   flags used by this pack: defense_contractor, fedramp_csp, operates_federal_system
+#
+# eCFR note: www.ecfr.gov redirects automated fetches, so every CFR clock below records the eCFR URL
+# as source_url (the authoritative current text) and was confirmed on the law.cornell.edu mirror.
+#
+# To promote a clock after checking the source: set tier: verified, verifier: <your name>,
+# verified_date: <date you checked>.
+
+pack: federal_contractors
+display_name: Federal and defense contractors
+includes_common: true
+
+clocks:
+  - id: dfars_7012_rapid_report_72h
+    name: DFARS 252.204-7012(c), rapid report of a cyber incident to DoD via DIBNet
+    regulator: US Department of Defense (DoD Cyber Crime Center via https://dibnet.dod.mil)
+    jurisdiction: US-federal
+    trigger: discovery of a cyber incident that affects a covered contractor information system or the covered defense information residing on it, or that affects the contractor's ability to perform operationally critical support
+    deadline_hours: 72
+    deadline_business_days: null
+    deadline_text: "Rapidly report cyber incidents to DoD at https://dibnet.dod.mil. Rapidly report means within 72 hours of discovery of any cyber incident"
+    applies_when:
+      flags: [defense_contractor]
+    source_url: https://www.ecfr.gov/current/title-48/chapter-2/subchapter-H/part-252/subpart-252.2/section-252.204-7012
+    citation: "48 CFR 252.204-7012(a) (definition of rapidly report) and (c)(1)(ii)"
+    tier: researched
+    verified_date: 2026-11-03
+    verifier: "pack_research skill (Claude), not yet human-checked"
+    notes: "Text confirmed via law.cornell.edu mirror on 2026-11-03. Reporting requires a DoD-approved medium assurance certificate, so the exercise should check that the certificate exists and that someone can find it. The clause flows down to subcontractors, who report to DoD and to the prime. FAR 52.204-21 (basic safeguarding of covered contractor information systems) contains no incident reporting clock; its only related item is 'identify, report, and correct information and information system flaws in a timely manner', with no recipient or deadline (confirmed on the law.cornell.edu mirror on 2026-11-03). The proposed government-wide FAR CUI rule is a note only: the January 15, 2025 proposal (90 FR 4278, FAR Case 2017-016) would have required reporting a suspected or confirmed CUI incident within 8 hours of discovery; the superseding June 23, 2026 proposal under the Revolutionary FAR Overhaul (91 FR 37550, FAR Case 2026-001, proposed clause FAR 52.240-7) proposes 72 hours from discovery. Neither is in force as of 2026-11-03; both were read on govinfo.gov."
+
+  - id: dfars_7012_media_preservation_90_days
+    name: DFARS 252.204-7012(e), preserve images and monitoring data for at least 90 days
+    regulator: US Department of Defense
+    jurisdiction: US-federal
+    trigger: submission of the cyber incident report to DoD
+    deadline_hours: 2160
+    deadline_business_days: null
+    deadline_text: "the Contractor shall preserve and protect images of all known affected information systems identified in paragraph (c)(1)(i) of this clause and all relevant monitoring/packet capture data for at least 90 days from the submission of the cyber incident report to allow DoD to request the media or decline interest"
+    applies_when:
+      flags: [defense_contractor]
+    source_url: https://www.ecfr.gov/current/title-48/chapter-2/subchapter-H/part-252/subpart-252.2/section-252.204-7012
+    citation: "48 CFR 252.204-7012(e)"
+    tier: researched
+    verified_date: 2026-11-03
+    verifier: "pack_research skill (Claude), not yet human-checked"
+    notes: "Text confirmed via law.cornell.edu mirror on 2026-11-03. This is a retention floor rather than a notice deadline: the clock engine should treat it as the earliest date the images may be destroyed, and the recovery inject should test whether the team rebuilds the affected systems before imaging them. Paragraph (f) also requires the contractor to submit malicious software to DoD when requested, and paragraph (g) gives DoD access to additional information or equipment for forensic analysis."
+
+  - id: cmmc_level2_incident_reporting
+    name: CMMC Program (32 CFR Part 170) Level 2, incident reporting practice IR.L2-3.6.2
+    regulator: US Department of Defense (CMMC Program Management Office; assessed by C3PAOs or self-assessed)
+    jurisdiction: US-federal
+    trigger: a security incident on a system that processes, stores, or transmits CUI under a contract with a CMMC Level 2 requirement
+    deadline_hours: null
+    deadline_business_days: null
+    deadline_text: "The security requirements in CMMC Level 2 are identical to the requirements in NIST SP 800-171 R2, which include 3.6.2: Track, document, and report incidents to designated officials and/or authorities both internal and external to the organization. 32 CFR Part 170 sets no reporting deadline of its own"
+    applies_when:
+      flags: [defense_contractor]
+    source_url: https://www.ecfr.gov/current/title-32/subtitle-A/chapter-I/subchapter-D/part-170
+    citation: "32 CFR 170.14(c)(3) (Level 2 requirements) and 170.3(e) (phased implementation)"
+    tier: researched
+    verified_date: 2026-11-03
+    verifier: "pack_research skill (Claude), not yet human-checked"
+    notes: "Text confirmed via law.cornell.edu mirror on 2026-11-03 (sections 170.14 and 170.3). Confirmed: 32 CFR 170.14 does not mention incident reporting, IR.L2-3.6.2, or any reporting deadline; the only incident timing in the part is the Level 3 requirement IR.L3-3.6.2e to maintain a cyber-incident response team deployable within 24 hours, which is a team deployment requirement, not a report. The deadline that matters in practice is the DFARS 252.204-7012 72 hour report. The CMMC phase-in runs over three years from the effective date of the 48 CFR part 204 acquisition rule; the part was published at 89 FR 83214 (October 15, 2024). The exercise should test whether the plan names the designated officials and external authorities, since 3.6.2 requires them to be designated."
+
+  - id: nist_800_171_3_6_2_incident_reporting
+    name: NIST SP 800-171, requirement 3.6.2 (Rev 2) and 03.06.02 (Rev 3), report incidents to designated authorities
+    regulator: Contracting agency (NIST SP 800-171 applies through contract clauses such as DFARS 252.204-7012)
+    jurisdiction: US-federal
+    trigger: a suspected or confirmed incident on a nonfederal system that processes, stores, or transmits CUI
+    deadline_hours: null
+    deadline_business_days: null
+    deadline_text: "Rev 2, 3.6.2: Track, document, and report incidents to designated officials and/or authorities both internal and external to the organization. Rev 3, 03.06.02: b. Report suspected incidents to the organizational incident response capability within [Assignment: organization-defined time period]. c. Report incident information to [Assignment: organization-defined authorities]"
+    applies_when:
+      data_types: [CUI]
+      countries: [US]
+    source_url: https://csrc.nist.gov/pubs/sp/800/171/r3/final
+    citation: "NIST SP 800-171 Rev 2, 3.6.2; NIST SP 800-171 Rev 3 (May 2024), 03.06.02"
+    tier: researched
+    verified_date: 2026-11-03
+    verifier: "pack_research skill (Claude), not yet human-checked"
+    notes: "Publication page opened on 2026-11-03; requirement text extracted from the Rev 2 and Rev 3 PDFs at nvlpubs.nist.gov on the same day. NIST sets no fixed hour count: Rev 3 leaves the time period and the authorities as organization-defined parameters, so the organization's own plan supplies the number and the exercise should ask for it. DFARS 252.204-7012 and CMMC Level 2 currently point to Rev 2; Rev 3 is the current NIST publication."
+
+  - id: fedramp_csp_incident_one_hour
+    name: FedRAMP incident communications procedures, cloud service provider report within one hour
+    regulator: FedRAMP (GSA), CISA (successor to US-CERT), and the agency authorizing officials
+    jurisdiction: US-federal
+    trigger: a suspected or confirmed incident identified by the cloud service provider's top-level CSIRT, SOC, or IT department
+    deadline_hours: 1
+    deadline_business_days: null
+    deadline_text: "CSPs must report suspected and confirmed incidents within one (1) hour of being identified by the CSP's top-level CSIRT, SOC, or IT department, to impacted customers, to CISA (if the incident involves an attack vector in CISA's Federal Incident Notification Guidelines), to FedRAMP at fedramp_security@gsa.gov, and to agency POCs"
+    applies_when:
+      flags: [fedramp_csp]
+    source_url: https://fedramp.gov/legacy/playbook/csp/continuous-monitoring/incident-communication/
+    citation: "FedRAMP Incident Communications Procedures (legacy playbook, in force for Rev 5 authorizations until the Consolidated Rules for 2026 grace period ends)"
+    tier: researched
+    verified_date: 2026-11-03
+    verifier: "pack_research skill (Claude), not yet human-checked"
+    notes: "Legacy page opened on 2026-11-03; it carries a notice that the legacy materials are for reference during the transition to FedRAMP's Consolidated Rules for 2026 (dated June 24, 2026). The 2026 rules (https://fedramp.gov/2026/reference/incident-evaluation-and-communication/, also opened on 2026-11-03) replace the uniform one hour with a tiered initial report deadline by certification class and Potential Agency Impact N-rating (PAIN): 15 minutes for Class D at PAIN-3 to PAIN-5, 1 hour for Class C at PAIN-3 to PAIN-5 and for Class D at PAIN-1 and PAIN-2, 6 hours for Classes A and B at PAIN-3 to PAIN-5, 24 hours for Class C at PAIN-2, and 1 business day otherwise; an incident whose impact has not been estimated is treated as PAIN-5. Recipients under the 2026 rules are FedRAMP (fedramp_security@fedramp.gov), agency customers per their own procedures, and the provider's trust center; the 2026 page does not mention CISA. Adoption dates: optional from 2026-07-04; Rev 5 initial certification from 2027-01-01 with the grace period ending 2027-06-01; 20x grace ends at the first independent assessment started after 2027-01-01. The facilitator should pick the regime that applies to the organization's authorization on the exercise date; the one hour clock is the conservative choice for both."
+
+  - id: cisa_federal_incident_notification_one_hour
+    name: CISA Federal Incident Notification Guidelines, one hour report by federal civilian agencies (flows down to contractors by contract)
+    regulator: CISA
+    jurisdiction: US-federal
+    trigger: an incident is identified by the agency's top-level Computer Security Incident Response Team, Security Operations Center, or information technology department
+    deadline_hours: 1
+    deadline_business_days: null
+    deadline_text: "within one hour of being identified by the agency's top-level Computer Security Incident Response Team (CSIRT), Security Operations Center (SOC), or information technology department"
+    applies_when:
+      flags: [operates_federal_system]
+    source_url: https://www.cisa.gov/federal-incident-notification-guidelines
+    citation: "CISA Federal Incident Notification Guidelines, reporting timeframe"
+    tier: researched
+    verified_date: 2026-11-03
+    verifier: "pack_research skill (Claude), not yet human-checked"
+    notes: "Page opened on 2026-11-03. The guidelines bind federal civilian executive branch agencies; reporting by other organizations is voluntary. They reach a contractor only when the contract or the agency's incident response procedures impose them, which is common for contractors that operate systems on behalf of an agency (set the operates_federal_system flag) and is referenced by the FedRAMP procedures. The guidelines also define the impact categories (functional impact, information impact, recoverability) and the attack vector taxonomy that the report must use."
+
+exercise_requirements:
+  - id: nist_800_171_3_6_3_test_ir
+    name: NIST SP 800-171, requirement 3.6.3 (Rev 2) and 03.06.03 (Rev 3), test the incident response capability
+    requirement: "Rev 2, 3.6.3: Test the organizational incident response capability. Rev 3, 03.06.03: Test the effectiveness of the incident response capability [Assignment: organization-defined frequency]. The discussion names checklists, walk-through or tabletop exercises, and simulations as acceptable tests"
+    frequency: organization-defined (Rev 3 leaves the frequency as an assignment parameter; Rev 2 states no frequency)
+    source_url: https://csrc.nist.gov/pubs/sp/800/171/r3/final
+    citation: "NIST SP 800-171 Rev 2, 3.6.3; NIST SP 800-171 Rev 3 (May 2024), 03.06.03"
+    tier: researched
+    verified_date: 2026-11-03
+    verifier: "pack_research skill (Claude), not yet human-checked"
+
+  - id: cmmc_ir_l2_3_6_3
+    name: CMMC Level 2 practice IR.L2-3.6.3, incident response testing
+    requirement: "The security requirements in CMMC Level 2 are identical to the requirements in NIST SP 800-171 R2 (32 CFR 170.14(c)(3)), which include 3.6.3: Test the organizational incident response capability. A tabletop exercise with a written record is evidence for the Level 2 self-assessment or C3PAO assessment"
+    frequency: organization-defined; evidence is reviewed at each Level 2 assessment (self-assessment annually, C3PAO certification every three years per the CMMC Program)
+    source_url: https://www.ecfr.gov/current/title-32/subtitle-A/chapter-I/subchapter-D/part-170
+    citation: "32 CFR 170.14(c)(3), incorporating NIST SP 800-171 R2 requirement 3.6.3"
+    tier: researched
+    verified_date: 2026-11-03
+    verifier: "pack_research skill (Claude), not yet human-checked"

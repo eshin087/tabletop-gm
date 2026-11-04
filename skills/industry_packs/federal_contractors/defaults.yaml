@@ -1,0 +1,91 @@
+# Pack defaults used when the organization uploads no plan. score_engine reads
+# expected_actions and notify_parties; scenario_design reads roles and phases.
+pack: federal_contractors
+
+roles:
+  - id: incident_commander
+    name: Incident Response Lead (Incident Commander)
+    decides: [incident_declaration, containment_actions, forensic_engagement]
+  - id: fso
+    name: Facility Security Officer
+    decides: [classified_spillage_determination, dcsa_contact, cleared_personnel_actions]
+  - id: ciso
+    name: Chief Information Security Officer
+    decides: [severity_rating, cui_impact_determination, dibnet_report]
+  - id: contracts_manager
+    name: Contracts Manager
+    decides: [contracting_officer_notification, prime_and_subcontractor_notification, contract_clause_review]
+  - id: program_manager
+    name: Program Manager (affected contract)
+    decides: [delivery_impact, customer_mission_impact_statement]
+  - id: cui_custodian
+    name: CUI Program Manager (or Information System Security Manager)
+    decides: [cui_inventory_of_affected_data, system_security_plan_update]
+  - id: legal
+    name: General Counsel
+    decides: [notification_obligations, law_enforcement_contact, privilege, false_claims_exposure]
+  - id: comms
+    name: Communications Lead
+    decides: [public_statement, customer_statement]
+  - id: ceo
+    name: Chief Executive
+    decides: [ransom_decision, business_shutdown, board_notification]
+
+notify_parties:
+  - id: dod_dibnet
+    name: DoD Cyber Crime Center via DIBNet (DFARS 252.204-7012 report)
+  - id: contracting_officer
+    name: Contracting Officer for each affected contract
+  - id: prime_contractor
+    name: Prime contractor (if subcontractor) or affected subcontractors (if prime)
+  - id: dcsa
+    name: DCSA (cleared facilities, for classified spillage or insider matters)
+  - id: fedramp_pmo
+    name: FedRAMP PMO and agency authorizing officials (cloud service providers)
+  - id: cisa
+    name: CISA Central
+  - id: law_enforcement
+    name: FBI field office
+  - id: cyber_insurer
+    name: Cyber insurance carrier
+  - id: executive_leadership
+    name: Executive leadership and board
+
+expected_actions:
+  detection:
+    - id: d1
+      text: Confirm the alert with a second source and identify whether the system is a covered contractor information system
+    - id: d2
+      text: Open an incident ticket and start a timeline with the time of discovery, since the 72 hour clock runs from discovery
+    - id: d3
+      text: Identify which contracts and which CUI categories the affected system supports
+  escalation:
+    - id: e1
+      text: Declare the incident and notify the incident commander, the CISO, and the contracts manager
+    - id: e2
+      text: Engage legal counsel and decide whether the facility security officer must assess for classified spillage
+    - id: e3
+      text: Locate the DoD medium assurance certificate and confirm who will file the DIBNet report
+  containment:
+    - id: c1
+      text: Isolate the affected system without destroying evidence
+    - id: c2
+      text: Image all known affected systems and preserve monitoring and packet capture data before any rebuild
+    - id: c3
+      text: Reset credentials believed compromised, including any used for government system access
+  recovery:
+    - id: r1
+      text: Confirm backups are intact and agree the restore order with the program managers
+    - id: r2
+      text: Retain the preserved images and capture data for at least 90 days from the report submission
+    - id: r3
+      text: Update the system security plan and plan of action with findings before the next assessment
+  notification:
+    - id: n1
+      text: Decide which clocks apply (DFARS, FedRAMP, agency guidelines, state) and who owns each notification
+    - id: n2
+      text: File the DIBNet cyber incident report within 72 hours of discovery and notify the contracting officers
+    - id: n3
+      text: Notify the prime contractor or affected subcontractors under the flowdown clause
+    - id: n4
+      text: Notify the cyber insurer before engaging outside forensics
