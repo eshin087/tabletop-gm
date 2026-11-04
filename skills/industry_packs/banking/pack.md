@@ -2,7 +2,7 @@
 
 Tier: researched (per-clock tiers live in `clocks.yaml`; promote after a human check)
 Last reviewed: 2026-11-03
-Owner: Steven (drafted by Claude Code pending his files)
+Owner: unassigned (drafted by Claude Code; human verification pending)
 
 Story material lives here; every deadline lives in `clocks.yaml`; scoring defaults live in `defaults.yaml`.
 
