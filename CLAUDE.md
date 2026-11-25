@@ -8,7 +8,7 @@ Read `docs/BUILD_SPEC.md` before doing anything; it is the source of truth and s
 - Human approval gate before any deliverable is built. The approved outline is `exercise_pack.json`; every output and the host console read only that file.
 - Read-only against Tenable and every other external system.
 - No secrets, no real company names, no real employer data, no uploaded policies, and no raw lab exports in the repo, ever. `.env` and `uploads/` are gitignored from the first commit. Samples are synthetic.
-- Pure-Python dependencies only (python-pptx, python-docx, openpyxl, pyyaml, pypdf, jinja2; pytenable optional). No Docker, Node, databases, cloud services, or accounts. The host console is a self-contained `host.html`; `ttx host` uses the standard library.
+- Pure-Python dependencies only (python-pptx, python-docx, openpyxl, pyyaml, pypdf, jinja2; pytenable optional; anthropic optional, used only by the `ttx host` co-host). No Docker, Node, databases, cloud services, or accounts. The host console is a self-contained `host.html`; the `ttx host` server uses the standard library, and the console must work with no key and no `anthropic` package.
 - README claims must match what actually runs. Every command in the README must work in a clean environment. Keep the five required sections: what it does, prerequisites, how to run, outputs, known limitations.
 - Keep scenario and file names clearly defensive (no "payload", "exploit", "attack tool").
 - Don't use em dashes in prose or documentation.
@@ -17,7 +17,7 @@ Read `docs/BUILD_SPEC.md` before doing anything; it is the source of truth and s
 1. `seed_engine`, `clock_engine`, `plan_ingest`, `validators`, `cli`, tests, synthetic sample estate and sample IR plan
 2. `score_engine`, generators (deck, guide, handout, tracker, sign-in, AAR), one complete sample run in `samples/outputs/`
 3. README, SECURITY.md, `SKILL.md` and sub-skills, packs (healthcare and banking verified; others researched or stubbed and listed as roadmap)
-4. After the PR: `host.html` generator (host's laptop console; audience sees only the deck), then optional `ttx host` with the AI co-host
+4. After the PR: `host.html` generator (host's laptop console), then optional `ttx host` with the AI co-host and a spoiler-free room screen for the projector
 
 ## When unsure
 Prefer the honest, smaller scope. Label assumptions. Ask Eric only about decisions the spec doesn't already settle. Tenable is optional: live mode reads `TENABLE_ACCESS_KEY` and `TENABLE_SECRET_KEY` from `.env`; export and sample-estate modes need no keys.

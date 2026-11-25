@@ -3,6 +3,7 @@
   1  See a finished sample exercise (no account, no internet)
   2  Build an exercise for my organization (opens Claude Code with /tabletop)
   3  Run an exercise live in chat (opens Claude Code; Claude facilitates)
+  4  Run an exercise from the host console (opens your browser; no account needed)
 
 Non-interactive use (tests, scripts):  launcher.py --choice demo [--no-open]
 """
@@ -72,24 +73,53 @@ def run_claude(live: bool = False) -> int:
     return subprocess.run([claude, CLAUDE_PROMPT], cwd=REPO, env=env).returncode
 
 
+def host_out_dir(root: Path | None = None) -> Path:
+    """The first unused session folder: out/host, then out/host-2, out/host-3, and so on."""
+    base = (root or REPO) / "out"
+    n = 1
+    while True:
+        candidate = base / ("host" if n == 1 else f"host-{n}")
+        if not (candidate / "decision_log.json").exists():
+            return candidate
+        n += 1
+
+
+def run_host(name: str | None = None) -> int:
+    from ttx.cli import main as ttx_main
+
+    pack = REPO / "out" / "exercise_pack.json"
+    if not pack.exists():
+        pack = REPO / "samples" / "exercise_pack_sample.json"
+        print("\nNo exercise of your own is built yet, so this runs the built-in sample (synthetic).")
+    if name is None:
+        name = input("Facilitator name for the record: ").strip() or "Facilitator"
+    out = host_out_dir()
+    print(f"\nOpening the host console in your browser. The record goes to {out}.")
+    os.chdir(REPO)
+    return ttx_main(["host", "--pack", str(pack), "--out", str(out), "--by", name])
+
+
 def menu() -> int:
     print(BANNER)
     while True:
         print("  1  See a finished sample exercise (no account needed)")
         print("  2  Build an exercise for my organization (uses Claude Code)")
         print("  3  Run an exercise live in chat (uses Claude Code)")
+        print("  4  Run an exercise from the host console in your browser (no account needed)")
         print("  Q  Quit\n")
-        choice = input("Choose 1, 2, 3, or Q: ").strip().lower()
+        choice = input("Choose 1, 2, 3, 4, or Q: ").strip().lower()
         if choice in {"1", "demo"}:
             run_demo()
         elif choice in {"2", "build"}:
             run_claude()
         elif choice in {"3", "live"}:
             run_claude(live=True)
+        elif choice in {"4", "host"}:
+            run_host()
         elif choice in {"q", "quit", "exit", ""}:
             return 0
         else:
-            print("Please type 1, 2, 3, or Q.\n")
+            print("Please type 1, 2, 3, 4, or Q.\n")
             continue
         print()
 
@@ -104,7 +134,9 @@ def main(argv: list[str]) -> int:
             return run_claude()
         if choice == "live":
             return run_claude(live=True)
-        print(f"unknown choice {choice}; use demo, build, or live")
+        if choice == "host":
+            return run_host(name="Facilitator")
+        print(f"unknown choice {choice}; use demo, build, live, or host")
         return 2
     try:
         return menu()

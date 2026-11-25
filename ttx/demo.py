@@ -92,6 +92,8 @@ Also built
   decision_tracker_completed.xlsx   The same tracker filled with invented answers, used for the sample score.
   attendance_signin.xlsx            Sign-in sheet for audit evidence.
   signoff_sheet.docx                Facilitator and sponsor sign-off.
+  host.html                         The host console for a second laptop. Double-click it: it shows the script,
+                                    captures each decision with a timestamp, and exports the decision log.
 
 Engine files (for the curious)
   seed.json                         The attack path picked from the synthetic exposure data, with the rule for each step.

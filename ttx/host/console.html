@@ -1,0 +1,743 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="referrer" content="no-referrer">
+<title>Tabletop GM host console</title>
+<style>
+:root{--bg:#f6f5f1;--surface:#ffffff;--line:#e4e2db;--text:#17191c;--muted:#636871;--faint:#9a9ea6;
+--accent:#0b6b57;--accent-soft:#e5f1ed;--warn:#8a5a00;--warn-soft:#fbf2dd;--bad:#b3261e;--bad-soft:#fbe9e7;--fill:#17191c;--on-fill:#ffffff;
+--mono:ui-monospace,SFMono-Regular,Consolas,"Liberation Mono",monospace;--sans:system-ui,-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif}
+:root[data-theme=dark]{--bg:#101214;--surface:#181a1d;--line:#2b2e33;--text:#eceef0;--muted:#a0a6ae;--faint:#6d737b;
+--accent:#62c9ad;--accent-soft:#16302a;--warn:#e3b65c;--warn-soft:#2e2511;--bad:#f1877f;--bad-soft:#371b19;--fill:#eceef0;--on-fill:#101214}
+*{box-sizing:border-box}
+html,body{margin:0;background:var(--bg);color:var(--text);font-family:var(--sans);font-size:15px;line-height:1.5}
+button,input,select,textarea{font:inherit;color:inherit}
+a{color:inherit}
+#app{max-width:900px;margin:0 auto;padding:18px 24px 56px}
+.mono{font-family:var(--mono)}.muted{color:var(--muted)}.small{font-size:13px}.spacer{flex:1}
+
+.top{display:flex;align-items:center;gap:18px}
+.word{font-weight:700;letter-spacing:-.01em;white-space:nowrap}
+.who{min-width:0;flex:1}
+.who b{display:block;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.who span{font-size:13px;color:var(--muted)}
+.timer{text-align:right;line-height:1.15}
+.timer b{font-family:var(--mono);font-size:19px;font-weight:600}
+.timer span{display:block;font-size:12px;color:var(--muted)}
+.bar2{display:flex;align-items:center;gap:14px;margin:12px 0 16px;padding:9px 0;border-top:1px solid var(--line);border-bottom:1px solid var(--line);font-size:13px}
+.crumb{font-family:var(--mono);color:var(--muted);min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.crumb b{color:var(--accent);font-weight:600}.crumb i{font-style:normal;color:var(--faint);margin:0 6px}
+.kev{font-family:var(--sans);font-size:10.5px;font-weight:700;color:var(--bad);margin-left:3px;vertical-align:1px}
+.roomlink{white-space:nowrap;text-decoration:none;border:1px solid var(--line);border-radius:999px;padding:3px 12px;background:var(--surface)}
+.roomlink.on{border-color:var(--accent);color:var(--accent)}
+.roomlink:before{content:"";display:inline-block;width:7px;height:7px;border-radius:50%;background:var(--faint);margin-right:7px;vertical-align:1px}
+.roomlink.on:before{background:var(--accent)}
+
+.prog{display:flex;gap:4px;margin-bottom:14px}
+.seg{flex:1;height:4px;border-radius:2px;background:var(--line)}
+.seg.done{background:var(--accent)}.seg.cur{background:var(--text)}.seg.skip{background:var(--faint)}
+.eyebrow{display:flex;gap:12px;font-size:13px;color:var(--muted)}
+h1.title{font-size:27px;line-height:1.2;font-weight:650;letter-spacing:-.015em;margin:2px 0 14px}
+h2.head{font-size:15px;font-weight:650;margin:0}
+
+.steps{display:flex;gap:6px;margin-bottom:10px}
+.stp{flex:1;text-align:left;background:none;border:0;border-top:3px solid var(--line);padding:7px 2px 0;font-size:13px;color:var(--faint);cursor:default}
+.stp b{display:block;font-size:15px;font-weight:600;color:inherit}
+.stp.done{border-color:var(--accent);color:var(--muted);cursor:pointer}
+.stp.on{border-color:var(--text);color:var(--text)}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:24px 26px}
+.card+.card,#clocks,#logbox{margin-top:16px}
+.do{font-size:13px;font-weight:600;color:var(--muted);margin-bottom:8px}
+.big{font-size:20px;line-height:1.5;white-space:pre-wrap}
+.ask{font-size:23px;line-height:1.32;font-weight:650;letter-spacing:-.01em}
+.sec{margin-top:20px}
+.lab{font-size:12px;font-weight:600;color:var(--muted);margin-bottom:5px}
+.lab em{font-style:normal;font-weight:400}
+.note{font-size:13px;color:var(--muted);margin-top:8px}
+.note.ok{color:var(--accent)}.note.warn{color:var(--warn)}
+.quote{border-left:2px solid var(--accent);padding-left:12px}
+.stake{font-size:12px;font-weight:600;color:var(--accent);background:var(--accent-soft);border-radius:4px;padding:1px 6px;margin-right:2px}
+.caret{display:inline-block;width:2px;height:20px;background:var(--accent);vertical-align:-3px;margin-left:2px;animation:blink 1s steps(2) infinite}
+@keyframes blink{50%{opacity:0}}
+.stall{margin-top:22px;border-top:1px solid var(--line);padding-top:16px}
+.stall ul{margin:0 0 12px;padding-left:18px}
+.stall li{margin-bottom:4px}
+.pushed{background:var(--accent-soft);border-radius:10px;padding:10px 14px;margin-top:12px;font-size:15px}
+.folds{margin-top:18px;border-top:1px solid var(--line)}
+details.fold{border-bottom:1px solid var(--line)}
+details.fold summary{cursor:pointer;font-size:13px;color:var(--muted);padding:9px 0}
+details.fold .in{padding:0 0 12px;font-size:14.5px}
+details.fold ul{margin:0;padding-left:18px}
+.priv{font-size:11px;font-weight:700;color:var(--bad);margin-left:6px}
+
+textarea,input[type=text],input[type=number],select{background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:8px 10px;width:100%}
+textarea{resize:vertical;font-size:17px}
+textarea:focus,input:focus,select:focus,button:focus-visible,summary:focus-visible,a:focus-visible{outline:2px solid var(--accent);outline-offset:1px}
+.pills{display:flex;flex-wrap:wrap;gap:6px;align-items:center}
+.pill{background:var(--surface);border:1px solid var(--line);border-radius:999px;padding:5px 13px;font-size:14px;cursor:pointer}
+.pill:hover{border-color:var(--muted)}
+.pill.sel{background:var(--fill);border-color:var(--fill);color:var(--on-fill)}
+.pill.sug{outline:2px dashed var(--accent);outline-offset:1px}
+.pills select{width:auto;border-radius:999px;padding:5px 10px;font-size:14px;color:var(--muted)}
+.chk{display:flex;gap:10px;align-items:flex-start;padding:8px 0;border-top:1px solid var(--line);cursor:pointer}
+.chk:first-of-type{border-top:0;padding-top:2px}
+.chk input{margin-top:4px;accent-color:var(--accent);width:15px;height:15px;flex:none}
+.chk .k{font-family:var(--mono);font-size:12px;color:var(--faint);margin-left:auto;padding-left:10px}
+.chk.sug .k{color:var(--accent);font-family:var(--sans)}
+.two{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,2fr);gap:16px}
+.rowf{display:grid;grid-template-columns:132px minmax(0,1fr);align-items:center;gap:10px;margin-top:10px}
+.rowf .lab{margin:0}
+.acts{display:flex;align-items:center;gap:14px;margin-top:24px}
+.btn{background:var(--surface);border:1px solid var(--line);border-radius:9px;padding:9px 16px;cursor:pointer;white-space:nowrap}
+.btn:hover{border-color:var(--muted)}
+.btn.primary{background:var(--accent);border-color:var(--accent);color:#fff;font-weight:600}
+:root[data-theme=dark] .btn.primary{color:#07140f}
+.btn.xl{font-size:16px;padding:11px 20px}
+.btn:disabled{opacity:.5;cursor:default}
+.link{background:none;border:0;padding:0;color:var(--muted);cursor:pointer;font-size:14px}
+.link:hover{color:var(--text);text-decoration:underline}
+.link.danger:hover,.link.danger.arm{color:var(--bad)}
+kbd{display:inline-block;font-family:var(--mono);font-size:10.5px;font-weight:400;line-height:1.3;color:inherit;opacity:.6;margin-left:10px;padding:1px 6px;border:1px solid currentColor;border-radius:5px;vertical-align:middle}
+.msg{border-radius:8px;padding:9px 12px;font-size:14px;margin:0 0 14px}
+.msg.err{background:var(--bad-soft);color:var(--bad)}
+.msg.warn{background:var(--warn-soft);color:var(--warn)}
+.msg.info{background:var(--accent-soft);color:var(--text);display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+
+.rowhead{display:flex;align-items:baseline;gap:12px}
+table.clk{width:100%;border-collapse:collapse;margin-top:10px}
+table.clk th{font-size:12px;font-weight:600;color:var(--muted);text-align:left;padding:6px 10px 6px 0}
+table.clk td{padding:9px 10px 9px 0;border-top:1px solid var(--line);vertical-align:middle}
+table.clk td:last-child,table.clk th:last-child{padding-right:0}
+table.clk .src{font-size:12px;color:var(--muted)}
+table.clk select,table.clk input{padding:6px 8px;font-size:14px}
+.none{color:var(--warn)}
+.lg{display:grid;grid-template-columns:76px minmax(0,1fr);gap:10px;padding:7px 0;border-top:1px solid var(--line);font-size:14px}
+.lg .t{font-family:var(--mono);font-size:12px;color:var(--faint);padding-top:2px}
+details.sect summary{cursor:pointer;list-style:none;display:flex;align-items:baseline;gap:12px}
+details.sect summary::-webkit-details-marker{display:none}
+details.sect summary .chev{color:var(--faint);font-size:12px}
+details.sect[open] summary{margin-bottom:10px}
+
+.scoretop{display:flex;align-items:flex-end;gap:30px;flex-wrap:wrap}
+.bigr{font-size:36px;font-weight:700;line-height:1.05;letter-spacing:-.02em}
+.stat span{display:block;font-size:12px;color:var(--muted)}
+.stat b{font-size:17px;font-weight:600}
+.bars{display:grid;grid-template-columns:minmax(0,200px) minmax(0,1fr) 40px;gap:9px 12px;align-items:center;margin:22px 0}
+.bar{height:6px;background:var(--line);border-radius:3px;overflow:hidden}
+.bar i{display:block;height:100%;background:var(--accent);border-radius:3px;transition:width .7s ease}
+.cols{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.25fr);gap:30px}
+@media (max-width:760px){.cols,.two{grid-template-columns:minmax(0,1fr)}}
+.li{padding:8px 0;border-top:1px solid var(--line);font-size:14px}
+.st{font-weight:600}.st.met{color:var(--accent)}.st.missed{color:var(--bad)}.st.open{color:var(--warn)}
+.start{max-width:520px;margin:10vh auto}
+footer{margin-top:22px;color:var(--faint);font-size:12px}
+@media (prefers-reduced-motion:reduce){.caret{animation:none}.bar i{transition:none}}
+</style>
+</head>
+<body>
+<div id="app"></div>
+<script id="boot" type="application/json">__TTX_BOOT__</script>
+<script>
+(function(){
+'use strict';
+var BOOT = JSON.parse(document.getElementById('boot').textContent);
+var PACK = BOOT.pack, SERVED = !!BOOT.served, END_NOTE = 'Exercise ended';
+var REPLAY = !!(BOOT.server && BOOT.server.mode === 'replay');
+var AI = function(){ return SERVED && !REPLAY && S.server && S.server.ai && S.server.ai.enabled; };
+var KEY = 'ttxhost:' + ((PACK.approval || {}).outline_hash || PACK.slug || 'draft');
+var S = { log: BOOT.log || null, report: BOOT.report || null, server: BOOT.server || null, cursor: (BOOT.server && BOOT.server.cursor) || 0, playing: false,
+  form: null, step: null, stepFor: null, clocksPending: false, push: null, pushBusy: false, pushCount: 0,
+  ai: {status: 'idle', text: '', findings: null, source: 'script', note: '', onWall: false}, aiSeq: 0,
+  err: '', formErr: '', confirmEnd: false, clockDraft: {owners: {}, hours: {}}, busy: false, logOpen: REPLAY, clocksOpen: false, moreOpen: false };
+
+function el(id){ return document.getElementById(id); }
+function esc(s){ return String(s == null ? '' : s).replace(/[&<>"']/g, function(c){ return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]; }); }
+function roleName(id){ var r = (PACK.roles || []).filter(function(x){ return x.id === id; })[0]; return r ? (r.name || id) : (id === 'other' ? 'Someone outside the plan' : (id || '')); }
+function partyName(id){ var p = (PACK.notify_parties || []).filter(function(x){ return x.id === id; })[0]; return p ? (p.name || id) : id; }
+function nowIso(){ return new Date().toISOString().slice(0, 19) + '+00:00'; }
+function hhmmss(iso){ var d = new Date(iso); return isNaN(d) ? '' : d.toLocaleTimeString([], {hour12: false}); }
+function dur(ms){ if (!(ms >= 0)) ms = 0; var s = Math.floor(ms / 1000), h = Math.floor(s / 3600), m = Math.floor(s % 3600 / 60), x = s % 60;
+  return (h < 10 ? '0' : '') + h + ':' + (m < 10 ? '0' : '') + m + ':' + (x < 10 ? '0' : '') + x; }
+function notice(c){ var n = String(c.name || ''), i = n.indexOf(', '); n = i >= 0 ? n.slice(i + 2) : n; return n.charAt(0).toUpperCase() + n.slice(1); }
+function deadline(c){
+  if (c.deadline_business_days != null) return c.deadline_business_days + ' business days';
+  if (c.deadline_hours == null) return 'no fixed deadline';
+  var h = Number(c.deadline_hours); return h % 24 === 0 && h >= 48 ? (h / 24) + ' days' : h + ' hours';
+}
+function startsClocks(j){ return !!j && (j.id === PACK.clock_start_inject || (((j.flags || {}).starts_clock) || []).length > 0); }
+
+/* ---------- everything on screen is derived from the pack and the log ---------- */
+function entries(){ var all = (S.log && S.log.entries) || []; return REPLAY ? all.slice(0, S.cursor) : all; }
+function derive(){
+  var vis = entries(), maxN = vis.length ? vis[vis.length - 1].n : 0;
+  var d = {decided: {}, skipped: {}, presented: {}, answers: {}, ended: false};
+  vis.forEach(function(e){
+    if (e.superseded_by && e.superseded_by <= maxN) return;
+    if (e.type === 'decision'){ if (!e.unplanned) d.decided[e.inject_id] = e; }
+    else if (e.type === 'mark' && e.event === 'skipped') d.skipped[e.inject_id] = true;
+    else if (e.type === 'mark' && e.event === 'presented') d.presented[e.inject_id] = e.at;
+    else if (e.type === 'clocks'){
+      Object.keys(e.owners || {}).forEach(function(c){ (d.answers[c] = d.answers[c] || {}).owner_role = e.owners[c]; });
+      Object.keys(e.planned_notify_hours || {}).forEach(function(c){ (d.answers[c] = d.answers[c] || {}).planned_notify_hours = e.planned_notify_hours[c]; });
+    } else if (e.type === 'note' && e.text === END_NOTE) d.ended = true;
+  });
+  var inj = PACK.injects || [];
+  d.idx = -1;
+  for (var i = 0; i < inj.length; i++){ if (!d.decided[inj[i].id] && !d.skipped[inj[i].id]){ d.idx = i; break; } }
+  d.current = d.idx >= 0 ? inj[d.idx] : null;
+  if (REPLAY){
+    var far = 0; vis.forEach(function(e){ for (var k = 0; k < inj.length; k++){ if (inj[k].id === e.inject_id && k > far) far = k; } });
+    d.focus = inj[far];
+  } else d.focus = d.current;
+  d.clocksStarted = inj.some(function(j){ return startsClocks(j) && (d.presented[j.id] || d.decided[j.id]); });
+  return d;
+}
+function resetForm(inj){
+  S.form = {inject_id: inj ? inj.id : null, decision: '', by: (inj && inj.decision_owner_role) || null, byDefault: !!(inj && inj.decision_owner_role), actions: {}, notified: {}, plan_step: null, documented: null,
+    scenario_minutes: '', note: '', unplanned: false, sug: {}, suggesting: false, ask: ''};
+  S.formErr = ''; S.confirmEnd = false; S.push = null; S.pushCount = 0;
+}
+function scriptLine(inj){ return inj ? ((inj.host_lines || [])[0] || inj.what_happens || '') : ''; }
+function showScript(inj, note){ S.aiSeq++; S.ai = {status: 'script', text: scriptLine(inj), findings: null, source: 'script', note: note || '', onWall: false}; }
+
+/* ---------- stores: the local server (engine) or this browser (host.html) ---------- */
+function api(path, data){
+  return fetch(path, {method: 'POST', headers: {'Content-Type': 'application/json', 'X-TTX-Token': BOOT.token}, body: JSON.stringify(data || {})})
+    .then(function(r){ return r.json().catch(function(){ return {error: 'the server sent an unreadable answer'}; }).then(function(j){
+      if (!r.ok) throw new Error(j.error || ('HTTP ' + r.status)); return j; }); });
+}
+function applyState(j){ if (j.log) S.log = j.log; if ('report' in j) S.report = j.report; if (j.server) S.server = j.server; }
+function persist(){ try { localStorage.setItem(KEY, JSON.stringify(S.log)); } catch (e) {} }
+function localAppend(entry, at){
+  at = at || nowIso(); var full = {n: S.log.entries.length + 1, at: at};
+  Object.keys(entry).forEach(function(k){ full[k] = entry[k]; });
+  S.log.entries.push(full); if (at > (S.log.last_activity_at || '')) S.log.last_activity_at = at; persist();
+}
+var Local = {
+  present: function(p){ localAppend({type: 'mark', inject_id: p.inject_id, event: 'presented'}); },
+  skip: function(p){ localAppend({type: 'mark', inject_id: p.inject_id, event: 'skipped'}); },
+  note: function(p){ localAppend({type: 'note', text: p.text}); },
+  decision: function(p){
+    var at = nowIso(), prev = S.log.last_activity_at || S.log.started_at;
+    var delta = Math.max(0, (Date.parse(at) - Date.parse(prev)) / 60000);
+    localAppend({type: 'decision', inject_id: p.inject_id, unplanned: !!p.unplanned, decision: p.decision, decided_by_role: p.by,
+      notified: p.notified || [], actions_completed: p.actions || [], plan_step_followed: p.plan_step || null, documented: p.documented || null,
+      scenario_minutes: p.scenario_minutes === '' || p.scenario_minutes == null ? null : Number(p.scenario_minutes),
+      discussion_minutes: Math.round(delta * 10) / 10, note: p.note || null}, at);
+  },
+  clocks: function(p){ localAppend({type: 'clocks', owners: p.owners || {}, planned_notify_hours: p.planned_hours || {}}); },
+  end: function(){ localAppend({type: 'note', text: END_NOTE}); }
+};
+function act(kind, payload){
+  S.err = ''; S.busy = true;
+  var p = SERVED ? api('/api/' + kind, payload).then(applyState) : Promise.resolve().then(function(){ Local[kind](payload || {}); });
+  return p.catch(function(e){ S.err = e.message; }).then(function(){ S.busy = false; });
+}
+function startLocal(name){
+  var at = nowIso();
+  S.log = {schema_version: 1, generator: 'Tabletop GM host.html ' + (BOOT.version || ''), pack_path: 'exercise_pack.json', pack_title: PACK.title,
+    organization: (PACK.organization || {}).name, approval_hash: (PACK.approval || {}).outline_hash || null, approved_by: (PACK.approval || {}).approved_by || null,
+    facilitator: name, started_at: at, resumed_at: [], last_activity_at: at, entries: []};
+  persist();
+}
+function download(){
+  var blob = new Blob([JSON.stringify(S.log, null, 2) + '\n'], {type: 'application/json'});
+  var a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = 'decision_log.json';
+  document.body.appendChild(a); a.click(); a.remove(); setTimeout(function(){ URL.revokeObjectURL(a.href); }, 2000);
+}
+
+/* ---------- the AI co-host (only when ttx host has a key) ---------- */
+function narrate(inj){
+  var seq = ++S.aiSeq;
+  S.ai = {status: 'streaming', text: '', findings: null, source: 'ai', note: '', onWall: false};
+  renderMain();
+  fetch('/api/cohost/voice', {method: 'POST', headers: {'Content-Type': 'application/json', 'X-TTX-Token': BOOT.token},
+    body: JSON.stringify({inject_id: inj.id, mode: 'present', text: '', wall: true})}).then(function(r){
+    if (!r.ok || !r.body) return r.json().catch(function(){ return {}; }).then(function(j){ throw new Error(j.error || 'the co-host is not available'); });
+    var reader = r.body.getReader(), dec = new TextDecoder(), buf = '';
+    function pump(){ return reader.read().then(function(x){
+      if (x.done) return;
+      buf += dec.decode(x.value, {stream: true});
+      var i; while ((i = buf.indexOf('\n\n')) >= 0){ onEvent(buf.slice(0, i)); buf = buf.slice(i + 2); }
+      return pump(); }); }
+    function onEvent(block){
+      if (seq !== S.aiSeq) return;
+      var ev = 'message', data = '';
+      block.split('\n').forEach(function(line){ if (line.indexOf('event: ') === 0) ev = line.slice(7); else if (line.indexOf('data: ') === 0) data += line.slice(6); });
+      var d = {}; try { d = JSON.parse(data); } catch (e) { return; }
+      if (ev === 'delta'){ S.ai.text += d.text; var t = el('gmtext'); if (t) t.textContent = S.ai.text; }
+      else if (ev === 'done'){ S.ai.status = 'done'; S.ai.findings = d.findings || []; S.ai.onWall = !!d.on_wall; if (d.ai) S.server.ai = d.ai; renderMain(); renderFoot(); }
+      else if (ev === 'error'){ throw new Error(d.error || 'the co-host stopped'); }
+    }
+    return pump();
+  }).catch(function(e){ if (seq === S.aiSeq){ showScript(inj, e.message); renderMain(); } });
+}
+function askCohost(){
+  var D = derive(), inj = D.current; if (!inj || !AI()) return;
+  var text = S.form.decision.trim();
+  if (!text){ S.formErr = 'Type the room’s decision first.'; renderMain(); return; }
+  S.formErr = ''; S.form.suggesting = true; renderMain();
+  api('/api/cohost/suggest', {inject_id: inj.id, text: text}).then(function(j){
+    if (S.form.inject_id !== inj.id) return;
+    var g = j.suggestion || {}, f = S.form; f.sug = {};
+    if (g.decided_by_role && (!f.by || f.byDefault)){ f.by = g.decided_by_role; f.sug.by = true; f.byDefault = false; }
+    (g.actions_completed || []).forEach(function(a){ if (!f.actions[a]){ f.actions[a] = true; f.sug['a:' + a] = true; } });
+    (g.notified || []).forEach(function(p){ if (!f.notified[p]){ f.notified[p] = true; f.sug['n:' + p] = true; } });
+    if (g.plan_step_followed && !f.plan_step){ f.plan_step = g.plan_step_followed; f.sug.plan = true; }
+    if (g.documented && !f.documented){ f.documented = g.documented; f.sug.doc = true; }
+    if (g.unplanned) { f.unplanned = true; f.sug.unplanned = true; }
+    f.ask = g.ask_next || ''; if (j.ai) S.server.ai = j.ai;
+  }).catch(function(e){ S.formErr = 'Co-host: ' + e.message; }).then(function(){ S.form.suggesting = false; renderMain(); renderFoot(); });
+}
+function pushRoom(){
+  var D = derive(), j = D.current; if (!j || S.pushBusy) return;
+  if (!SERVED){
+    var qs = j.probing_questions || []; if (!qs.length) return;
+    S.push = {role: 'Facilitator', text: qs[S.pushCount % qs.length], source: 'script', local: true}; S.pushCount++; renderMain(); return;
+  }
+  S.pushBusy = true; renderMain();
+  api('/api/wall/push', {inject_id: j.id}).then(function(r){ S.push = r.stake; S.push.note = r.note || ''; if (r.ai) S.server.ai = r.ai; })
+    .catch(function(e){ S.push = {role: '', text: '', error: e.message}; }).then(function(){ S.pushBusy = false; renderMain(); renderFoot(); });
+}
+
+/* ---------- actions ---------- */
+function setStep(step){ S.step = step; renderMain(); if (step === 'record'){ var t = el('f_decision'); if (t) t.focus(); } window.scrollTo(0, 0); }
+function present(){
+  var D = derive(), inj = D.current; if (!inj || D.presented[inj.id] || D.ended || S.busy) return;
+  act('present', {inject_id: inj.id}).then(function(){
+    S.step = 'read'; S.stepFor = inj.id; showScript(inj); renderAll();
+    if (AI() && !S.err) narrate(inj);
+  });
+}
+function formError(text){ S.formErr = text; renderMain(); var e = el('formerr'); if (e && e.scrollIntoView) e.scrollIntoView({block: 'center'}); }
+function logDecision(){
+  var D = derive(), inj = D.current, f = S.form; if (!inj || S.busy) return;
+  if (!f.decision.trim()) return formError('Type the room’s decision first.');
+  if (!f.by) return formError('Choose who made the call.');
+  if (f.by === 'other' && !f.note.trim()){ S.moreOpen = true; return formError('Open More and say who decided in the note.'); }
+  var payload = {inject_id: inj.id, decision: f.decision.trim(), by: f.by, actions: Object.keys(f.actions).filter(function(k){ return f.actions[k]; }),
+    notified: Object.keys(f.notified).filter(function(k){ return f.notified[k]; }), plan_step: f.plan_step, documented: f.documented,
+    scenario_minutes: f.scenario_minutes, note: f.note.trim() || null, unplanned: f.unplanned};
+  var askClocks = startsClocks(inj) && !f.unplanned;
+  act('decision', payload).then(function(){
+    if (!S.err){
+      if (f.unplanned){ f.decision = ''; f.unplanned = false; f.sug = {}; }
+      else { var N = derive(); S.clocksPending = askClocks; resetForm(N.current); showScript(N.current); S.step = null; S.stepFor = null; }
+    }
+    renderAll(); window.scrollTo(0, 0);
+  });
+}
+function skip(){ var D = derive(); if (!D.current || S.busy) return; act('skip', {inject_id: D.current.id}).then(function(){ var N = derive(); resetForm(N.current); showScript(N.current); S.step = null; S.stepFor = null; renderAll(); }); }
+function endExercise(){
+  if (!S.confirmEnd){ S.confirmEnd = true; renderMain(); return; }
+  S.confirmEnd = false; S.clocksPending = false; act('end', {}).then(renderAll);
+}
+function saveClocks(then){
+  var o = {}, h = {}, dr = S.clockDraft;
+  Object.keys(dr.owners).forEach(function(c){ if (dr.owners[c]) o[c] = dr.owners[c]; });
+  Object.keys(dr.hours).forEach(function(c){ if (dr.hours[c] !== '' && !isNaN(Number(dr.hours[c]))) h[c] = Number(dr.hours[c]); });
+  if (!Object.keys(o).length && !Object.keys(h).length){ if (then) then(); return; }
+  act('clocks', {owners: o, planned_hours: h}).then(function(){ if (!S.err){ S.clockDraft = {owners: {}, hours: {}}; if (then){ then(); return; } } renderAll(); });
+}
+function replayStep(n){
+  var total = (S.log.entries || []).length; S.cursor = Math.max(0, Math.min(total, n));
+  if (S.cursor >= total) S.playing = false;
+  if (SERVED) api('/api/replay/cursor', {n: S.cursor}).catch(function(){});
+  var D = derive(); showScript(D.focus); renderAll();
+}
+var playTimer = null;
+function replayPlay(){
+  S.playing = !S.playing; clearInterval(playTimer);
+  if (S.playing) playTimer = setInterval(function(){ if (!S.playing || S.cursor >= S.log.entries.length){ clearInterval(playTimer); S.playing = false; renderAll(); return; } replayStep(S.cursor + 1); }, 1600);
+  renderAll();
+}
+function keepFocus(fn){
+  var a = document.activeElement, id = a && a.id, s = a && a.selectionStart, e = a && a.selectionEnd; fn();
+  if (id && el(id)){ el(id).focus(); try { if (s != null) el(id).setSelectionRange(s, e); } catch (x) {} }
+}
+
+/* ---------- rendering ---------- */
+function shell(){
+  el('app').innerHTML = '<header class="top" id="hdr"></header><div class="bar2" id="bar2"></div><div id="banners"></div><div id="main"></div>'
+    + '<section class="card" id="clocks"></section><section class="card" id="logbox"></section><footer id="foot"></footer>';
+}
+function renderHeader(){
+  var org = (PACK.organization || {}).name || PACK.title || '', sc = PACK.scenario || {}, ap = PACK.approval || {}, ai = (S.server || {}).ai || {};
+  var fam = String(sc.family || 'Exercise'); fam = fam.charAt(0).toUpperCase() + fam.slice(1);
+  var mode = REPLAY ? 'Replay' : !SERVED ? 'Standalone file' : ai.enabled ? 'AI co-host on' : 'Script only';
+  var meta = [fam, PACK.duration_minutes + ' min', ap.approved ? '✓ Approved' : 'Draft, not approved', mode];
+  el('hdr').innerHTML = '<div class="word">Tabletop GM</div><div class="who"><b>' + esc(org) + '</b><span' + (ap.approved ? ' title="Approved by ' + esc(ap.approved_by) + ' · ' + esc(String(ap.outline_hash || '').slice(0, 12)) + '"' : '') + '>' + esc(meta.join(' · ')) + '</span></div>'
+    + '<div class="timer"><b id="elapsed">00:00:00</b><span>elapsed</span></div><button class="link" data-act="theme" id="themebtn"></button>';
+  el('themebtn').textContent = document.documentElement.getAttribute('data-theme') === 'dark' ? 'Light' : 'Dark';
+  var seed = PACK.seed || {}, D = derive(), src = D.focus && D.focus.source && D.focus.source.type === 'finding' ? D.focus.source.ref : null, hops = [];
+  ['entry', 'pivot', 'target'].forEach(function(k){ var s = seed[k]; if (!s || !s.asset) return;
+    var t = esc(s.asset) + (s.kev ? '<span class="kev" title="On the CISA Known Exploited Vulnerabilities list">KEV</span>' : '');
+    hops.push('<span title="' + esc([s.finding_id, s.cve, s.vpr != null ? 'VPR ' + s.vpr : '', (s.data || []).join(', ')].filter(Boolean).join(' · ')) + '">' + (src && s.finding_id === src ? '<b>' + t + '</b>' : t) + '</span>'); });
+  var open = (S.server || {}).room_open;
+  el('bar2').innerHTML = '<span class="muted">Attack path</span><span class="crumb">' + (hops.join('<i>→</i>') || 'generic scenario, no exposure data') + '</span><span class="spacer"></span>'
+    + (SERVED ? '<a class="roomlink' + (open ? ' on' : '') + '" href="/room" target="_blank" rel="noopener" title="Open this on the projector or the shared screen">' + (open ? 'Room screen is open' : 'Open the room screen') + '</a>' : '');
+  tick();
+}
+function renderBanners(){
+  var h = '';
+  if (S.err) h += '<div class="msg err">' + esc(S.err) + '</div>';
+  if (BOOT.draft) h += '<div class="msg warn">Draft outline. Rehearsal only: this log cannot be scored until the outline is approved.</div>';
+  if (REPLAY){
+    var total = (S.log.entries || []).length;
+    h += '<div class="msg info"><span><b>Replay</b> · entry ' + S.cursor + ' of ' + total + '</span><span class="spacer"></span>'
+      + '<button class="btn" data-act="rstep">Next<kbd>Space</kbd></button><button class="btn" data-act="rplay">' + (S.playing ? 'Pause' : 'Play') + '</button>'
+      + '<button class="btn" data-act="rend">Jump to end</button><button class="btn" data-act="rreset">Restart</button>'
+      + '<button class="btn primary" data-act="rscore"' + (S.busy ? ' disabled' : '') + '>Score</button></div>';
+  }
+  el('banners').innerHTML = h;
+}
+function fold(title, inner, priv){ return inner ? '<details class="fold"><summary>' + title + (priv ? '<span class="priv">PRIVATE</span>' : '') + '</summary><div class="in">' + inner + '</div></details>' : ''; }
+function ul(items){ items = (items || []).filter(Boolean); return items.length ? '<ul>' + items.map(function(x){ return '<li>' + esc(x) + '</li>'; }).join('') + '</ul>' : ''; }
+function stakes(html){
+  (PACK.roles || []).map(function(r){ return r.name; }).concat(['CEO', 'CIO', 'CISO', 'CFO']).forEach(function(name){
+    if (!name) return;
+    var at = 0, label = esc(name) + ':';
+    while ((at = html.indexOf(label, at)) >= 0){
+      var rest = html.slice(at + label.length).replace(/^\s+/, '');
+      if (rest.indexOf('&quot;') === 0 || rest.indexOf('“') === 0){
+        var chip = '<span class="stake">' + esc(name) + '</span> ';
+        html = html.slice(0, at) + chip + rest; at += chip.length;
+      } else at += label.length;
+    }
+  });
+  return html;
+}
+function pills(act, opts, val, sug){
+  return opts.map(function(o){ return '<button class="pill' + (val === o[0] ? ' sel' : '') + (val === o[0] && sug ? ' sug' : '') + '" data-act="' + act + '" data-arg="' + o[0] + '">' + o[1] + '</button>'; }).join('');
+}
+function progHtml(D){
+  return '<div class="prog">' + (PACK.injects || []).map(function(j, i){
+    var cls = D.decided[j.id] ? 'done' : D.skipped[j.id] ? 'skip' : (D.focus && D.focus.id === j.id ? 'cur' : '');
+    return '<div class="seg ' + cls + '" title="' + (i + 1) + '. ' + esc(j.title) + (D.skipped[j.id] ? ' (skipped)' : '') + '"></div>'; }).join('') + '</div>';
+}
+function eyebrow(D, j){
+  var n = (PACK.injects || []).indexOf(j) + 1, phase = String(j.phase || ''); phase = phase.charAt(0).toUpperCase() + phase.slice(1);
+  return '<div class="eyebrow"><span>Inject ' + n + ' of ' + PACK.injects.length + ' · ' + esc(phase) + ' · ' + esc(j.time_marker) + (j.slide_number ? ' · slide ' + esc(j.slide_number) : '') + '</span>'
+    + '<span class="spacer"></span>' + (D.presented[j.id] && !D.decided[j.id] ? '<span>Discussing <b class="mono" id="disc"></b></span>' : '') + '</div><h1 class="title">' + esc(j.title) + '</h1>';
+}
+function endLinks(){
+  return '<button class="link" data-act="skip">Skip inject</button><button class="link danger' + (S.confirmEnd ? ' arm' : '') + '" data-act="end">' + (S.confirmEnd ? 'Click again to end and score' : 'End exercise') + '</button>';
+}
+function clockTable(D, live){
+  var cl = PACK.clocks || [], dr = S.clockDraft, unverified = cl.filter(function(c){ return c.tier !== 'verified'; }).length;
+  var rows = cl.map(function(c){
+    var a = D.answers[c.id] || {}, owner = dr.owners[c.id] != null ? dr.owners[c.id] : (a.owner_role || ''), hrs = dr.hours[c.id] != null ? dr.hours[c.id] : (a.planned_notify_hours != null ? a.planned_notify_hours : '');
+    var name = '<div title="' + esc(c.name) + '">' + esc(notice(c)) + '</div><div class="src">' + esc(c.regulator || '') + (c.regulator ? ' · ' : '')
+      + (c.source_url ? '<a href="' + esc(c.source_url) + '" target="_blank" rel="noopener noreferrer">' + esc(c.citation || 'source') + '</a>' : esc(c.citation || ''))
+      + (c.tier !== 'verified' && unverified !== cl.length ? ' · not verified' : '') + '</div>';
+    var o, t;
+    if (live){
+      o = '<select data-clock="owner" data-arg="' + esc(c.id) + '"><option value="">No one yet</option>' + (PACK.roles || []).map(function(r){ return '<option value="' + esc(r.id) + '"' + (owner === r.id ? ' selected' : '') + '>' + esc(r.name) + '</option>'; }).join('') + '</select>';
+      t = '<input type="number" min="0" placeholder="hour" data-clock="hours" data-arg="' + esc(c.id) + '" value="' + esc(hrs) + '">';
+    } else if (D.clocksStarted){
+      o = a.owner_role ? esc(roleName(a.owner_role)) : '<span class="none">No owner</span>';
+      t = a.planned_notify_hours != null ? 'hour ' + esc(a.planned_notify_hours) : '<span class="none">No time</span>';
+    } else { o = t = '<span class="muted">–</span>'; }
+    return '<tr><td>' + name + '</td><td class="mono" style="white-space:nowrap">' + esc(deadline(c)) + '</td><td style="width:27%">' + o + '</td><td style="width:14%">' + t + '</td></tr>';
+  }).join('');
+  return '<table class="clk"><tr><th>Notice</th><th>Deadline <span class="priv">PRIVATE</span></th><th>Owner</th><th>Send at</th></tr>' + rows + '</table>'
+    + (unverified ? '<div class="note warn">' + (unverified === cl.length ? 'These deadlines are' : unverified + ' of these deadlines are') + ' sourced but not yet human-verified. Open each source before the exercise.</div>' : '');
+}
+function stepCard(D, j){
+  var f = S.form, proc = j.procedure_tested || {}, a = S.ai, h = '';
+  if (!D.presented[j.id]){
+    return '<div class="card"><div class="do">Next up</div><div class="big">' + (SERVED ? 'Presenting puts this inject on the room screen and starts the discussion clock.' : 'Presenting stamps the time and starts the discussion clock.') + '</div>'
+      + '<div class="acts"><button class="btn primary xl" data-act="present"' + (S.busy ? ' disabled' : '') + '>Present inject<kbd>Space</kbd></button><span class="spacer"></span>' + endLinks() + '</div></div>';
+  }
+  var step = S.step;
+  if (step === 'read'){
+    var held = a.source === 'ai' && a.status === 'done' && a.findings && a.findings.length;
+    h = '<div class="card"><div class="do">' + (SERVED ? 'Read this aloud. The room screen shows the same line.' : 'Read this aloud') + '</div>'
+      + '<div class="big"><span id="gmtext">' + (held ? esc(scriptLine(j)) : stakes(esc(a.text))) + '</span>' + (a.status === 'streaming' ? '<span class="caret"></span>' : '') + '</div>';
+    if (a.source === 'ai' && a.status === 'streaming') h += '<div class="note">The AI co-host is writing. The room screen waits until the line has passed the fact check.</div>';
+    if (a.source === 'ai' && a.status === 'done') h += a.findings && a.findings.length
+      ? '<div class="note warn">This is the script. The co-host wrote a line with details that are not in the exercise (' + esc(a.findings.map(function(x){ return x.token; }).join(', ')) + '), so it was held back from the room screen:</div><div class="note"><s>' + esc(a.text) + '</s></div>'
+      : '<div class="note ok" title="Every number, identifier, and duration in this line is in the approved exercise.">✓ Fact check passed. Written by the AI co-host.</div>';
+    if (a.note) h += '<div class="note warn">' + esc(a.note) + ' Showing the script.</div>';
+    h += '<div class="acts"><button class="btn primary xl" data-act="step" data-arg="discuss">Done reading<kbd>Space</kbd></button></div></div>';
+    return h;
+  }
+  if (step === 'discuss'){
+    var qs = j.probing_questions || [], p = S.push;
+    h = '<div class="card"><div class="do">Ask this, then let them talk</div><div class="lab" style="font-size:13px">For the ' + esc(roleName(j.decision_owner_role)) + '</div><div class="ask">' + esc(j.decision_forced) + '</div>';
+    h += '<div class="stall"><div class="lab">If the room stalls</div>' + (qs.length ? ul(qs) : '<div class="muted small">No follow-up questions in this inject.</div>');
+    if (qs.length || AI()) h += '<button class="btn" data-act="push"' + (S.pushBusy ? ' disabled' : '') + '>' + (S.pushBusy ? 'Writing…' : (SERVED ? 'Push the room' : 'Pick a follow-up for me')) + '<kbd>P</kbd></button>'
+      + '<span class="small muted" style="margin-left:10px">' + (AI() ? 'A stakeholder speaks on the room screen.' : SERVED ? 'Puts the next follow-up on the room screen.' : '') + '</span>';
+    if (p && p.error) h += '<div class="note warn">' + esc(p.error) + '</div>';
+    else if (p) h += '<div class="pushed"><span class="small muted">' + (p.local ? 'Ask' : 'On the room screen') + ' · ' + esc(p.source === 'ai' ? p.role + ', played by the co-host' : 'follow-up from the script') + '</span><br>' + (p.source === 'ai' ? '“' + esc(p.text) + '”' : esc(p.text))
+      + (p.note ? '<div class="note warn">' + esc(p.note) + '</div>' : '') + '</div>';
+    h += '</div><div class="folds">'
+      + fold('What their plan says', proc.quote ? '<div class="lab"><em>' + esc(proc.label || '') + '</em></div><div class="quote">“' + esc(proc.quote) + '”</div>' : (proc.label ? esc(proc.label) : ''), true)
+      + fold('A good answer, and where teams fail', ul([j.what_good_looks_like, j.where_teams_fail]), true)
+      + fold('Hints, only if they are stuck', ul(j.hints), true)
+      + fold('Background', '<div>' + esc(j.what_happens) + '</div><div class="note">' + ((j.recipients || []).length ? 'Goes to ' + esc(j.recipients.join(', ')) + '. ' : '') + ((j.source || {}).type === 'finding' ? 'Built on finding ' + esc(j.source.ref) + '.' : 'Built on a labeled assumption.') + '</div>')
+      + '</div><div class="acts"><button class="btn primary xl" data-act="step" data-arg="record">They decided<kbd>Space</kbd></button><span class="spacer"></span>' + endLinks() + '</div></div>';
+    return h;
+  }
+  /* record */
+  var owners = [j.decision_owner_role].concat(j.acceptable_owner_roles || []).filter(Boolean);
+  if (f.by && owners.indexOf(f.by) < 0 && f.by !== 'other') owners.push(f.by);
+  var others = (PACK.roles || []).filter(function(r){ return owners.indexOf(r.id) < 0; });
+  var shownN = (j.expected_notifications || []).slice();
+  Object.keys(f.notified).forEach(function(q){ if (f.notified[q] && shownN.indexOf(q) < 0) shownN.push(q); });
+  var moreN = (PACK.notify_parties || []).filter(function(q){ return shownN.indexOf(q.id) < 0; });
+  h = '<div class="card"><div class="do">Record what they said</div>'
+    + '<textarea id="f_decision" rows="2" placeholder="What did the room decide? One sentence.">' + esc(f.decision) + '</textarea>'
+    + '<div class="sec"><div class="lab">Decided by</div><div class="pills">'
+    + owners.map(function(r){ return '<button class="pill' + (f.by === r ? ' sel' : '') + (f.by === r && f.sug.by ? ' sug' : '') + '" data-act="by" data-arg="' + esc(r) + '">' + esc(roleName(r)) + '</button>'; }).join('')
+    + '<select id="f_by_more"><option value="">Someone else…</option>' + others.map(function(r){ return '<option value="' + esc(r.id) + '">' + esc(r.name) + '</option>'; }).join('')
+    + '<option value="other"' + (f.by === 'other' ? ' selected' : '') + '>Outside the plan (add a note)</option></select></div></div>';
+  if ((j.expected_actions || []).length) h += '<div class="sec"><div class="lab">Actions they stated <em>· tick only what they actually said</em></div>'
+    + j.expected_actions.map(function(x, i){ var on = !!f.actions[x.id], sg = on && f.sug['a:' + x.id];
+      return '<label class="chk' + (sg ? ' sug' : '') + '"><input type="checkbox" data-chk="a" data-arg="' + esc(x.id) + '"' + (on ? ' checked' : '') + '><span>' + esc(x.text) + '</span><span class="k">' + (sg ? 'suggested' : (i + 1)) + '</span></label>'; }).join('') + '</div>';
+  if ((PACK.notify_parties || []).length) h += '<div class="sec"><div class="lab">They will tell</div><div class="pills">'
+    + shownN.map(function(q){ var on = !!f.notified[q]; return '<button class="pill' + (on ? ' sel' : '') + (on && f.sug['n:' + q] ? ' sug' : '') + '" data-act="notify" data-arg="' + esc(q) + '">' + esc(partyName(q)) + '</button>'; }).join('')
+    + (moreN.length ? '<select id="f_notify_more"><option value="">Add…</option>' + moreN.map(function(q){ return '<option value="' + esc(q.id) + '">' + esc(q.name) + '</option>'; }).join('') + '</select>' : '') + '</div></div>';
+  h += '<div class="sec"><div class="rowf"><div class="lab">Followed the plan</div><div class="pills">' + pills('plan', [['yes', 'Yes'], ['partial', 'Partly'], ['no', 'No'], ['plan_unclear', 'Unclear'], ['n/a', 'N/A']], f.plan_step, f.sug.plan) + '</div></div>'
+    + '<div class="rowf"><div class="lab">Written down</div><div class="pills">' + pills('doc', [['yes', 'Yes'], ['partial', 'Partly'], ['no', 'No']], f.documented, f.sug.doc) + '</div></div>'
+    + (proc.quote ? '<div class="note">Their plan: “' + esc(proc.quote) + '”</div>' : '') + '</div>'
+    + '<div class="folds"><details class="fold" id="f_more"' + (S.moreOpen || f.note || f.scenario_minutes || f.unplanned || f.by === 'other' ? ' open' : '') + '><summary>More: time, note, unplanned</summary><div class="in">'
+    + '<div class="two"><div><div class="lab">Minutes it takes</div><input type="number" min="0" id="f_minutes" value="' + esc(f.scenario_minutes) + '"></div>'
+    + '<div><div class="lab">Note</div><input type="text" id="f_note" value="' + esc(f.note) + '"></div></div>'
+    + '<label class="chk" style="border-top:0;margin-top:8px"><input type="checkbox" id="f_unplanned"' + (f.unplanned ? ' checked' : '') + '><span>Unplanned action. Log it, do not score it, stay on this inject.</span></label></div></details></div>';
+  if (S.formErr) h += '<div class="msg err" id="formerr" style="margin:14px 0 0">' + esc(S.formErr) + '</div>';
+  if (Object.keys(f.sug).length) h += '<div class="note">Dashed and “suggested” items came from the co-host. Change anything before you log it.</div>';
+  if (f.ask) h += '<div class="note"><b>Still open:</b> ' + esc(f.ask) + '</div>';
+  h += '<div class="acts"><button class="btn primary xl" data-act="log"' + (S.busy ? ' disabled' : '') + '>Log decision<kbd>Ctrl+Enter</kbd></button>'
+    + (AI() ? '<button class="btn" data-act="ask"' + (f.suggesting ? ' disabled' : '') + '>' + (f.suggesting ? 'Reading…' : 'Suggest ticks<kbd>Enter</kbd>') + '</button>' : '')
+    + '<span class="spacer"></span>' + endLinks() + '</div></div>';
+  return h;
+}
+function stepper(D, j){
+  var presented = !!D.presented[j.id], order = ['read', 'discuss', 'record'], at = order.indexOf(S.step);
+  var names = {read: 'Read', discuss: 'Discuss', record: 'Record'};
+  return '<div class="steps">' + order.map(function(s, i){
+    var cls = !presented ? '' : i < at ? ' done' : i === at ? ' on' : '';
+    return '<button class="stp' + cls + '"' + (presented && i < at ? ' data-act="step" data-arg="' + s + '"' : '') + '>Step ' + (i + 1) + '<b>' + (cls === ' done' ? '✓ ' : '') + names[s] + '</b></button>'; }).join('')
+    + (startsClocks(j) ? '<button class="stp">Step 4<b>Clocks</b></button>' : '') + '</div>';
+}
+function fixes(gaps){
+  var seen = {}, rows = [];
+  gaps.forEach(function(g){ var k = g.label + '|' + g.fix; if (seen[k]) { seen[k].n++; return; } seen[k] = {label: g.label, fix: g.fix, owner: g.owner, due: g.due, n: 1}; rows.push(seen[k]); });
+  var order = {plan: 0, technical: 1, people: 2};
+  return rows.sort(function(a, b){ return (order[a.label] == null ? 3 : order[a.label]) - (order[b.label] == null ? 3 : order[b.label]); });
+}
+function scoreHtml(){
+  var r = S.report, sm = r.summary || {}, labels = r.dimension_labels || {}, av = sm.dimension_averages || {};
+  var counts = {plan: 0, people: 0, technical: 0}; (r.gaps || []).forEach(function(g){ if (counts[g.label] != null) counts[g.label]++; });
+  var h = '<section class="card"><div class="scoretop"><div class="stat"><span>Readiness</span><div class="bigr">' + esc(r.rating) + '</div></div>'
+    + '<div class="stat"><span>Score</span><div class="bigr mono">' + Number(r.percent).toFixed(1) + '%</div></div>'
+    + '<div class="stat"><span>Decisions scored</span><b>' + esc(sm.injects_scored) + ' of ' + esc(sm.injects_total) + '</b></div>'
+    + '<div class="stat"><span>Deadlines met</span><b>' + esc(sm.clocks_met) + ' of ' + (r.clocks || []).length + '</b></div>'
+    + '<div class="stat"><span>Gaps</span><b>' + counts.plan + ' plan · ' + counts.technical + ' technical · ' + counts.people + ' people</b></div></div>'
+    + '<div class="sec">' + esc(r.headline) + '</div>' + (SERVED ? '<div class="note">The room screen is showing the rating, the score, and the five bars. The detail below is yours.</div>' : '') + '<div class="bars">';
+  Object.keys(labels).forEach(function(k){ var v = av[k]; h += '<div class="small">' + esc(labels[k]) + '</div><div class="bar"><i style="width:' + (v == null ? 0 : Math.round(v / 3 * 100)) + '%"></i></div><div class="mono small muted">' + (v == null ? 'n/a' : Number(v).toFixed(1)) + '</div>'; });
+  h += '</div><div class="cols"><div><div class="lab">Notification deadlines</div>' + (r.clocks || []).map(function(c){
+    var late = Math.abs(Number(c.margin_hours));
+    var st = c.status === 'met' ? ['met', 'Met'] : c.status === 'missed' ? ['missed', 'Missed' + (c.margin_hours != null ? ' by ' + (late >= 48 ? Number((late / 24).toFixed(1)) + ' days' : Number(late.toFixed(1)) + ' hours') : '')]
+      : c.status === 'not_planned' ? ['open', 'No owner or time'] : ['', String(c.status || '').replace(/_/g, ' ')];
+    return '<div class="li">' + esc(notice(c)) + '<div class="small"><span class="st ' + st[0] + '">' + esc(st[1]) + '</span><span class="muted"> · ' + esc(c.regulator || '') + '</span></div></div>'; }).join('') + '</div>'
+    + '<div><div class="lab">What to fix first</div>' + fixes(r.gaps || []).slice(0, 5).map(function(g){
+      return '<div class="li">' + esc(g.fix) + '<div class="muted small">' + esc(g.label.charAt(0).toUpperCase() + g.label.slice(1)) + ' gap' + (g.n > 1 ? ' ×' + g.n : '') + (g.owner ? ' · ' + esc(g.owner) : '') + (g.due ? ' · due ' + esc(g.due) : '') + '</div></div>'; }).join('') + '</div></div>'
+    + '<div class="acts">' + (SERVED ? '<button class="btn primary" data-act="open" data-arg="after_action_report">Open after-action report</button><button class="btn" data-act="open" data-arg="executive_summary_slides">Executive slides</button>'
+    + '<button class="btn" data-act="open" data-arg="executive_summary_memo">Memo</button><button class="btn" data-act="open" data-arg="folder">Folder</button>' : '')
+    + '<span class="spacer"></span><span class="small muted">Scored by the engine. Same log, same score.</span></div></section>';
+  return h;
+}
+function renderMain(){ keepFocus(drawMain); tick(); }
+function drawMain(){
+  var D = derive(), j = D.focus, box = el('main');
+  if (S.report){ box.innerHTML = scoreHtml(); return; }
+  if (REPLAY){
+    if (!j){ box.innerHTML = ''; return; }
+    var e = D.decided[j.id];
+    box.innerHTML = progHtml(D) + eyebrow(D, j) + '<div class="card"><div class="do">Read aloud</div><div class="big">' + esc(scriptLine(j)) + '</div>'
+      + '<div class="sec"><div class="lab">Decision <em>· ' + esc(roleName(j.decision_owner_role)) + '</em></div><div class="ask" style="font-size:19px">' + esc(j.decision_forced) + '</div></div>'
+      + '<div class="sec"><div class="lab">Recorded</div>' + (e ? '<div>' + esc(e.decision) + '</div><div class="note">' + esc([roleName(e.decided_by_role), (e.actions_completed || []).length + ' of ' + (j.expected_actions || []).length + ' expected actions',
+        e.plan_step_followed ? 'plan followed: ' + e.plan_step_followed : '', e.documented ? 'written down: ' + e.documented : ''].filter(Boolean).join(' · ')) + '</div>' : '<div class="muted">Nothing recorded yet at this point.</div>') + '</div></div>';
+    return;
+  }
+  if (S.clocksPending && !D.ended){
+    box.innerHTML = progHtml(D) + '<div class="eyebrow"><span>Step 4 · once per exercise</span></div><h1 class="title">The notification clocks have started</h1>'
+      + '<div class="card"><div class="do">Ask the room two things for each notice: who owns it, and when will you send it</div>'
+      + '<div class="note" style="margin-top:0">Do not read the deadlines out. If nobody owns a notice, leave that row blank. That gap is the finding.</div>' + clockTable(D, true)
+      + '<div class="acts"><button class="btn primary xl" data-act="clocksdone">Save and continue</button><span class="spacer"></span><button class="link" data-act="clocksskip">Skip for now</button></div></div>';
+    return;
+  }
+  if (D.ended){
+    box.innerHTML = '<div class="card"><h2 class="head">The exercise has ended</h2><div class="sec muted">The record is closed. Corrections go through <span class="mono">ttx log edit</span>, which keeps the original entry.</div>'
+      + (!SERVED ? '<div class="sec">Download the log, then score it:<div class="mono small" style="margin:6px 0 12px">ttx report --log decision_log.json --pack exercise_pack.json</div><button class="btn primary" data-act="download">Download decision_log.json</button></div>' : '') + '</div>';
+    return;
+  }
+  if (!j){
+    box.innerHTML = progHtml(D) + '<div class="eyebrow"><span>All ' + PACK.injects.length + ' injects are done</span></div><h1 class="title">Ready to score</h1>'
+      + '<div class="card"><div class="big">Ending the exercise scores the record, writes the reports' + (SERVED ? ', and puts the score on the room screen.' : '.') + '</div>'
+      + '<div class="acts"><button class="btn primary xl" data-act="end">' + (S.confirmEnd ? 'Click again to end and score' : 'End exercise and score') + '</button></div></div>';
+    return;
+  }
+  if (!S.form || S.form.inject_id !== j.id) resetForm(j);
+  if (D.presented[j.id] && (S.stepFor !== j.id || !S.step)){ S.step = S.stepFor === j.id ? 'read' : ((/[?&]step=(read|discuss|record)(?:&|$)/.exec(location.search) || [])[1] || 'discuss'); S.stepFor = j.id; }
+  box.innerHTML = progHtml(D) + eyebrow(D, j) + stepper(D, j) + stepCard(D, j);
+}
+function renderClocks(){
+  var D = derive(), cl = PACK.clocks || [], box = el('clocks');
+  if (!cl.length || S.clocksPending || S.report){ box.style.display = 'none'; return; }
+  box.style.display = '';
+  var start = (PACK.injects || []).filter(startsClocks)[0], startN = start ? (PACK.injects || []).indexOf(start) + 1 : null;
+  var live = D.clocksStarted && !D.ended && !REPLAY, dirty = Object.keys(S.clockDraft.owners).length || Object.keys(S.clockDraft.hours).length;
+  box.innerHTML = '<details class="sect" id="clockdetails"' + (S.clocksOpen ? ' open' : '') + '><summary><h2 class="head">Notification clocks</h2><span class="small muted">'
+    + (D.clocksStarted ? cl.filter(function(c){ return (D.answers[c.id] || {}).owner_role; }).length + ' of ' + cl.length + ' have an owner' : cl.length + (startN ? ' start at inject ' + startN : ' in this scenario')) + '</span><span class="spacer"></span><span class="chev">' + (S.clocksOpen ? 'Hide' : 'Show') + '</span></summary>'
+    + clockTable(D, live) + (live ? '<div class="acts" style="margin-top:12px"><button class="btn' + (dirty ? ' primary' : '') + '" data-act="clocks"' + (dirty ? '' : ' disabled') + '>Save</button></div>' : '') + '</details>';
+}
+function renderLog(){
+  var vis = entries().slice().reverse(), box = el('logbox'), ended = derive().ended;
+  var rows = vis.map(function(e){
+    var t = '';
+    if (e.type === 'decision') t = '<b>' + esc(e.inject_id) + '</b> ' + esc(e.decision) + ' <span class="muted">· ' + esc(roleName(e.decided_by_role)) + (e.unplanned ? ' · unplanned' : '') + (e.supersedes ? ' · corrects #' + e.supersedes : '') + '</span>';
+    else if (e.type === 'mark') t = '<span class="muted"><b>' + esc(e.inject_id) + '</b> ' + (e.event === 'presented' ? 'presented' : 'skipped') + '</span>';
+    else if (e.type === 'note') t = '<span class="muted">' + esc(e.text) + '</span>';
+    else if (e.type === 'clocks') t = '<span class="muted">Clock answers saved</span>';
+    return '<div class="lg"><div class="t">' + esc(hhmmss(e.at)) + '</div><div>' + t + '</div></div>';
+  }).join('');
+  var h = '<details class="sect" id="logdetails"' + (S.logOpen ? ' open' : '') + '><summary><h2 class="head">Log</h2><span class="small muted">' + vis.length + (vis.length === 1 ? ' entry' : ' entries')
+    + (vis.length ? ' · last ' + esc(hhmmss(vis[0].at)) : '') + ' · ' + (SERVED ? 'timestamps from the engine' : 'saved in this browser') + '</span><span class="spacer"></span><span class="chev">' + (S.logOpen ? 'Hide' : 'Show') + '</span></summary>'
+    + (rows || '<div class="small muted">Nothing logged yet.</div>');
+  if (!REPLAY && !ended) h += '<div class="acts" style="margin-top:12px"><input type="text" id="f_lognote" placeholder="Add a note" style="flex:1">' + '<button class="btn" data-act="note">Add</button>'
+    + (!SERVED ? '<button class="btn" data-act="download">Download log</button>' : '') + '</div>';
+  box.innerHTML = h + '</details>';
+}
+function renderFoot(){
+  var ai = (S.server || {}).ai || {}, bits = [];
+  bits.push(REPLAY ? 'Space: next entry' : 'Space: next step · P: push the room · 1 to 9: tick actions · Ctrl+Enter: log');
+  if (ai.enabled) bits.push(esc(ai.model) + ' · ' + ((ai.usage || {}).calls || 0) + ' calls' + (ai.estimated_cost_usd != null ? ' · about $' + Number(ai.estimated_cost_usd).toFixed(2) : '')
+    + ' · ' + (ai.lines_checked || 0) + ' lines checked, ' + (ai.lines_flagged || 0) + ' held back');
+  else if (SERVED && !REPLAY && ai.reason) bits.push(esc(ai.reason));
+  bits.push((SERVED ? 'This screen is private. Runs on this computer only. Record saved to ' + esc((S.server || {}).out_dir || '') : 'Standalone file. Nothing leaves this browser.') + ' · Tabletop GM ' + esc(BOOT.version || ''));
+  el('foot').innerHTML = bits.join('<br>');
+}
+function renderStart(){
+  var saved = null; try { saved = JSON.parse(localStorage.getItem(KEY) || 'null'); } catch (e) {}
+  el('app').innerHTML = '<div class="card start"><div class="word">Tabletop GM</div><h1 class="title" style="margin-top:14px">' + esc(PACK.title) + '</h1>'
+    + '<div class="sec muted">Runs on this computer only. Each decision is timestamped, and the log you export is scored by <span class="mono">ttx report --log</span>.</div>'
+    + (BOOT.draft ? '<div class="msg warn" style="margin-top:14px">Draft outline. Rehearsal only.</div>' : '')
+    + '<div class="sec"><div class="lab">Facilitator name</div><input type="text" id="f_name" placeholder="Goes on the record"></div>'
+    + '<div class="acts"><button class="btn primary" data-act="startlocal">Start</button>'
+    + (saved && saved.entries ? '<button class="btn" data-act="resumelocal">Resume saved session (' + saved.entries.length + ' entries)</button>' : '') + '</div><div class="msg err" id="starterr" style="display:none;margin:14px 0 0"></div></div>';
+}
+function renderAll(){
+  if (!S.log){ renderStart(); return; }
+  if (!el('hdr')) shell();
+  renderHeader(); renderBanners(); renderMain(); renderClocks(); renderLog(); renderFoot();
+}
+function tick(){
+  if (!S.log || !el('elapsed')) return;
+  var D = derive(), vis = entries(), lastAt = Date.parse(S.log.started_at);
+  vis.forEach(function(e){ var t = Date.parse(e.edited_at || e.at); if (t > lastAt) lastAt = t; });
+  var endAt = (D.ended || REPLAY) ? lastAt : Date.now();
+  // the exercise clock starts with the first thing recorded, not when the page was opened
+  el('elapsed').textContent = vis.length ? dur(endAt - Date.parse(vis[0].at)) : '00:00:00';
+  var j = D.focus, disc = el('disc');
+  if (disc && j && D.presented[j.id]) disc.textContent = dur(endAt - Date.parse(D.presented[j.id])).slice(3);
+}
+function setTheme(t){ document.documentElement.setAttribute('data-theme', t); var b = el('themebtn'); if (b) b.textContent = t === 'dark' ? 'Light' : 'Dark'; }
+function nextStep(){
+  if (REPLAY){ replayStep(S.cursor + 1); return; }
+  var D = derive(), j = D.current; if (!j || S.clocksPending || D.ended) return;
+  if (!D.presented[j.id]) present(); else if (S.step === 'read') setStep('discuss'); else if (S.step === 'discuss') setStep('record');
+}
+
+/* ---------- events ---------- */
+document.addEventListener('click', function(ev){
+  var b = ev.target.closest('[data-act]'); if (!b) return;
+  var a = b.getAttribute('data-act'), arg = b.getAttribute('data-arg'), f = S.form;
+  if (a === 'theme'){ var t = document.documentElement.getAttribute('data-theme') === 'dark' ? 'light' : 'dark'; setTheme(t); try { localStorage.setItem('ttxhost:theme', t); } catch (e) {} }
+  else if (a === 'startlocal' || a === 'resumelocal'){
+    if (a === 'resumelocal'){ try { S.log = JSON.parse(localStorage.getItem(KEY)); } catch (e) {} }
+    else { var nm = (el('f_name').value || '').trim(); if (!nm){ var se = el('starterr'); se.style.display = ''; se.textContent = 'Enter the facilitator’s name. It goes on the record.'; return; } startLocal(nm); }
+    var D0 = derive(); resetForm(D0.current); showScript(D0.current); renderAll();
+  }
+  else if (a === 'present') present();
+  else if (a === 'step') setStep(arg);
+  else if (a === 'push') pushRoom();
+  else if (a === 'log') logDecision();
+  else if (a === 'ask') askCohost();
+  else if (a === 'skip') skip();
+  else if (a === 'end') endExercise();
+  else if (a === 'clocks') saveClocks();
+  else if (a === 'clocksdone') saveClocks(function(){ S.clocksPending = false; renderAll(); window.scrollTo(0, 0); });
+  else if (a === 'clocksskip'){ S.clocksPending = false; renderAll(); }
+  else if (a === 'download') download();
+  else if (a === 'by'){ f.by = f.by === arg ? null : arg; f.byDefault = false; delete f.sug.by; renderMain(); }
+  else if (a === 'notify'){ f.notified[arg] = !f.notified[arg]; delete f.sug['n:' + arg]; renderMain(); }
+  else if (a === 'plan'){ f.plan_step = f.plan_step === arg ? null : arg; delete f.sug.plan; renderMain(); }
+  else if (a === 'doc'){ f.documented = f.documented === arg ? null : arg; delete f.sug.doc; renderMain(); }
+  else if (a === 'note'){ var n = el('f_lognote'), txt = (n.value || '').trim(); if (txt) act('note', {text: txt}).then(renderAll); }
+  else if (a === 'open') api('/api/open', {what: arg}).catch(function(e){ S.err = e.message; renderBanners(); });
+  else if (a === 'rstep') replayStep(S.cursor + 1);
+  else if (a === 'rplay') replayPlay();
+  else if (a === 'rend') replayStep(S.log.entries.length);
+  else if (a === 'rreset'){ S.report = null; replayStep(0); }
+  else if (a === 'rscore'){ replayStep(S.log.entries.length); act('end', {}).then(renderAll); }
+});
+document.addEventListener('toggle', function(ev){
+  var t = ev.target; if (!t || !t.id) return;
+  if (t.id === 'logdetails') S.logOpen = t.open; else if (t.id === 'clockdetails') S.clocksOpen = t.open; else if (t.id === 'f_more'){ S.moreOpen = t.open; return; } else return;
+  var c = t.querySelector('.chev'); if (c) c.textContent = t.open ? 'Hide' : 'Show';
+}, true);
+document.addEventListener('input', function(ev){
+  var t = ev.target, f = S.form;
+  if (t.id === 'f_decision'){ f.decision = t.value; S.formErr = ''; }
+  else if (t.id === 'f_minutes') f.scenario_minutes = t.value;
+  else if (t.id === 'f_note') f.note = t.value;
+  else if (t.getAttribute('data-clock') === 'hours'){ S.clockDraft.hours[t.getAttribute('data-arg')] = t.value; var sb = document.querySelector('[data-act=clocks]'); if (sb){ sb.disabled = false; sb.classList.add('primary'); } }
+});
+document.addEventListener('change', function(ev){
+  var t = ev.target, f = S.form;
+  if (t.getAttribute('data-chk') === 'a'){ var id = t.getAttribute('data-arg'); f.actions[id] = t.checked; delete f.sug['a:' + id]; renderMain(); }
+  else if (t.id === 'f_unplanned') f.unplanned = t.checked;
+  else if (t.id === 'f_by_more' && t.value){ f.by = t.value; f.byDefault = false; delete f.sug.by; renderMain(); }
+  else if (t.id === 'f_notify_more' && t.value){ f.notified[t.value] = true; renderMain(); }
+  else if (t.getAttribute('data-clock') === 'owner'){ S.clockDraft.owners[t.getAttribute('data-arg')] = t.value; var sb = document.querySelector('[data-act=clocks]'); if (sb){ sb.disabled = false; sb.classList.add('primary'); } }
+});
+document.addEventListener('keydown', function(ev){
+  if (!S.log) { if (ev.key === 'Enter' && ev.target.id === 'f_name'){ var sb = document.querySelector('[data-act=startlocal]'); if (sb) sb.click(); } return; }
+  var typing = /^(INPUT|TEXTAREA|SELECT)$/.test(ev.target.tagName) && ev.target.type !== 'checkbox';
+  if (ev.key === 'Enter' && (ev.ctrlKey || ev.metaKey)){ ev.preventDefault(); if (!REPLAY && S.step === 'record') logDecision(); return; }
+  if (ev.key === 'Enter' && ev.target.id === 'f_decision' && !ev.shiftKey){ ev.preventDefault(); if (AI()) askCohost(); return; }
+  if (ev.key === 'Enter' && ev.target.id === 'f_lognote'){ ev.preventDefault(); var nb = document.querySelector('[data-act=note]'); if (nb) nb.click(); return; }
+  if (typing) return;
+  if (ev.key === ' '){ ev.preventDefault(); nextStep(); }
+  else if (ev.key === 'p' || ev.key === 'P'){ if (!REPLAY && S.step === 'discuss') pushRoom(); }
+  else if (ev.key === 't' || ev.key === 'T'){ var tb = document.querySelector('[data-act=theme]'); if (tb) tb.click(); }
+  else if (/^[1-9]$/.test(ev.key) && !REPLAY && S.step === 'record'){
+    var D = derive(), j = D.current; if (!j || !D.presented[j.id]) return;
+    var a = (j.expected_actions || [])[Number(ev.key) - 1]; if (!a) return;
+    S.form.actions[a.id] = !S.form.actions[a.id]; delete S.form.sug['a:' + a.id]; renderMain();
+  }
+});
+
+/* ---------- start ---------- */
+(function(){
+  var th = (/[?&]theme=(light|dark)(?:&|$)/.exec(location.search) || [])[1] || null;
+  if (!th) { try { th = localStorage.getItem('ttxhost:theme'); } catch (e) {} }
+  if (!th) th = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+  document.documentElement.setAttribute('data-theme', th);
+})();
+if (S.log){ var D1 = derive(); resetForm(D1.current); showScript(D1.focus); }
+renderAll();
+setInterval(tick, 1000);
+if (SERVED) setInterval(function(){
+  fetch('/api/state', {headers: {'X-TTX-Token': BOOT.token}, cache: 'no-store'}).then(function(r){ return r.json(); }).then(function(j){
+    var was = (S.server || {}).room_open; if (j.server){ S.server.room_open = j.server.room_open; if (was !== j.server.room_open) renderHeader(); } }).catch(function(){});
+}, 3000);
+})();
+</script>
+</body>
+</html>

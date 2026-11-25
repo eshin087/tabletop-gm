@@ -5,7 +5,7 @@ description: Assist the exercise host privately during a live tabletop. Map what
 
 # Host co-pilot
 
-Status: the method below works today in a Claude Code chat open on the host's laptop next to the facilitator guide. The browser console (`host.html`) and the local `ttx host` server with a built-in co-host are Phase 2 and are not shipped yet (see the README roadmap).
+Status: the method below works in a Claude Code chat open on the host's laptop next to the facilitator guide. The same rules are built into the co-host of the browser console (`ttx host`, see `ttx/host/cohost.py`), where a JSON schema limits the answer to the pack's own ids and the host confirms each suggestion with a click.
 
 ## Setup
 

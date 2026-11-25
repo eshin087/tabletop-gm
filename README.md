@@ -13,15 +13,17 @@ The scenario is not a template. It is built from your real exposure data (Tenabl
 | | |
 |---|---|
 | **Try the facilitator** | Download the ZIP, double-click the launcher, choose 3. Claude runs the built-in sample exercise live in the chat. See [Quick start](#quick-start). |
+| **Try the host console** | Launcher option 4, or `ttx host`. Two browser screens run the built-in sample with no account and no keys: a private console that walks the host through each inject (read, discuss, record), and a room screen for the wall with the attack path, the decision on the table, and a scorecard at the end. See [The host console](#the-host-console). |
 | **Try the sample in 10 seconds** | Launcher option 1. No account, no keys, no network after setup. |
-| **Sample outputs** | [Deck](samples/outputs/deck.pptx) · [Facilitator guide](samples/outputs/facilitator_guide.docx) · [Decision tracker](samples/outputs/decision_tracker_completed.xlsx) · [After-action report](samples/outputs/after_action_report.docx) · [Executive summary slides](samples/outputs/executive_summary.pptx) · [Executive memo](samples/outputs/executive_summary.docx) · [Live session logs](samples/live/) |
+| **Sample outputs** | [Deck](samples/outputs/deck.pptx) · [Facilitator guide](samples/outputs/facilitator_guide.docx) · [Decision tracker](samples/outputs/decision_tracker_completed.xlsx) · [After-action report](samples/outputs/after_action_report.docx) · [Executive summary slides](samples/outputs/executive_summary.pptx) · [Executive memo](samples/outputs/executive_summary.docx) · [Host console](samples/outputs/host.html) (download and double-click) · [Live session logs](samples/live/) |
 | **Engine files behind them** | [seed.json](samples/outputs/seed.json) (attack path) · [clocks.json](samples/outputs/clocks.json) (deadlines) · [exercise_pack.json](samples/outputs/exercise_pack.json) (approved outline) · [score.json](samples/outputs/score.json) |
-| **Status** | 132 automated tests pass. Pure Python, six dependencies, MIT. Read-only against every external system. |
+| **Status** | 175 automated tests pass. Pure Python, six dependencies, plus one optional package for the AI co-host. MIT. Read-only against every external system. |
 
 ## Contents
 
 - [The problem](#the-problem)
 - [The facilitator agent](#the-facilitator-agent)
+- [The host console](#the-host-console)
 - [What it does](#what-it-does)
 - [How the workflow goes](#how-the-workflow-goes)
 - [Architecture](#architecture)
@@ -78,6 +80,62 @@ Every decision the host types becomes one `ttx log add` call: the inject, the de
 
 Two scripted sessions ship in [`samples/live/`](samples/live/): a team that follows its plan and one that does not. The tests export and score both.
 
+## The host console
+
+`ttx host` is a second way to run the exercise, for a host who would rather click than type. It serves two screens from the host's own laptop.
+
+| Screen | Where it goes | What is on it |
+|---|---|---|
+| **Room screen** (`/room`) | The wall, the projector, or a shared window in a video call | The attack path as far as the story has gone, the inject, the line the facilitator reads, the decision on the table with a discussion timer, and a short activity feed. No answers, no plan quotes, nothing from a later inject. |
+| **Host console** (`/`) | The host's laptop, private | One step at a time: **Read**, **Discuss**, **Record**. The plan quote, what a good answer looks like, the hints, the notification deadlines, and the capture form live here. |
+
+![Room screen at inject 3: the attack path has reached the domain controller, the facilitator's line and a follow-up are on screen, and the decision is on the table](docs/images/host_room.png)
+
+*The room screen, from `ttx host` running the built-in sample in script mode, with no AI. The first two injects carry the decisions from the scripted "good" log in [`samples/live/`](samples/live/).*
+
+![Host console at the same moment, on the Record step: the decision box, who decided, the expected actions as checkboxes, and the plan quote](docs/images/host_console.png)
+
+*The host console at the same moment, on the Record step.*
+
+**What the room sees**
+
+- **The attack path, revealed as it happens.** Entry, pivot, and target start as unknowns. A system gets its name when an inject cites its finding or names it in words already on the screen. The attacker marker sits on the furthest system reached.
+- **The line to read and the decision it forces**, with the role that owns the decision and a timer that starts when the inject is presented.
+- **A push when the room goes quiet.** One key puts a short line on the wall. With the AI co-host it is a role the pack defines, speaking in character. Without it, it is the next follow-up question from the script.
+- **An activity feed** of what the facilitator and the engine just did: presenting, clock started, fact check passed, decision logged.
+- **The decision as logged**, and at the end the readiness rating, the score, and the five dimension bars. The gaps and the fixes stay on the host's screen.
+
+**What the host does**
+
+1. **Read.** Present the inject and read the line aloud. The same line is on the room screen.
+2. **Discuss.** Ask the decision question and let the room talk. The follow-ups, the plan quote, a good answer, and the hints are one click away and marked private.
+3. **Record.** Type the decision in one sentence, click who made the call, and tick only the expected actions the room actually stated. Ctrl+Enter logs it through the engine.
+4. **Clocks, once.** After the inject that starts the notification clocks, record who owns each notice and when the team plans to send it.
+
+End the exercise and the engine scores the log, writes the after-action report and the executive summary, and shows the scorecard on both screens. On the sample this takes about two seconds.
+
+![Scorecard on the host console: readiness rating, five dimensions, deadlines met and missed, and the fixes](docs/images/host_console_score.png)
+
+*The scripted "poor" session from [`samples/live/`](samples/live/), replayed and scored by the console.*
+
+**How it stays honest**
+
+| Rule | How it holds |
+|---|---|
+| The room screen is built without the answers | One module, `ttx/host/room.py`, builds everything the wall shows from the approved pack and the log. Expected actions, plan quotes, the clock table, later injects, and systems the story has not reached are never in it. A test searches the whole payload for them. |
+| The record is the only state that matters | Every click is one `ttx.decision_log` call, the same code `ttx log` uses. Stop the server, start it again with `--resume`, and the session is exactly where it was. The server remembers one thing of its own, the line currently on the wall, and after a restart it shows the pack's script line. |
+| The AI co-host is optional | With no API key both screens run from the pack's own script. Nothing else in the engine calls a model. |
+| The co-host suggests, the host confirms | The co-host maps the host's one-sentence note onto the inject's expected actions and roles. A JSON schema limits its answer to ids the pack defines, the engine drops anything else, and nothing is logged until the host clicks. |
+| The co-host cannot reveal what it was never given | A line written for the room is built from the current inject only. Later injects and expected answers are not in the request. |
+| An AI line reaches the room only after code has checked it | A deterministic check flags any number, any identifier containing a digit, and any duration the pack does not contain, plus any five-word run lifted from a later inject or an expected answer. A flagged line is held back: the room screen shows the pack's script line, and the host sees what was flagged. A stakeholder line must also name a role the pack defines. |
+| It only answers this computer | The server binds to 127.0.0.1 and checks the Host header. Everything that reads the full exercise or writes to the log requires a random per-run token. The room screen needs no token, so it can open in a second window, and it can read only the room's view. |
+
+**Three ways to open it**
+
+- `ttx host` serves both screens and records through the engine. With `ANTHROPIC_API_KEY` in `.env` and the optional `anthropic` package installed, the AI co-host is on.
+- `ttx host --replay samples/live/poor/decision_log.json` replays a recorded session read-only on both screens, one entry at a time, and scores it. No model, no network.
+- `host.html`, written by `ttx build`, is the host console as a single file. Double-click it on any laptop. It keeps the log in the browser and exports `decision_log.json`, which `ttx report --log` scores. It has no room screen, which needs `ttx host`. A built sample is at [`samples/outputs/host.html`](samples/outputs/host.html).
+
 ## What it does
 
 Tabletop GM ships as a Claude Code skill (`/tabletop`) on top of a deterministic command-line engine (`ttx`). The facilitator is the part the room sees. The rest builds the exercise it facilitates.
@@ -89,8 +147,9 @@ Tabletop GM ships as a Claude Code skill (`/tabletop`) on top of a deterministic
 5. **Outline.** `ttx outline` writes a complete, valid skeleton. Each inject cites a finding or a labeled assumption and names the plan procedure it tests. Claude refines the narrative, then reviews it adversarially.
 6. **Approval gate.** A named human approves the outline with `ttx approve`. Nothing runs or builds before that. Any later edit breaks the approval hash.
 7. **Run it live.** Claude facilitates in the chat, as described above. The approved pack is the only input live mode needs.
-8. **Or build the documents.** `ttx build` writes the deck, facilitator guide, participant handout, decision tracker, attendance sheet, and sign-off sheet from the approved pack, for a host who prefers a projector deck and a paper tracker.
-9. **Score and report.** `ttx report` scores the live log or the filled tracker against your plan's own commitments and the pack defaults, then writes the after-action report and the executive summary in one step. For a pitch, `ttx report --demo` scores synthetic responses and marks every page as demo data.
+8. **Or run it from the host console.** `ttx host` opens two browser screens from the host's laptop: a private console that walks the host through each inject and records the decisions, and a room screen for the wall. It writes the same decision log, with an optional AI co-host. No Claude Code session is needed.
+9. **Or build the documents.** `ttx build` writes the deck, facilitator guide, participant handout, decision tracker, attendance sheet, sign-off sheet, and a standalone `host.html` from the approved pack, for a host who prefers a projector deck and a paper tracker.
+10. **Score and report.** `ttx report` scores the live log or the filled tracker against your plan's own commitments and the pack defaults, then writes the after-action report and the executive summary in one step. For a pitch, `ttx report --demo` scores synthetic responses and marks every page as demo data.
 
 ## How the workflow goes
 
@@ -110,10 +169,12 @@ flowchart LR
         H --> J["Room decides, host types,<br/>ttx log timestamps it"]
         J --> J2["Claude presses in character,<br/>asks follow-ups, starts the clocks"]
         E -- "approve, then ttx build" --> G["Alternative: deck on the projector,<br/>guide and tracker in hand"]
+        E -- "approve, then ttx host" --> HC["Alternative: host console and room screen<br/>in the browser, clicks instead of typing"]
     end
     subgraph After["Afterwards (minutes)"]
         J2 -- END --> K["Log review and corrections"]
         G --> K2["/tabletop-report"]
+        HC -- "End exercise" --> L
         K --> L["ttx report --log:<br/>after-action report with timeline,<br/>executive slides and memo"]
         K2 --> L
         L --> M["Recap in the room:<br/>what good looked like,<br/>deadlines by the hour"]
@@ -131,6 +192,8 @@ flowchart LR
 **Afterwards, the host's ten minutes:** END. The room reads the log on the projector and corrects anything misheard. One command scores it and writes the reports. Claude gives the recap: the headline, the gaps with owners, the clocks met or missed by the hour, and only now what the expected good answers were.
 
 **If you would rather run from a deck:** `ttx build` writes the slides, the facilitator guide, and a dropdown-only decision tracker. `/tabletop-report` scores the filled tracker the same way.
+
+**If you would rather click than type:** `ttx host` opens the host console in your browser. It records through the same engine and scores the session when you end it.
 
 ## Architecture
 
@@ -152,6 +215,7 @@ flowchart TB
         OL["outline<br/>valid skeleton,<br/>every inject cited"]
         AP["approve<br/>named human,<br/>SHA-256 lock"]
         LG["log<br/>append-only decision log,<br/>engine timestamps"]
+        HS["host<br/>local browser console,<br/>one log call per click"]
         BD["build<br/>pptx, docx, xlsx"]
         SC["score_engine<br/>5 dimensions,<br/>plan commitments first"]
         RP["report / aar / exec_summary"]
@@ -161,6 +225,7 @@ flowchart TB
         K1["/tabletop: interview,<br/>policy mapping, narrative,<br/>adversarial review"]
         K2["facilitate: runs the room,<br/>plays stakeholders,<br/>asks follow-ups"]
         K3["/tabletop-report: recap<br/>and explanation"]
+        K4["host co-host, optional:<br/>suggests, never logs"]
     end
     T --> SE
     X --> SE
@@ -174,6 +239,9 @@ flowchart TB
     OL --> V --> AP
     AP --> LG
     K2 -- "one ttx log call<br/>per decision" --> LG
+    AP --> HS
+    HS -- "one log call<br/>per click" --> LG
+    K4 -. "suggestions the<br/>host confirms" .-> HS
     AP --> BD
     LG --> SC
     BD --> SC
@@ -192,11 +260,12 @@ The approved `exercise_pack.json` is the single source of truth. Live mode reads
 | Human in the loop | `ttx approve --by <name>` locks the pack. `ttx log start` and `ttx build` refuse an unapproved or modified pack. Claude never approves on anyone's behalf. |
 | The engine owns time | `ttx log` stamps every entry with the wall clock and computes discussion minutes. The agent never states a time. |
 | The log is the audit original | Append-only. `ttx log edit` keeps the original entry marked superseded and records who asked for the correction. `ttx log add` refuses an inject, role, or action id that is not in the pack. |
-| Read-only everywhere | Tenable export endpoints only. One optional unauthenticated GET for the CISA KEV feed. No telemetry. Live mode adds no outbound calls. [SECURITY.md](SECURITY.md) lists every call. |
+| The host console's co-host is fenced | It is optional, it sees only the current inject when it writes for the room, its suggestions are limited by schema to ids the pack defines, the host confirms before anything is logged, and a deterministic check holds back any line with a number, identifier, or duration the pack does not contain before it reaches the room screen. |
+| Read-only everywhere | Tenable export endpoints only. One optional unauthenticated GET for the CISA KEV feed. No telemetry. Live mode adds no outbound calls. The host console calls the Anthropic API only when you give it a key. [SECURITY.md](SECURITY.md) lists every call. |
 | No secrets or real data in the repo | `.env`, `uploads/`, and `out/` are gitignored. Samples are synthetic. |
-| Reproducible without a model | Every document rebuilds from `exercise_pack.json` with no API key. 132 tests cover the engine, validators, builders, scoring, launcher, and the live log. |
+| Reproducible without a model | Every document rebuilds from `exercise_pack.json` with no API key. 175 tests cover the engine, validators, builders, scoring, launcher, the live log, and the host console. |
 
-The code is about 7,400 lines of Python across `ttx/` and `ttx/build/`, plus the skills under `skills/` and `.claude/skills/`, the schemas under `schemas/`, and the industry packs under `skills/industry_packs/`. [docs/BUILD_SPEC.md](docs/BUILD_SPEC.md) is the full specification, [docs/LIVE_GM_ADDENDUM.md](docs/LIVE_GM_ADDENDUM.md) specifies live mode, and [docs/DECISIONS.md](docs/DECISIONS.md) records the build decisions.
+The code is about 8,800 lines of Python across `ttx/`, `ttx/build/`, and `ttx/host/`, two self-contained pages (the host console and the room screen), plus the skills under `skills/` and `.claude/skills/`, the schemas under `schemas/`, and the industry packs under `skills/industry_packs/`. [docs/BUILD_SPEC.md](docs/BUILD_SPEC.md) is the full specification, [docs/LIVE_GM_ADDENDUM.md](docs/LIVE_GM_ADDENDUM.md) specifies live mode, and [docs/DECISIONS.md](docs/DECISIONS.md) records the build decisions.
 
 ## What it produces
 
@@ -234,6 +303,7 @@ The same engine that keeps the live record also builds a full document set, for 
 - **The deadlines are auditable.** Every clock has a source, a checked date, and a verification tier. The AAR says which notices were planned on time, which were late and by how much, and which had no owner.
 - **The record is defensible.** Append-only log, engine timestamps, corrections that keep the original, a hash of the approved pack on every output. An auditor can read the timeline appendix and see who decided what, and when.
 - **It is honest about what it knows.** Assumptions are labeled. Researched clocks are flagged. Unplanned decisions are shown but never scored.
+- **The host is not tied to a chat window.** The same approved exercise runs in the Claude Code chat, from two browser screens served by the host's laptop, from a single `host.html` file, or from a deck and a paper tracker. All four feed the same score.
 - **It runs anywhere and is safe to point at production.** Pure Python, six dependencies, no Docker, no database. Read-only Tenable keys are enough. Nothing is written to any external system, ever.
 
 ## Prerequisites
@@ -242,7 +312,9 @@ The same engine that keeps the live record also builds a full document set, for 
 - **Python 3.11 or newer.** The Windows launcher offers to install it for you. On macOS it offers Homebrew if you have it, or opens the download page.
 - **Internet on the first run only,** to download the document libraries. After that, everything except the guided workflow runs offline.
 - **To run the facilitator, or build an exercise for your own organization:** Claude Code (terminal, desktop app, or IDE) and a Claude account. The launcher tells you how to install it if it is missing.
+- **To run the host console:** nothing more than the launcher. It needs no Claude account.
 - **Optional:** read-only Tenable Vulnerability Management or Tenable One API keys, for live exposure data.
+- **Optional:** an Anthropic API key and the `anthropic` package, for the AI co-host in the host console. Without them the console runs from the pack's script.
 
 There is no git, Docker, Node, database, or cloud service to set up. The dependencies are pure Python: python-pptx, python-docx, openpyxl, pyyaml, pypdf, and jinja2.
 
@@ -259,6 +331,7 @@ There is no git, Docker, Node, database, or cloud service to set up. The depende
    - **1. See a finished sample exercise.** About 10 seconds, no account. It builds the complete Valley Regional exercise and opens the folder. Start with `START_HERE.txt`.
    - **2. Build an exercise for my organization.** This opens Claude Code in the folder and starts the `/tabletop` interview.
    - **3. Run an exercise live in chat.** Claude facilitates in the chat. With nothing built yet, it runs the sample exercise. See [Run it live in chat](#run-it-live-in-chat).
+   - **4. Run an exercise from the host console.** This opens the console in your browser, with no account. With nothing built yet, it runs the sample exercise. See [Run it from the host console](#run-it-from-the-host-console).
 
 The first run takes a minute or two. The launcher creates a private `.venv` folder inside the download and installs into it, so nothing else on your computer changes. Later runs go straight to the menu.
 
@@ -270,6 +343,33 @@ The first run takes a minute or two. The launcher creates a private `.venv` fold
 4. Click **End the exercise**, or type `END`, when you are done. Claude shows the log for corrections, writes the scored after-action report and executive summary into `out/live/`, runs the hot wash, and gives the recap.
 
 The sample exercise is already approved, so option 3 in the launcher is the quickest way to see the facilitator work.
+
+### Run it from the host console
+
+No Claude account is needed for this path.
+
+1. Double-click the launcher and choose **4**, or run `ttx host` from the folder. With no exercise of your own built yet, it runs the built-in sample.
+2. The host console opens in your browser at `http://127.0.0.1:8765/`. Click **Open the room screen**, then drag that window to the projector or share it in the call. F11 makes it full screen.
+3. Press **Space** to present the first inject. That stamps the time and puts the inject on the room screen. Read the line aloud, then press **Space** to move to Discuss.
+4. Let the room talk. If it stalls, press **P** to push the room. When they decide, press **Space**, type the decision in one sentence, click who made the call, tick the expected actions the room clearly stated, and press **Ctrl+Enter**.
+5. After the inject that starts the notification clocks, record who owns each notice and when the team plans to send it.
+6. Click **End exercise** twice. The scorecard appears on both screens, and the after-action report and executive summary are written next to the log in `out/host/`.
+
+To turn on the AI co-host, install the optional package and put a key in `.env` (copy `.env.example`):
+
+```bash
+pip install -e ".[host]"
+```
+
+The footer of the host console then shows the model, the number of calls, an estimated cost, and how many lines were checked and held back. Presenting an inject asks the co-host to write the line for the room, and **P** asks it for one stakeholder line. Both reach the room screen only after the fact check passes. On the Record step, **Enter** in the decision box asks the co-host to suggest what to tick and what to ask next. `ttx host --no-ai` runs from the script even when a key is present.
+
+To rehearse or to show a finished session, replay one of the recorded logs:
+
+```bash
+ttx host --replay samples/live/poor/decision_log.json
+```
+
+On a laptop with nothing installed, open `host.html` from `ttx build` instead. It exports `decision_log.json`; score it with `ttx report --log decision_log.json --pack out/exercise_pack.json`.
 
 ### Build an exercise for your organization
 
@@ -345,7 +445,15 @@ ttx log show
 ttx report --log out/live/decision_log.json
 ```
 
-See [docs/CLI.md](docs/CLI.md) for every command, the export and live Tenable modes (`ttx seed --mode export` and `--mode tenable`), and every `ttx log` subcommand.
+The host console, on the same approved pack. The first command serves it until you press Ctrl+C:
+
+```bash
+ttx host --pack out/exercise_pack.json --out out/host --by "Facilitator name"
+ttx host --replay samples/live/good/decision_log.json
+ttx build out/exercise_pack.json --out out/build --only host
+```
+
+See [docs/CLI.md](docs/CLI.md) for every command, the export and live Tenable modes (`ttx seed --mode export` and `--mode tenable`), every `ttx log` subcommand, and every `ttx host` option.
 
 ## Outputs
 
@@ -360,6 +468,8 @@ See [docs/CLI.md](docs/CLI.md) for every command, the export and live Tenable mo
 | `facilitator_guide.docx` | Facilitator, deck mode | Timing table, then per inject: host lines, the decision and its owner, a "what the plan says" box with the verbatim quote, good answers, where teams fail, expected-action checklists, hints, probing questions, and the source finding. Ends with every clock and its source. |
 | `participant_handout.docx` | Everyone | Roles, ground rules, a contact-list template, and note space. No inject content. |
 | `decision_tracker.xlsx` | Host, deck mode | One color-coded block per inject with plain questions and dropdowns: who made the call, how fast, Yes/No for each expected action and notification, plan followed, written down. Only the two optional note rows are typed. A Notification clocks sheet records who owns each notice and when they will send it. `ttx report` reads it. |
+| `host.html` | Host, on a second laptop | The host console as one self-contained file: the guided steps per inject, the capture form, the clocks, and a timer. It keeps the log in the browser and exports `decision_log.json` for `ttx report --log`. No server, no network, and no room screen. |
+| `out/host/decision_log.json` and the reports beside it (from `ttx host`) | Host console | The same append-only log as live mode, written through the engine on every click. Ending the exercise writes `score.json`, the after-action report with its decision timeline, and the executive summary into the same folder. |
 | `attendance_signin.xlsx`, `signoff_sheet.docx` | Audit evidence | Sign-in and roles-present sheets. The sign-off covers scope, approval record, documents exercised, requirements supported, clocks, and an attestation. |
 
 Option 1 in the launcher (or `ttx demo`) rebuilds the same sample into `out/demo/` with a `START_HERE.txt` guide. [`samples/outputs/`](samples/outputs/) holds one complete synthetic run: the documents above plus `seed.json`, `clocks.json`, `exercise_pack.json`, a synthetic completed tracker, and `score.json`. The sample rates Adequate at 82.8% across 7 decisions, with 4 of 6 notification deadlines met. Its regulatory clock line is the HIPAA media notice, planned 30 days late. The California health department report had no owner. The sample report lists 2 plan gaps, 11 people gaps, and 3 technical gaps. [`samples/live/`](samples/live/) holds two scripted live-session logs, one that follows the plan and one that does not.
@@ -389,6 +499,13 @@ Every clock is at the researched tier: drafted from a primary source with a cita
 - **No clock is human-verified yet.** All 118 clocks were drafted by Claude from primary sources on 2026-11-03, but no human has checked them. Every output that uses them carries a "verify before exercise" banner, and the AAR evidence page lists them as unverified. A few clocks whose source could not be fetched say so in their notes. To promote a clock, set `tier: verified`, `verifier`, and `verified_date` after opening its source.
 - **Live mode relies on the host typing.** When Claude facilitates in chat, the record is only as complete as what the host types in; voice capture of the room is roadmap. Timestamps and discussion minutes are measured from when each decision is typed.
 - **Live mode is tested through scripted logs, not a live model.** The two sessions in `samples/live/` were produced by the engine's own API with fixed timestamps, and the tests export and score them. The facilitator's conduct is specified in the skill and exercised by hand, not by automated tests, because tests cannot call a model.
+- **The AI co-host is tested through a stand-in client.** No automated test calls a model. The tests check what the console sends, how it handles a declined request, and that its answers are cut down to ids the pack defines.
+- **The co-host's fact check is exact but narrow.** It checks numbers, identifiers that contain a digit, durations, and text lifted from a later inject or an expected answer. It cannot catch an invented name with no digit in it, and a line that passes goes to the room screen. The host is still responsible for what the room is told; `--no-ai` runs from the script alone.
+- **The host console is for one host on one computer.** Both screens are served on 127.0.0.1. The room screen is a second browser window on that computer, dragged to a projector or shared in a call. It is not a link other people can open, and there is no shared session.
+- **The room screen's attack path follows the words on screen.** A system is revealed when an inject cites its finding or names it in the title, the line read aloud, or the decision. If a pack's injects never name a system, it appears only when its finding is cited.
+- **The two screens were checked by hand in one browser.** Edge on Windows, at 16:9 for the room screen. Other browsers and other projector shapes are untested, and the screens have not yet been used in a real exercise.
+- **The standalone `host.html` trusts the browser.** Its timestamps come from the laptop's clock, and the log lives in that browser's storage until it is exported. It cannot score: scoring is `ttx report --log` on the exported file.
+- **The co-host's cost figure is an estimate.** It multiplies the token counts the API returned by list prices recorded in the code on 2026-11-22, for the default model only.
 - **Deadline arithmetic is simplified.**
   - Business-day deadlines skip weekends but not public holidays.
   - Calendar-month deadlines are stored as 720 hours.
@@ -404,14 +521,12 @@ Every clock is at the researched tier: drafted from a primary source with a cita
 - **Pre-approved commands depend on Claude Code's trust prompt.** Claude Code applies the project's allow rules only after you accept the trust prompt for the folder. The Windows rule's backslash path has not been confirmed in a live session; if Claude Code still asks, choose "don't ask again" once.
 - **Executive ratings use fixed thresholds.** Strong is 85% and up, Adequate is 70 to 84%, and Needs work is below 70%. Tune them to your organization's appetite in `ttx/build/exec_summary.py`.
 - **Launchers were tested on Windows only.** The Windows launcher was run from a fresh copy. The macOS and Linux launchers are plain shell scripts but have not been run on a Mac or a Linux desktop yet. macOS Gatekeeper asks for a right-click Open the first time.
-- **No second-screen host console ships.** The browser host console (`host.html`) and `ttx host` are not shipped. Run the exercise live in chat, or from the facilitator guide and the tracker; see Roadmap.
-- **The images in this README** were rendered from the committed sample with Microsoft Office, and the chat sequence is a drawn illustration of the sample pack and a scripted log, not a screen recording. The files in `samples/` are the source.
+- **The images in this README** were rendered from the committed sample with Microsoft Office, and the chat sequence is a drawn illustration of the sample pack and a scripted log, not a screen recording. The three host console and room screen images are screenshots of `ttx host` running the scripted sample sessions in script mode. The files in `samples/` are the source.
 
 ## Roadmap
 
 - Voice capture of the room, so the host stops typing.
-- `host.html`: a self-contained host console for a second laptop, with click-based decision capture, a timer, and tracker export.
-- `ttx host`: a standard-library local server with an AI co-host that follows `skills/host_copilot/SKILL.md`.
+- A practice mode in which a model plays the room, so a host can rehearse alone and the co-host's conduct can be measured over many runs.
 - Human verification of the healthcare and banking clocks first, then the rest.
 - More packs through `pack_research`, plus community contributions.
 - Tenable One attack path API ingestion and a Qualys/Rapid7 column map.
