@@ -17,9 +17,12 @@
   ttx aar --pack --score --out    after-action report from the score (--log adds the live timeline)
   ttx log start|add|note|mark|edit|show|clocks|export
                                   append-only decision log for an exercise facilitated live in chat
+  ttx host                        host console and room screen in the browser: capture decisions, score at the end
+  ttx host --replay LOG           replay a recorded session read-only, with no model
 
-No command here calls a model. Live Tenable mode is the only network call and
-it is read-only.
+Only ttx host can call a model, and only when ANTHROPIC_API_KEY is set: its AI
+co-host is optional and the console runs from the pack's script without it.
+Live Tenable mode is the only other network call and it is read-only.
 """
 
 from __future__ import annotations
@@ -422,6 +425,27 @@ def _pairs(values: list[str] | None, flag: str) -> dict[str, str]:
     return out
 
 
+def cmd_host(args) -> int:
+    from .common import REPO_ROOT
+    from .host.cohost import make_cohost
+    from .host.server import App, serve
+    from .host.session import HostSession
+
+    _load_env()
+    if args.replay:
+        session = HostSession.replay(args.replay, args.out or "out/host-replay", args.pack)
+        cohost, reason = None, "replay of a recorded session: no AI, nothing is changed"
+    else:
+        pack = args.pack
+        if not pack:
+            pack = "out/exercise_pack.json" if Path("out/exercise_pack.json").exists() else str(REPO_ROOT / "samples" / "exercise_pack_sample.json")
+            print(f"using {pack}")
+        session = HostSession(pack, args.out or "out/host", args.by, resume=args.resume)
+        cohost, reason = (None, "the AI co-host is turned off (--no-ai)") if args.no_ai else make_cohost()
+    serve(App(session, cohost=cohost, cohost_reason=reason, replay=bool(args.replay)), port=args.port, open_browser=not args.no_open)
+    return 0
+
+
 def cmd_log_start(args) -> int:
     from .decision_log import log_path, start
 
@@ -633,6 +657,17 @@ def build_parser() -> argparse.ArgumentParser:
     s.set_defaults(func=cmd_aar)
 
     # ttx log: append-only decision log for an exercise facilitated live in chat
+    s = sub.add_parser("host", help="host console in the browser: run an approved exercise, capture decisions, score it")
+    s.add_argument("--pack", help="approved exercise pack (default: out/exercise_pack.json, else the built-in sample)")
+    s.add_argument("--out", help="folder for the decision log and reports (default: out/host)")
+    s.add_argument("--by", default="Facilitator", help="facilitator name for the record")
+    s.add_argument("--port", type=int, default=8765)
+    s.add_argument("--resume", action="store_true", help="continue the session already in --out")
+    s.add_argument("--replay", metavar="LOG", help="replay a recorded decision_log.json read-only, with no model")
+    s.add_argument("--no-ai", action="store_true", help="run from the pack's script even when an API key is present")
+    s.add_argument("--no-open", action="store_true", help="do not open the browser")
+    s.set_defaults(func=cmd_host)
+
     lg = sub.add_parser("log", help="append-only decision log for a live, chat-facilitated exercise")
     lsub = lg.add_subparsers(dest="log_command", required=True)
 

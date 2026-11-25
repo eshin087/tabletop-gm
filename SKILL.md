@@ -186,11 +186,13 @@ End with one sentence: after the exercise, run `/tabletop-report` (or `/tabletop
 
 ### 8. Run
 
-Two ways to run the exercise:
+Three ways to run the exercise:
 
 **A. In the room with the deck.** The deck goes on the projector. The facilitator runs from `facilitator_guide.docx` and records decisions in `decision_tracker.xlsx`. If the facilitator wants a private co-host in this chat, follow `skills/host_copilot/SKILL.md`.
 
 **B. Live in chat.** No deck: the chat goes on the projector, Claude presents one inject at a time, the host types the room's decisions, and `ttx log` records them. Tell the person, in one line: on exercise day, open a new chat in this folder, type `/tabletop`, and choose "Run an exercise live". It must be a new chat, because this one holds the expected answers.
+
+**C. From the host console.** No chat on exercise day: the host runs `ttx host --pack out/exercise_pack.json --by "<name>"` in a terminal in this folder (or picks option 4 in the launcher), and two screens open in the browser: a private host console that walks the host through each inject (read, discuss, record) and writes the same decision log, and a room screen for the projector that shows the attack path and the decision on the table with no answers on it. Ending the exercise there scores it and writes the reports into `out/host/`. It needs no Claude account. `ttx build` also writes `host.html`, the same console as a single file for a laptop with nothing installed. Tell the person about this option in one line; do not start the server yourself, because it runs until it is stopped.
 
 ### 9. Score and report
 

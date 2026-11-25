@@ -30,7 +30,7 @@ def built(sample_pack, tmp_path_factory):
 
 def test_every_generator_builds(built):
     out, paths = built
-    assert set(paths) == {"deck", "facilitator_guide", "participant_handout", "decision_tracker", "attendance", "signoff"}
+    assert set(paths) == {"deck", "facilitator_guide", "participant_handout", "decision_tracker", "attendance", "signoff", "host_console"}
     for p in paths.values():
         assert (out / p.split("\\")[-1].split("/")[-1]).exists()
 

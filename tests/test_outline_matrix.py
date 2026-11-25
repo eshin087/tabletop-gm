@@ -66,7 +66,7 @@ def test_durations_and_severities_with_the_sample_plan(duration, severity, org_p
     assert len(pack["injects"]) == {30: 3, 60: 5, 90: 7}[duration]
     stamp_approval(pack, "test")
     built = build_all(pack, tmp_path)
-    assert len(built) == 6
+    assert len(built) == 7
 
 
 def test_no_exposure_data_builds_a_labeled_generic_scenario(tmp_path):

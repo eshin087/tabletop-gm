@@ -1,0 +1,191 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="referrer" content="no-referrer">
+<title>Tabletop GM room screen</title>
+<style>
+:root{--bg:#0b0e12;--text:#eef1f4;--muted:#8a929c;--line:#222730;--ok:#62c9ad;--hot:#ff7a6b;--amb:#f2c96b;--eng:#7fb8ff;
+--mono:Consolas,ui-monospace,"Courier New",monospace;--sans:system-ui,-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif}
+*{box-sizing:border-box}
+html,body{margin:0;height:100%;background:#000;overflow:hidden}
+#stage{position:absolute;left:50%;top:50%;width:1200px;height:675px;margin:-337.5px 0 0 -600px;background:var(--bg);color:var(--text);
+font-family:var(--sans);padding:28px 44px 30px;display:flex;flex-direction:column;transform-origin:50% 50%}
+.top{display:flex;align-items:baseline;font-size:13px;color:var(--muted);letter-spacing:.04em;text-transform:uppercase}
+.top b{color:var(--text);font-weight:600}
+.top .t{margin-left:auto;font-family:var(--mono);font-size:26px;color:var(--text);letter-spacing:0;text-transform:none}
+svg text{font-family:var(--mono)}
+.head{font-size:40px;font-weight:700;letter-spacing:-.025em;line-height:1.08;margin:6px 0 14px}
+.mid{display:grid;grid-template-columns:minmax(0,1fr) 316px;gap:34px;flex:1;min-height:0}
+.gm{display:flex;gap:14px;margin-bottom:18px}
+.av{width:38px;height:38px;border-radius:10px;background:#12362e;color:var(--ok);font-weight:700;font-size:13px;display:grid;place-items:center;flex:none}
+.av.s{background:#3a2c0c;color:var(--amb)}
+.say{font-size:21px;line-height:1.45;color:#d3d8de;white-space:pre-wrap}
+.say.q{color:var(--text);font-size:20px;display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:4;overflow:hidden}
+.gm.past{margin-bottom:12px}.gm.past .say{font-size:16px;color:var(--muted);display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:3;overflow:hidden}.gm.past .av{opacity:.55}
+.left{min-height:0;overflow:hidden;padding-bottom:2px}
+.rise{animation:rise .45s both}
+.tag{font-size:12px;color:var(--ok);margin-top:6px}
+.tag.s{color:var(--amb)}
+.caret{display:inline-block;width:.5em;height:1em;background:currentColor;vertical-align:-.12em;margin-left:3px;animation:blink 1s steps(2) infinite}
+.dots i{display:inline-block;width:6px;height:6px;border-radius:50%;background:currentColor;margin-right:4px;animation:blink 1.2s infinite}
+.dots i:nth-child(2){animation-delay:.2s}.dots i:nth-child(3){animation-delay:.4s}
+.feed{border-left:1px solid var(--line);padding-left:22px;font-family:var(--mono);font-size:12.5px;line-height:1.4;min-height:0;display:flex;flex-direction:column}
+.rows{flex:1;min-height:0;overflow:hidden}
+.feed h4{flex:none;margin:0 0 8px;font-size:11.5px;font-weight:400;color:var(--muted);letter-spacing:.08em}
+.ln{display:grid;grid-template-columns:62px 54px minmax(0,1fr);gap:6px;padding:3px 0;color:#b9c0c8}
+.ln span:first-child{color:#5b636d}
+.ln .who{color:var(--amb)}.ln .eng{color:var(--eng)}
+.ln.new{animation:rise .45s both}
+.ln b{color:var(--text);font-weight:700}
+.ask{display:grid;grid-template-columns:1fr auto;gap:30px;align-items:end;border-top:1px solid var(--line);padding-top:18px;margin-top:14px}
+.ask small{font-size:13px;font-weight:600;color:var(--ok);letter-spacing:.04em;text-transform:uppercase}
+.ask .q{font-size:28px;font-weight:650;line-height:1.25;letter-spacing:-.01em;margin-top:4px}
+.ask .q.done{font-size:22px;font-weight:400;color:#d3d8de;display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:3;overflow:hidden}
+.timer{text-align:right;font-family:var(--mono)}
+.timer b{font-size:40px;font-weight:600;display:block;line-height:1}
+.timer span{font-size:12px;color:var(--muted)}
+.center{flex:1;display:flex;flex-direction:column;justify-content:center}
+.center h1{font-size:50px;letter-spacing:-.03em;margin:0 0 6px;line-height:1.05}
+.center .sub{font-size:20px;color:var(--muted);margin-bottom:26px}
+.rules{font-size:18px;color:#c9ced4;line-height:1.5;max-width:860px}
+.rules div{padding:7px 0;border-top:1px solid var(--line)}
+.scoretop{display:flex;align-items:flex-end;gap:54px;margin:8px 0 18px}
+.stat span{display:block;font-size:13px;color:var(--muted);letter-spacing:.04em;text-transform:uppercase}
+.stat b{font-size:26px;font-weight:600}
+.stat .big{font-size:64px;font-weight:700;letter-spacing:-.03em;line-height:1}
+.bars{display:grid;grid-template-columns:270px 1fr 50px;gap:12px 16px;align-items:center;font-size:17px;margin-top:6px}
+.bar{height:8px;background:var(--line);border-radius:4px;overflow:hidden}.bar i{display:block;height:100%;background:var(--ok);border-radius:4px;transition:width 1.2s ease}
+.lost{position:absolute;right:16px;bottom:10px;font-size:12px;color:var(--hot);font-family:var(--mono)}
+@keyframes blink{50%{opacity:0}}
+@keyframes pulse{0%{r:15;opacity:.9}100%{r:36;opacity:0}}
+@keyframes dash{to{stroke-dashoffset:-28}}
+@keyframes rise{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+.pulse{animation:pulse 1.6s ease-out infinite}
+.flow{stroke-dasharray:6 8;animation:dash .9s linear infinite}
+.static *{animation:none!important;transition:none!important}
+@media (prefers-reduced-motion:reduce){.pulse,.flow,.caret,.dots i,.ln.new,.rise{animation:none}}
+</style>
+</head>
+<body>
+<div id="stage"></div>
+<script>
+(function(){
+'use strict';
+var stage = document.getElementById('stage');
+var S = null, sig = '', offset = 0, lost = 0, seenFeed = {}, seenStake = '';
+var type = {key: '', text: '', n: 0};
+var STATIC = /[?&]static/.test(location.search); if (STATIC) document.documentElement.className = 'static';
+
+function esc(s){ return String(s == null ? '' : s).replace(/[&<>"']/g, function(c){ return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]; }); }
+function clock(iso){ var d = new Date(iso); return isNaN(d) ? '' : d.toLocaleTimeString([], {hour12: false}); }
+function mmss(ms){ if (!(ms >= 0)) ms = 0; var s = Math.floor(ms / 1000), m = Math.floor(s / 60); s = s % 60; return (m < 10 ? '0' : '') + m + ':' + (s < 10 ? '0' : '') + s; }
+function initials(role){ var w = String(role).split(/\s+/).filter(function(x){ return /^[A-Z]/.test(x); }); return (w.map(function(x){ return x[0]; }).join('') || 'GM').slice(0, 3); }
+function fit(){ var k = Math.min(window.innerWidth / 1200, window.innerHeight / 675); stage.style.transform = 'scale(' + k + ')'; }
+
+function pathSvg(nodes){
+  var n = nodes.length; if (!n) return '';
+  var xs = [40]; for (var i = 0; i < n; i++) xs.push(Math.round(40 + (i + 1) * (930 / n)));
+  var h = '<svg viewBox="0 0 1112 132" width="1112" height="132" style="margin:14px 0 0">';
+  nodes.forEach(function(nd, i){
+    var c = nd.state === 'passed' ? '#62c9ad' : nd.state === 'active' ? '#ff7a6b' : '#3a414b';
+    h += '<line ' + (nd.state === 'active' ? 'class="flow" ' : nd.state === 'unknown' ? 'stroke-dasharray="3 9" ' : '') + 'x1="' + xs[i] + '" y1="46" x2="' + xs[i + 1] + '" y2="46" stroke="' + c + '" stroke-width="2.5"/>';
+  });
+  h += '<circle cx="40" cy="46" r="8" fill="#0b0e12" stroke="#8a929c" stroke-width="2"/><text x="40" y="84" fill="#8a929c" font-size="13" text-anchor="middle">internet</text>';
+  nodes.forEach(function(nd, i){
+    var x = xs[i + 1];
+    if (nd.state === 'unknown'){
+      h += '<circle cx="' + x + '" cy="46" r="12" fill="#0b0e12" stroke="#3a414b" stroke-width="2"/><text x="' + x + '" y="51" fill="#5b636d" font-size="14" text-anchor="middle">?</text>'
+        + '<text x="' + x + '" y="84" fill="#5b636d" font-size="13" text-anchor="middle">not known yet</text>';
+      return;
+    }
+    var hot = nd.state === 'active', c = hot ? '#ff7a6b' : '#62c9ad';
+    if (hot) h += '<circle class="pulse" cx="' + x + '" cy="46" r="15" fill="none" stroke="#ff7a6b" stroke-width="2"/>';
+    h += '<circle cx="' + x + '" cy="46" r="' + (hot ? 15 : 13) + '" fill="' + c + '"/>'
+      + '<text x="' + x + '" y="84" fill="' + (hot ? c : '#eef1f4') + '" font-size="17" font-weight="700" text-anchor="middle">' + esc(nd.asset) + '</text>'
+      + '<text x="' + x + '" y="104" fill="#8a929c" font-size="12.5" text-anchor="middle">' + esc(String(nd.label).toLowerCase() + (nd.detail ? ' · ' + nd.detail : '')) + '</text>'
+      + '<text x="' + x + '" y="122" fill="' + c + '" font-size="12.5" text-anchor="middle">' + (hot ? 'attacker here' : 'compromised') + (nd.since ? ' ' + esc(nd.since) : '') + '</text>';
+  });
+  return h + '</svg>';
+}
+function feedHtml(){
+  var rows = (S.feed || []).map(function(f){
+    var k = f.at + '|' + f.who + '|' + f.text, fresh = !seenFeed[k]; seenFeed[k] = 1;
+    var who = String(f.who || '');
+    return '<div class="ln' + (fresh ? ' new' : '') + '"><span>' + esc(clock(f.at)) + '</span><span class="' + (who === 'ENGINE' ? 'eng' : 'who') + '">' + esc(who) + '</span><span>' + (f.strong ? '<b>' + esc(f.text) + '</b>' : esc(f.text)) + '</span></div>';
+  }).join('');
+  return '<h4>AGENT ACTIVITY</h4><div class="rows" id="rows">' + rows + '</div>';
+}
+function trimFeed(){ var r = document.getElementById('rows'); while (r && r.children.length > 1 && r.scrollHeight > r.clientHeight + 1) r.removeChild(r.firstChild); }
+function topHtml(){
+  var j = S.ended ? null : S.inject;
+  return '<div class="top"><b>' + esc(S.organization || '') + '</b>&nbsp;&nbsp;·&nbsp;&nbsp;tabletop exercise' + (j ? '&nbsp;&nbsp;·&nbsp;&nbsp;inject ' + j.n + ' of ' + S.total : '')
+    + (S.mode === 'replay' ? '&nbsp;&nbsp;·&nbsp;&nbsp;replay' : '') + '<span class="t">' + esc(j ? j.time_marker : '') + '</span></div>';
+}
+function render(){
+  var j = S.inject, sc = S.score;
+  var now = [S.ended, sc ? sc.percent : '', j ? j.id : '', S.logged ? S.logged.at : '', S.stake ? S.stake.text : '', (S.path || []).map(function(p){ return p.state + (p.asset || ''); }).join(','),
+    S.line ? S.line.source + S.line.writing : ''].join('|');
+  if (now !== sig){ sig = now; draw(); }
+  var f = document.getElementById('feed'); if (f){ f.innerHTML = feedHtml(); trimFeed(); }
+  setLine(); tick();
+}
+function subtitle(){ var t = String(S.title || ''), o = String(S.organization || ''); if (o && t.indexOf(o) === 0) t = t.slice(o.length).replace(/^[\s:,-]+/, ''); return t.charAt(0).toUpperCase() + t.slice(1); }
+function draw(){
+  var j = S.inject, sc = S.score, h = topHtml();
+  if (S.ended){
+    h += '<div class="center">';
+    if (sc){
+      h += '<div class="sub" style="margin-bottom:0">Exercise complete</div><div class="scoretop"><div class="stat"><span>Readiness</span><div class="big">' + esc(sc.rating) + '</div></div>'
+        + '<div class="stat"><span>Score</span><div class="big" style="font-family:var(--mono)">' + Number(sc.percent).toFixed(1) + '%</div></div>'
+        + '<div class="stat"><span>Decisions scored</span><b>' + esc(sc.decisions_scored) + ' of ' + esc(sc.decisions_total) + '</b></div>'
+        + '<div class="stat"><span>Deadlines met</span><b>' + esc(sc.deadlines_met) + ' of ' + esc(sc.deadlines_total) + '</b></div></div><div class="bars">'
+        + (sc.dimensions || []).map(function(d){ return '<div>' + esc(d.label) + '</div><div class="bar"><i style="width:' + (d.average == null ? 0 : Math.round(d.average / 3 * 100)) + '%"></i></div><div style="font-family:var(--mono);color:var(--muted)">' + (d.average == null ? 'n/a' : Number(d.average).toFixed(1)) + '</div>'; }).join('')
+        + '</div><div class="tag" style="font-size:14px;margin-top:22px">Scored by the engine from the decision log. Your facilitator has the full report.</div>';
+    } else h += '<h1>Exercise ended</h1><div class="sub"><span class="dots"><i></i><i></i><i></i></span> the engine is scoring the record</div>';
+    stage.innerHTML = h + '</div>'; return;
+  }
+  if (!j){
+    stage.innerHTML = h + '<div class="mid"><div class="center"><h1>' + esc(S.organization || 'Tabletop exercise') + '</h1><div class="sub">' + esc(subtitle()) + '</div>'
+      + '<div class="rules">' + (S.ground_rules || []).map(function(r){ return '<div>' + esc(r) + '</div>'; }).join('') + '</div></div><div class="feed" id="feed"></div></div>'
+      + '<div class="ask"><div><small>Waiting for the facilitator</small><div class="q done">The exercise starts when the first inject is presented.</div></div><div></div></div>';
+    return;
+  }
+  var L = S.line || {}, st = S.stake, stKey = st ? j.id + '|' + st.text : '', fresh = stKey !== seenStake; seenStake = stKey;
+  h += pathSvg(S.path || []) + '<div class="head">' + esc(j.title) + '</div><div class="mid"><div class="left">'
+    + '<div class="gm' + (st ? ' past' : '') + '"><div class="av">GM</div><div><div class="say"><span id="line"></span><span class="caret" id="caret"></span></div>'
+    + '<div class="tag">' + (L.writing ? '<span class="dots"><i></i><i></i><i></i></span> AI facilitator is writing' : L.source === 'ai' ? 'AI facilitator · checked against your approved exercise' : 'Facilitator') + '</div></div></div>';
+  if (st) h += '<div class="gm' + (fresh ? ' rise' : '') + '"><div class="av s">' + esc(st.source === 'ai' ? initials(st.role) : 'GM') + '</div><div><div class="say q">' + (st.source === 'ai' ? '“' + esc(st.text) + '”' : esc(st.text)) + '</div>'
+    + '<div class="tag s">' + (st.source === 'ai' ? esc(st.role) + ' · played by the AI facilitator' : 'Facilitator · follow-up') + '</div></div></div>';
+  h += '</div><div class="feed" id="feed"></div></div>';
+  if (S.logged) h += '<div class="ask"><div><small>Decision logged · ' + esc(clock(S.logged.at)) + ' · ' + esc(S.logged.by) + '</small><div class="q done">' + esc(S.logged.decision) + '</div></div><div class="timer"><b>✓</b><span>recorded</span></div></div>';
+  else h += '<div class="ask"><div><small>Decision for the ' + esc(j.owner) + '</small><div class="q">' + esc(j.decision) + '</div></div><div class="timer"><b id="disc">00:00</b><span>in discussion</span></div></div>';
+  stage.innerHTML = h;
+}
+function setLine(){
+  var el = document.getElementById('line'); if (!el || !S.inject) return;
+  var L = S.line || {}, key = S.inject.id + '|' + L.source + '|' + (L.text || '');
+  if (key !== type.key){ type = {key: key, text: L.text || '', n: STATIC ? 1e6 : 0}; }
+  el.textContent = type.text.slice(0, type.n);
+  var c = document.getElementById('caret'); if (c) c.style.display = (type.n < type.text.length) ? '' : 'none';
+}
+function tick(){
+  var d = document.getElementById('disc');
+  if (d && S && S.inject && S.inject.presented_at) d.textContent = mmss((S.as_of ? Date.parse(S.as_of) : Date.now() + offset) - Date.parse(S.inject.presented_at));
+  var l = document.getElementById('lost'); if (l) l.style.display = lost > 3 ? '' : 'none';
+}
+function poll(){
+  fetch('/room/state', {cache: 'no-store'}).then(function(r){ return r.json(); }).then(function(s){
+    lost = 0; offset = Date.parse(s.now) - Date.now(); S = s; render();
+  }).catch(function(){ lost++; tick(); });
+}
+setInterval(function(){ if (type.n < type.text.length){ type.n += 2; setLine(); } }, 26);
+setInterval(tick, 500);
+setInterval(poll, 800);
+window.addEventListener('resize', fit); fit(); poll();
+document.body.insertAdjacentHTML('beforeend', '<div class="lost" id="lost" style="display:none">connection to the host lost, retrying</div>');
+})();
+</script>
+</body>
+</html>

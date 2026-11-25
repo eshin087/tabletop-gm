@@ -11,7 +11,7 @@ from pathlib import Path
 
 from ..validators import check_approval, validate_exercise_pack
 
-GENERATORS = ["deck", "guide", "handout", "tracker", "signin", "signoff"]
+GENERATORS = ["deck", "guide", "handout", "tracker", "signin", "signoff", "host"]
 
 
 def build_all(pack: dict, out_dir: str | Path, only: list[str] | None = None, allow_draft: bool = False) -> dict[str, str]:
@@ -44,4 +44,8 @@ def build_all(pack: dict, out_dir: str | Path, only: list[str] | None = None, al
         built["attendance"] = str(signin.build_attendance(pack, out / "attendance_signin.xlsx", draft=draft))
     if "signoff" in wanted:
         built["signoff"] = str(signin.build_signoff(pack, out / "signoff_sheet.docx", draft=draft))
+    if "host" in wanted:
+        from . import hostconsole
+
+        built["host_console"] = str(hostconsole.build_host_console(pack, out / "host.html", draft=draft))
     return built

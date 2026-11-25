@@ -21,17 +21,19 @@ dependencies = [
 
 [project.optional-dependencies]
 tenable = ["pytenable>=1.4"]
+host = ["anthropic>=2.12"]
 dev = ["pytest>=8.0"]
 
 [project.scripts]
 ttx = "ttx.cli:main"
 
 [tool.setuptools]
-packages = ["ttx", "ttx.build"]
+packages = ["ttx", "ttx.build", "ttx.host"]
 include-package-data = true
 
 [tool.setuptools.package-data]
 ttx = ["templates/*", "data/*"]
+"ttx.host" = ["*.html"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]

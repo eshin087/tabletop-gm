@@ -136,6 +136,49 @@ The same steps one at a time: `ttx log export`, then `ttx score --tracker out/li
 
 Two scripted synthetic sessions ship under `samples/live/` (a team that follows the plan and one that does not); `python samples/make_live_logs.py` regenerates them.
 
+## Run the exercise from the host console: `ttx host`
+
+`ttx host` serves two screens in the browser on this computer: the host console at `/`, private to the host, and the room screen at `/room`, for the wall or the projector. It records through the same decision log as `ttx log`, so everything above about the log applies. Ending the exercise in the console runs the same pipeline as `ttx report --log`.
+
+```bash
+ttx host
+ttx host --pack out/exercise_pack.json --out out/host --by "Facilitator name"
+ttx host --pack out/exercise_pack.json --out out/host --resume
+ttx host --replay samples/live/poor/decision_log.json
+```
+
+| Option | Does |
+|---|---|
+| `--pack FILE` | The approved exercise pack. Default: `out/exercise_pack.json`, or the built-in sample when that does not exist. An unapproved or changed pack is refused. |
+| `--out DIR` | Where the decision log and the reports go. Default `out/host` (`out/host-replay` with `--replay`). An existing log is refused unless `--resume`. |
+| `--by NAME` | The facilitator's name, recorded in the log. |
+| `--resume` | Continue the session already in `--out`. The log gets a "Session resumed" note. |
+| `--replay LOG` | Open a recorded `decision_log.json` read-only and step through it on both screens. The log is copied into `--out`; the original is not written. Scoring works; capture and the AI co-host do not. |
+| `--port N` | Port on 127.0.0.1. Default 8765. |
+| `--no-ai` | Run from the pack's script even when an API key is present. |
+| `--no-open` | Do not open the browser. |
+
+Keys on the host console: Space moves to the next step (present, done reading, they decided), P pushes the room during Discuss, 1 to 9 toggle the expected actions, Ctrl+Enter logs the decision, and T switches light and dark. Add `?theme=dark` or `?theme=light` to the address to pin a theme.
+
+The room screen is read-only and has no controls. Open it from the link in the host console, or at `http://127.0.0.1:8765/room`, and move that window to the projector.
+
+The AI co-host is on when `ANTHROPIC_API_KEY` is in `.env` and the optional package is installed (`pip install -e ".[host]"`). Presenting an inject asks it to write the line for the room, and pushing the room asks it for one stakeholder line; both reach the room screen only after the fact check passes. In the decision box, Enter asks it to suggest what to tick and what to ask next. Four environment variables tune it:
+
+| Variable | Default | Meaning |
+|---|---|---|
+| `TTX_HOST_MODEL` | `claude-opus-5-5` | The model the co-host calls. `claude-sonnet-5-5` and `claude-haiku-5-5` also work and show a cost estimate. Haiku 5.5 has no server-side fallback, so a declined line falls back to the script. |
+| `TTX_HOST_EFFORT` | `low` | Reasoning effort: `low`, `medium`, `high`, `xhigh`, or `max`. Low keeps the room waiting least. |
+| `TTX_HOST_FAST` | off | Set to `1` for fast output mode on models that support it, at a higher price. |
+| `TTX_HOST_AI` | on | Set to `off` to disable the co-host without removing the key. |
+
+Requests include a server-side fallback, so a request a safety classifier declines by mistake is retried on the model Anthropic recommends. If the co-host still cannot answer, the console shows the pack's script line and says why.
+
+`ttx build PACK --out DIR --only host` writes the standalone `host.html`. It needs no server: open it, run the exercise, export `decision_log.json`, then:
+
+```bash
+ttx report --log decision_log.json --pack out/exercise_pack.json
+```
+
 ## Use your own data
 
 - **Export mode.** Put a findings export in `uploads/` (CSV, JSON, or .nessus), plus an optional asset export. Set `environment.mode: export` and `environment.estate_file` in your intake, or pass `--mode export --estate uploads/findings.csv --assets uploads/assets.csv`. Column mapping is config-driven with fuzzy header matching (`schemas/export_columns.yaml`). It was built from the Tenable field names recorded in the build spec and is tested against Tenable-shaped CSV and JSON. Add aliases there for another scanner.
@@ -159,9 +202,11 @@ Two scripted synthetic sessions ship under `samples/live/` (a team that follows 
 | `ttx narrate PACK OVERLAY` | Apply a narrative overlay (narrative fields only) |
 | `ttx validate KIND FILE` | seed, pack, packs, clocks, org-plan, outline, exercise-pack |
 | `ttx approve PACK --by NAME` | Human approval gate |
-| `ttx build PACK --out [--open]` | Every document from the approved pack |
+| `ttx build PACK --out [--open]` | Every document from the approved pack, and the standalone `host.html` |
 | `ttx score --pack --tracker --out` | Deterministic score from the tracker |
 | `ttx aar --pack --score --out [--log]` | After-action report; `--log` adds the live decision timeline appendix |
 | `ttx log start\|add\|note\|mark\|edit\|show\|clocks\|export` | Append-only decision log for an exercise run live in chat |
+| `ttx host [--pack --out --by --resume --port --no-ai]` | Host console and room screen in the browser: guided steps, click capture, clocks, and a scorecard at the end |
+| `ttx host --replay LOG` | Replay a recorded decision log read-only, with no model |
 
 Run `ttx <command> --help` for options.
